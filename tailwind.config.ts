@@ -57,6 +57,48 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Brand Colors
+        brand: {
+          primary: "hsl(var(--brand-primary))",
+          "primary-foreground": "hsl(var(--brand-primary-foreground))",
+          secondary: "hsl(var(--brand-secondary))",
+          accent: "hsl(var(--brand-accent))",
+        },
+        // Card Template Colors
+        minimal: {
+          accent: "hsl(var(--minimal-accent))",
+          "accent-foreground": "hsl(var(--minimal-accent-foreground))",
+        },
+        bold: {
+          accent: "hsl(var(--bold-accent))",
+          "accent-foreground": "hsl(var(--bold-accent-foreground))",
+          bg: "hsl(var(--bold-bg))",
+        },
+        elegant: {
+          accent: "hsl(var(--elegant-accent))",
+          "accent-foreground": "hsl(var(--elegant-accent-foreground))",
+          bg: "hsl(var(--elegant-bg))",
+        },
+        creative: {
+          accent: "hsl(var(--creative-accent))",
+          "accent-foreground": "hsl(var(--creative-accent-foreground))",
+        },
+      },
+      backgroundImage: {
+        "gradient-hero": "var(--gradient-hero)",
+        "gradient-minimal": "var(--gradient-minimal)",
+        "gradient-bold": "var(--gradient-bold)",
+        "gradient-elegant": "var(--gradient-elegant)",
+        "gradient-creative": "var(--gradient-creative)",
+      },
+      boxShadow: {
+        card: "var(--shadow-card)",
+        "card-hover": "var(--shadow-card-hover)",
+        hero: "var(--shadow-hero)",
+      },
+      transitionTimingFunction: {
+        smooth: "var(--transition-smooth)",
+        bounce: "var(--transition-bounce)",
       },
       borderRadius: {
         lg: "var(--radius)",
