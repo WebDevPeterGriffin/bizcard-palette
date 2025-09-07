@@ -130,11 +130,11 @@ const RequestForm = () => {
 
       toast({
         title: "Card Created!",
-        description: `Your digital business card is ready at /card/${slug}`,
+        description: `Your digital business card is ready at /${slug}`,
       });
 
       // Redirect to the generated card
-      navigate(`/card/${slug}`);
+      navigate(`/${slug}`);
 
     } catch (error) {
       console.error('Error creating card:', error);
@@ -302,7 +302,7 @@ const RequestForm = () => {
           </Card>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Your card will be instantly available at: yourdomain.com/card/{formData.full_name ? generateSlug(formData.full_name) : 'your-name'}</p>
+            <p>Your card will be instantly available at: yourdomain.com/{formData.full_name ? generateSlug(formData.full_name) : 'your-name'}</p>
           </div>
         </div>
       </div>

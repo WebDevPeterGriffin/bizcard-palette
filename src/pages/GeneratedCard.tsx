@@ -48,7 +48,7 @@ const GeneratedCard = () => {
       const { data, error } = await supabase
         .from('cards')
         .select('*')
-        .eq('slug', slug)
+        .ilike('slug', slug.trim())
         .maybeSingle();
 
       if (!data || error) {

@@ -32,6 +32,7 @@ const App = () => (
             <Route path="/preview/creative" element={<PreviewCreative />} />
             <Route path="/request" element={<RequestForm />} />
             <Route path="/card/:slug" element={<GeneratedCard />} />
+            <Route path="/:slug" element={<GeneratedCard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
