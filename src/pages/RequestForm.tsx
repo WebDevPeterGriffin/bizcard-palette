@@ -47,7 +47,7 @@ const RequestForm = () => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${cardId}.${fileExt}`;
-      const filePath = `headshots/${fileName}`;
+      const filePath = `${cardId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('headshots')
@@ -95,7 +95,7 @@ const RequestForm = () => {
           .from('cards')
           .select('id')
           .eq('slug', slug)
-          .single();
+          .maybeSingle();
 
         if (!existingCard) break;
         

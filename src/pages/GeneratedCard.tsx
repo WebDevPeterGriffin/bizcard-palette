@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Share2, Download } from "lucide-react";
+import { ArrowLeft, Share2 } from "lucide-react";
 import MinimalCard from "@/components/cards/MinimalCard";
 import BoldCard from "@/components/cards/BoldCard";
 import ElegantCard from "@/components/cards/ElegantCard";
 import CreativeCard from "@/components/cards/CreativeCard";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CardData {
   name: string;
@@ -30,14 +31,47 @@ const GeneratedCard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (slug) {
-      // In a real app, this would fetch from a database
+    const fetchCard = async () => {
+      if (!slug) {
+        setLoading(false);
+        return;
+      }
+
+      // Try Supabase first
+      const { data, error } = await supabase
+        .from('cards')
+        .select('*')
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (data) {
+        const socials = (data as any).socials || {};
+        setCardData({
+          name: data.full_name,
+          title: data.role || '',
+          company: data.company || '',
+          phone: data.phone || '',
+          email: data.email || '',
+          website: data.website || '',
+          linkedin: socials.linkedin || '',
+          twitter: socials.twitter || '',
+          style: data.style_id,
+          slug: data.slug,
+          createdAt: data.created_at,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Fallback to localStorage (legacy)
       const storedData = localStorage.getItem(`card_${slug}`);
       if (storedData) {
         setCardData(JSON.parse(storedData));
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+
+    fetchCard();
   }, [slug]);
 
   const renderCard = () => {
