@@ -110,12 +110,16 @@ const CreativeCard = ({
                   src={headshotUrl} 
                   alt={`${name} profile`}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('Failed to load headshot:', headshotUrl);
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
                 />
-              ) : (
-                <span className="text-2xl font-bold">
-                  {name.charAt(0)}
-                </span>
-              )}
+              ) : null}
+              <span className={`text-2xl font-bold ${headshotUrl ? 'hidden' : ''}`}>
+                {name.charAt(0)}
+              </span>
             </div>
             <h1 className="mb-1 text-2xl font-bold drop-shadow-lg">{name}</h1>
             <div className="rounded-full bg-white/20 backdrop-blur-sm px-4 py-1 mb-2">
