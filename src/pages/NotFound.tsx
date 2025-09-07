@@ -1,12 +1,23 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const NotFound = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-  }, [location.pathname]);
+
+    // Smart redirect: if the path looks like a single slug (e.g., /john-doe), try the card route
+    const trimmed = location.pathname.replace(/^\/+|\/+$/g, "");
+    const isSingleSegment = trimmed.length > 0 && !trimmed.includes("/");
+    const reserved = new Set(["", "styles", "request", "preview", "card"]);
+
+    if (isSingleSegment && !reserved.has(trimmed)) {
+      // Redirect to legacy route which is guaranteed to work
+      navigate(`/card/${trimmed}`, { replace: true });
+    }
+  }, [location.pathname, navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">

@@ -49,6 +49,7 @@ const GeneratedCard = () => {
         .from('cards')
         .select('*')
         .ilike('slug', slug.trim())
+        .limit(1)
         .maybeSingle();
 
       if (!data || error) {
