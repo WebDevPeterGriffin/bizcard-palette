@@ -269,27 +269,32 @@ const GeneratedCard = () => {
           </div>
         </div>
 
-        {/* Create Your Own CTA */}
+        {/* Brand CTA Section */}
         <div className="mt-8 text-center">
-          <div className={`rounded-lg p-6 ${
+          <div className={`rounded-lg p-8 ${
             cardData.style === 'bold' || cardData.style === 'creative' ? 
               'bg-white/10 backdrop-blur-sm border border-white/20' : 
               'bg-white/80 shadow-card'
           }`}>
-            <h2 className={`text-xl font-bold mb-4 ${
-              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white' : ''
+            <h2 className={`text-3xl font-bold mb-2 ${
+              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white' : 'text-foreground'
             }`}>
-              {cardData.name}'s Digital Business Card
+              Get Your Own Digital Business Card
             </h2>
+            <p className={`text-lg mb-6 ${
+              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white/80' : 'text-muted-foreground'
+            }`}>
+              Stand out from the crowd with a professional digital presence
+            </p>
             <Button 
               onClick={() => navigate('/')}
+              size="lg"
               className={cardData.style === 'bold' || cardData.style === 'creative' ? 
-                "bg-white text-gray-900 hover:bg-white/90" : 
-                ""
+                "bg-white text-gray-900 hover:bg-white/90 text-lg px-8 py-3" : 
+                "text-lg px-8 py-3"
               }
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Create Your Own
+              Create Your Own Now
             </Button>
           </div>
         </div>
