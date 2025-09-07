@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useEffect } from "react";
 
 const NotFound = () => {
@@ -16,6 +16,14 @@ const NotFound = () => {
     if (isSingleSegment && !reserved.has(trimmed)) {
       // Redirect to legacy route which is guaranteed to work
       navigate(`/card/${trimmed}`, { replace: true });
+
+      // Fallback hard redirect in case SPA navigation is blocked by hosting configuration
+      setTimeout(() => {
+        const current = window.location.pathname.replace(/^\/+|\/+$/g, "");
+        if (current === trimmed) {
+          window.location.replace(`/card/${trimmed}`);
+        }
+      }, 50);
     }
   }, [location.pathname, navigate]);
 
@@ -24,9 +32,9 @@ const NotFound = () => {
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold">404</h1>
         <p className="mb-4 text-xl text-gray-600">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 underline hover:text-blue-700">
+        <Link to="/" className="text-blue-500 underline hover:text-blue-700">
           Return to Home
-        </a>
+        </Link>
       </div>
     </div>
   );
