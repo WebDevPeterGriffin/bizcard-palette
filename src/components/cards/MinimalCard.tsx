@@ -15,6 +15,7 @@ interface MinimalCardProps {
   email?: string;
   website?: string;
   socialLinks?: SocialLink[];
+  headshotUrl?: string;
   // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
@@ -28,6 +29,7 @@ const MinimalCard = ({
   email = "john.doe@techinn.com",
   website = "www.johndoe.com",
   socialLinks = [],
+  headshotUrl,
   linkedin = "linkedin.com/in/johndoe",
   twitter = "@johndoe"
 }: MinimalCardProps) => {
@@ -93,10 +95,18 @@ const MinimalCard = ({
       <CardContent className="p-8 text-center">
         {/* Profile Section */}
         <div className="mb-6">
-          <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-minimal-accent/10 flex items-center justify-center">
-            <span className="text-2xl font-bold text-minimal-accent">
-              {name.charAt(0)}
-            </span>
+          <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-minimal-accent/10 flex items-center justify-center overflow-hidden">
+            {headshotUrl ? (
+              <img 
+                src={headshotUrl} 
+                alt={`${name} profile`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-2xl font-bold text-minimal-accent">
+                {name.charAt(0)}
+              </span>
+            )}
           </div>
           <h1 className="mb-1 text-2xl font-bold text-minimal-accent">{name}</h1>
           <p className="text-lg text-muted-foreground">{title}</p>
@@ -105,18 +115,29 @@ const MinimalCard = ({
 
         {/* Contact Info */}
         <div className="space-y-3 border-t border-minimal-accent/10 pt-6">
-          <div className="flex items-center justify-center space-x-2">
-            <Phone className="h-4 w-4 text-minimal-accent" />
-            <span className="text-sm">{phone}</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2">
-            <Mail className="h-4 w-4 text-minimal-accent" />
-            <span className="text-sm">{email}</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2">
-            <Globe className="h-4 w-4 text-minimal-accent" />
-            <span className="text-sm">{website}</span>
-          </div>
+          {phone && (
+            <a href={`tel:${phone}`} className="flex items-center justify-center space-x-2 hover:text-minimal-accent/80 transition-colors">
+              <Phone className="h-4 w-4 text-minimal-accent" />
+              <span className="text-sm">{phone}</span>
+            </a>
+          )}
+          {email && (
+            <a href={`mailto:${email}`} className="flex items-center justify-center space-x-2 hover:text-minimal-accent/80 transition-colors">
+              <Mail className="h-4 w-4 text-minimal-accent" />
+              <span className="text-sm">{email}</span>
+            </a>
+          )}
+          {website && (
+            <a 
+              href={website.startsWith('http') ? website : `https://${website}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center justify-center space-x-2 hover:text-minimal-accent/80 transition-colors"
+            >
+              <Globe className="h-4 w-4 text-minimal-accent" />
+              <span className="text-sm">{website}</span>
+            </a>
+          )}
         </div>
 
         {/* Social Links */}

@@ -99,6 +99,7 @@ const GeneratedCard = () => {
       email: cardData.email,
       website: cardData.website,
       socialLinks: cardData.socialLinks,
+      headshotUrl: cardData.headshotUrl,
     };
 
     switch (cardData.style) {

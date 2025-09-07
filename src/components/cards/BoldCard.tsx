@@ -15,6 +15,7 @@ interface BoldCardProps {
   email?: string;
   website?: string;
   socialLinks?: SocialLink[];
+  headshotUrl?: string;
   // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
@@ -28,6 +29,7 @@ const BoldCard = ({
   email = "sarah.j@designpro.com",
   website = "www.sarahdesigns.com",
   socialLinks = [],
+  headshotUrl,
   linkedin = "linkedin.com/in/sarahjohnson",
   twitter = "@sarahcreates"
 }: BoldCardProps) => {
@@ -93,10 +95,18 @@ const BoldCard = ({
       <CardContent className="p-8 text-center">
         {/* Profile Section */}
         <div className="mb-6">
-          <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-bold-accent flex items-center justify-center">
-            <span className="text-2xl font-bold text-bold-accent-foreground">
-              {name.charAt(0)}
-            </span>
+          <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-bold-accent flex items-center justify-center overflow-hidden">
+            {headshotUrl ? (
+              <img 
+                src={headshotUrl} 
+                alt={`${name} profile`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-2xl font-bold text-bold-accent-foreground">
+                {name.charAt(0)}
+              </span>
+            )}
           </div>
           <h1 className="mb-1 text-2xl font-bold text-white">{name}</h1>
           <p className="text-lg text-bold-accent">{title}</p>
@@ -105,24 +115,35 @@ const BoldCard = ({
 
         {/* Contact Info */}
         <div className="space-y-4 border-t border-white/20 pt-6">
-          <div className="rounded-lg bg-white/5 p-3">
-            <div className="flex items-center justify-center space-x-2">
-              <Phone className="h-5 w-5 text-bold-accent" />
-              <span className="text-white font-medium">{phone}</span>
-            </div>
-          </div>
-          <div className="rounded-lg bg-white/5 p-3">
-            <div className="flex items-center justify-center space-x-2">
-              <Mail className="h-5 w-5 text-bold-accent" />
-              <span className="text-white font-medium">{email}</span>
-            </div>
-          </div>
-          <div className="rounded-lg bg-white/5 p-3">
-            <div className="flex items-center justify-center space-x-2">
-              <Globe className="h-5 w-5 text-bold-accent" />
-              <span className="text-white font-medium">{website}</span>
-            </div>
-          </div>
+          {phone && (
+            <a href={`tel:${phone}`} className="rounded-lg bg-white/5 p-3 hover:bg-white/10 transition-colors block">
+              <div className="flex items-center justify-center space-x-2">
+                <Phone className="h-5 w-5 text-bold-accent" />
+                <span className="text-white font-medium">{phone}</span>
+              </div>
+            </a>
+          )}
+          {email && (
+            <a href={`mailto:${email}`} className="rounded-lg bg-white/5 p-3 hover:bg-white/10 transition-colors block">
+              <div className="flex items-center justify-center space-x-2">
+                <Mail className="h-5 w-5 text-bold-accent" />
+                <span className="text-white font-medium">{email}</span>
+              </div>
+            </a>
+          )}
+          {website && (
+            <a 
+              href={website.startsWith('http') ? website : `https://${website}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="rounded-lg bg-white/5 p-3 hover:bg-white/10 transition-colors block"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <Globe className="h-5 w-5 text-bold-accent" />
+                <span className="text-white font-medium">{website}</span>
+              </div>
+            </a>
+          )}
         </div>
 
         {/* Social Links */}

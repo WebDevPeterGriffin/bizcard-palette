@@ -15,6 +15,7 @@ interface CreativeCardProps {
   email?: string;
   website?: string;
   socialLinks?: SocialLink[];
+  headshotUrl?: string;
   // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
@@ -28,6 +29,7 @@ const CreativeCard = ({
   email = "maya@creativepixel.com",
   website = "www.mayachen.design",
   socialLinks = [],
+  headshotUrl,
   linkedin = "linkedin.com/in/mayachen",
   twitter = "@mayauxui"
 }: CreativeCardProps) => {
@@ -102,10 +104,18 @@ const CreativeCard = ({
         <CardContent className="relative p-8 text-center text-white">
           {/* Profile Section */}
           <div className="mb-6">
-            <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-4 ring-white/30">
-              <span className="text-2xl font-bold">
-                {name.charAt(0)}
-              </span>
+            <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-4 ring-white/30 overflow-hidden">
+              {headshotUrl ? (
+                <img 
+                  src={headshotUrl} 
+                  alt={`${name} profile`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-2xl font-bold">
+                  {name.charAt(0)}
+                </span>
+              )}
             </div>
             <h1 className="mb-1 text-2xl font-bold drop-shadow-lg">{name}</h1>
             <div className="rounded-full bg-white/20 backdrop-blur-sm px-4 py-1 mb-2">
@@ -116,32 +126,43 @@ const CreativeCard = ({
 
           {/* Contact Cards */}
           <div className="space-y-3 mb-6">
-            <div className="rounded-2xl bg-white/15 backdrop-blur-sm p-3 border border-white/20">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="rounded-full bg-white/20 p-1">
-                  <Phone className="h-4 w-4" />
+            {phone && (
+              <a href={`tel:${phone}`} className="rounded-2xl bg-white/15 backdrop-blur-sm p-3 border border-white/20 hover:bg-white/25 transition-colors block">
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="rounded-full bg-white/20 p-1">
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <span className="text-sm font-medium">{phone}</span>
                 </div>
-                <span className="text-sm font-medium">{phone}</span>
-              </div>
-            </div>
+              </a>
+            )}
             
-            <div className="rounded-2xl bg-white/15 backdrop-blur-sm p-3 border border-white/20">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="rounded-full bg-white/20 p-1">
-                  <Mail className="h-4 w-4" />
+            {email && (
+              <a href={`mailto:${email}`} className="rounded-2xl bg-white/15 backdrop-blur-sm p-3 border border-white/20 hover:bg-white/25 transition-colors block">
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="rounded-full bg-white/20 p-1">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <span className="text-sm font-medium">{email}</span>
                 </div>
-                <span className="text-sm font-medium">{email}</span>
-              </div>
-            </div>
+              </a>
+            )}
             
-            <div className="rounded-2xl bg-white/15 backdrop-blur-sm p-3 border border-white/20">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="rounded-full bg-white/20 p-1">
-                  <Globe className="h-4 w-4" />
+            {website && (
+              <a 
+                href={website.startsWith('http') ? website : `https://${website}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="rounded-2xl bg-white/15 backdrop-blur-sm p-3 border border-white/20 hover:bg-white/25 transition-colors block"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="rounded-full bg-white/20 p-1">
+                    <Globe className="h-4 w-4" />
+                  </div>
+                  <span className="text-sm font-medium">{website}</span>
                 </div>
-                <span className="text-sm font-medium">{website}</span>
-              </div>
-            </div>
+              </a>
+            )}
           </div>
 
           {/* Social Bubbles */}

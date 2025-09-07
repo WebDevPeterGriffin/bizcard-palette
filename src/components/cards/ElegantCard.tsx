@@ -15,6 +15,7 @@ interface ElegantCardProps {
   email?: string;
   website?: string;
   socialLinks?: SocialLink[];
+  headshotUrl?: string;
   // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
@@ -28,6 +29,7 @@ const ElegantCard = ({
   email = "a.reed@reedlaw.com",
   website = "www.reedlawfirm.com",
   socialLinks = [],
+  headshotUrl,
   linkedin = "linkedin.com/in/alexreed",
   twitter = "@alexreedlaw"
 }: ElegantCardProps) => {
@@ -94,10 +96,18 @@ const ElegantCard = ({
         {/* Header with gold accent line */}
         <div className="border-b-2 border-elegant-accent pb-6 mb-6">
           <div className="text-center">
-            <div className="mx-auto mb-4 h-20 w-20 rounded-full bg-elegant-accent/20 flex items-center justify-center border-2 border-elegant-accent/30">
-              <span className="text-xl font-serif font-bold text-elegant-accent">
-                {name.split(' ').map(n => n.charAt(0)).join('')}
-              </span>
+            <div className="mx-auto mb-4 h-20 w-20 rounded-full bg-elegant-accent/20 flex items-center justify-center border-2 border-elegant-accent/30 overflow-hidden">
+              {headshotUrl ? (
+                <img 
+                  src={headshotUrl} 
+                  alt={`${name} profile`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-xl font-serif font-bold text-elegant-accent">
+                  {name.split(' ').map(n => n.charAt(0)).join('')}
+                </span>
+              )}
             </div>
             <h1 className="mb-2 text-2xl font-serif font-bold text-gray-800">{name}</h1>
             <p className="text-lg font-medium text-elegant-accent">{title}</p>
@@ -107,26 +117,37 @@ const ElegantCard = ({
 
         {/* Contact Information */}
         <div className="space-y-3">
-          <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-elegant-accent/5 transition-colors">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-elegant-accent/10">
-              <Phone className="h-4 w-4 text-elegant-accent" />
-            </div>
-            <span className="text-sm font-medium text-gray-700">{phone}</span>
-          </div>
+          {phone && (
+            <a href={`tel:${phone}`} className="flex items-center space-x-3 p-2 rounded-md hover:bg-elegant-accent/5 transition-colors">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-elegant-accent/10">
+                <Phone className="h-4 w-4 text-elegant-accent" />
+              </div>
+              <span className="text-sm font-medium text-gray-700">{phone}</span>
+            </a>
+          )}
           
-          <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-elegant-accent/5 transition-colors">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-elegant-accent/10">
-              <Mail className="h-4 w-4 text-elegant-accent" />
-            </div>
-            <span className="text-sm font-medium text-gray-700">{email}</span>
-          </div>
+          {email && (
+            <a href={`mailto:${email}`} className="flex items-center space-x-3 p-2 rounded-md hover:bg-elegant-accent/5 transition-colors">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-elegant-accent/10">
+                <Mail className="h-4 w-4 text-elegant-accent" />
+              </div>
+              <span className="text-sm font-medium text-gray-700">{email}</span>
+            </a>
+          )}
           
-          <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-elegant-accent/5 transition-colors">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-elegant-accent/10">
-              <Globe className="h-4 w-4 text-elegant-accent" />
-            </div>
-            <span className="text-sm font-medium text-gray-700">{website}</span>
-          </div>
+          {website && (
+            <a 
+              href={website.startsWith('http') ? website : `https://${website}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center space-x-3 p-2 rounded-md hover:bg-elegant-accent/5 transition-colors"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-elegant-accent/10">
+                <Globe className="h-4 w-4 text-elegant-accent" />
+              </div>
+              <span className="text-sm font-medium text-gray-700">{website}</span>
+            </a>
+          )}
         </div>
 
         {/* Professional Networks */}
