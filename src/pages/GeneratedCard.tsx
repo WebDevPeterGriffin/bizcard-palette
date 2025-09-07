@@ -44,14 +44,33 @@ const GeneratedCard = () => {
         return;
       }
 
-      // Try Supabase first
-      const { data, error } = await supabase
-        .from('cards')
-        .select('*')
-        .eq('slug', slug)
-        .maybeSingle();
+      // Fetch card data via edge function for public access
+      try {
+        const response = await fetch(
+          `https://ichuswmtnolzjbjdxcej.supabase.co/functions/v1/get-public-card?slug=${encodeURIComponent(slug)}`
+        );
+        
+        if (!response.ok) {
+          // Fallback to localStorage (legacy)
+          const storedData = localStorage.getItem(`card_${slug}`);
+          if (storedData) {
+            setCardData(JSON.parse(storedData));
+          }
+          setLoading(false);
+          return;
+        }
 
-      if (data) {
+        const data = await response.json();
+        if (!data) {
+          // Fallback to localStorage (legacy)
+          const storedData = localStorage.getItem(`card_${slug}`);
+          if (storedData) {
+            setCardData(JSON.parse(storedData));
+          }
+          setLoading(false);
+          return;
+        }
+
         const socials = (data as any).socials || {};
         // Convert socials object to array format
         const socialLinks: SocialLink[] = Object.entries(socials).map(([platform, url]) => ({
@@ -79,15 +98,15 @@ const GeneratedCard = () => {
           headshotUrl: headshotUrl || '',
         });
         setLoading(false);
-        return;
+      } catch (fetchError) {
+        console.error('Error fetching card:', fetchError);
+        // Fallback to localStorage (legacy)
+        const storedData = localStorage.getItem(`card_${slug}`);
+        if (storedData) {
+          setCardData(JSON.parse(storedData));
+        }
+        setLoading(false);
       }
-
-      // Fallback to localStorage (legacy)
-      const storedData = localStorage.getItem(`card_${slug}`);
-      if (storedData) {
-        setCardData(JSON.parse(storedData));
-      }
-      setLoading(false);
     };
 
     fetchCard();

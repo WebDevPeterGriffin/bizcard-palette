@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import { ArrowLeft, CheckCircle } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 import ImageUpload from "@/components/ImageUpload";
 import SocialLinkSelector from "@/components/SocialLinkSelector";
 import SEO from "@/components/SEO";
@@ -16,6 +17,7 @@ const RequestForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { user, loading } = useAuth();
   
   const [formData, setFormData] = useState({
     full_name: "",
@@ -32,6 +34,13 @@ const RequestForm = () => {
   const [headshotPreview, setHeadshotPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    // Redirect to auth if not logged in
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
+
   const cardStyles = [
     { id: "minimal", name: "Minimal Clean" },
     { id: "bold", name: "Bold Modern" },
@@ -43,34 +52,18 @@ const RequestForm = () => {
     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   };
 
-  const uploadHeadshot = async (file: File, cardId: string): Promise<string | null> => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${cardId}.${fileExt}`;
-      const filePath = `${cardId}/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('headshots')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        return null;
-      }
-
-      const { data } = supabase.storage
-        .from('headshots')
-        .getPublicUrl(filePath);
-
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Error uploading headshot:', error);
-      return null;
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to create a card.",
+        variant: "destructive"
+      });
+      navigate('/auth');
+      return;
+    }
     
     if (!formData.full_name || !formData.email || !formData.style_id) {
       toast({
@@ -103,7 +96,7 @@ const RequestForm = () => {
         slug = `${baseSlug}-${counter}`;
       }
 
-      // Insert card record
+      // Insert card record with user_id
       const { data: cardData, error: insertError } = await supabase
         .from('cards')
         .insert({
@@ -115,6 +108,7 @@ const RequestForm = () => {
           website: formData.website,
           style_id: formData.style_id,
           slug: slug,
+          user_id: user.id,
           socials: Object.fromEntries(
             socialLinks.map(link => [link.platform, link.url])
           )
@@ -127,15 +121,25 @@ const RequestForm = () => {
       }
 
       // Upload headshot if provided
-      let headshotUrl = null;
+      let headshotFilePath = null;
       if (headshot && cardData) {
-        headshotUrl = await uploadHeadshot(headshot, cardData.id);
+        const fileExt = headshot.name.split('.').pop();
+        const fileName = `${cardData.id}.${fileExt}`;
+        const filePath = `${cardData.id}/${fileName}`;
         
-        if (headshotUrl) {
-          // Update card with headshot URL
+        const { error: uploadError } = await supabase.storage
+          .from('headshots')
+          .upload(filePath, headshot);
+          
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+        } else {
+          headshotFilePath = filePath;
+          
+          // Update card with headshot file path (not URL)
           const { error: updateError } = await supabase
             .from('cards')
-            .update({ headshot_url: headshotUrl })
+            .update({ headshot_url: headshotFilePath })
             .eq('id', cardData.id);
 
           if (updateError) {
@@ -146,11 +150,11 @@ const RequestForm = () => {
 
       toast({
         title: "Card Created!",
-        description: `Your digital business card is ready at /${slug}`,
+        description: `Your digital business card is ready at /card/${slug}`,
       });
 
       // Redirect to the generated card
-      navigate(`/${slug}`);
+      navigate(`/card/${slug}`);
 
     } catch (error) {
       console.error('Error creating card:', error);
@@ -317,9 +321,8 @@ const RequestForm = () => {
             </CardContent>
           </Card>
 
-          {/* Preview Note */}
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Your card will be instantly available at: yourdomain.com/{formData.full_name ? generateSlug(formData.full_name) : 'your-name'}</p>
+            <p>Your card will be instantly available at: yourdomain.com/card/{formData.full_name ? generateSlug(formData.full_name) : 'your-name'}</p>
           </div>
         </div>
       </div>
