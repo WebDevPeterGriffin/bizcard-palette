@@ -36,7 +36,11 @@ const RequestForm = () => {
     { id: "minimal", name: "Minimal Clean" },
     { id: "bold", name: "Bold Modern" },
     { id: "elegant", name: "Elegant Professional" },
-    { id: "creative", name: "Creative Colorful" }
+    { id: "creative", name: "Creative Colorful" },
+    { id: "neon", name: "Neon Cyber" },
+    { id: "floating", name: "Floating Cloud" },
+    { id: "liquid", name: "Liquid Morph" },
+    { id: "cosmic", name: "Cosmic Space" }
   ];
 
   const generateSlug = (name: string) => {

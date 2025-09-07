@@ -158,7 +158,7 @@ const NeonCard = ({
 
         {/* Social Links with electric animations */}
         {displaySocialLinks.length > 0 && (
-          <div className="flex justify-center space-x-3">
+          <div className="flex flex-wrap justify-center gap-2 px-2">
             {displaySocialLinks.map((social, index) => (
               <a
                 key={social.platform}
