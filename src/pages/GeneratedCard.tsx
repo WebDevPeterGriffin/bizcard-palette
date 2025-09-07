@@ -76,6 +76,11 @@ const GeneratedCard = () => {
       const headshotUrl = data.headshot_url
         ? `${supabase.storage.from('headshots').getPublicUrl(data.headshot_url).data.publicUrl}`
         : null;
+      
+      console.log('Card data:', { 
+        headshot_url: data.headshot_url, 
+        constructed_url: headshotUrl 
+      });
 
       setCardData({
         name: data.full_name,

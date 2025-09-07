@@ -103,17 +103,27 @@ const RequestForm = () => {
       // Upload headshot if provided
       let headshotFilePath = null;
       if (headshot && cardData) {
+        console.log('Uploading headshot:', headshot.name, 'size:', headshot.size);
         const fileExt = headshot.name.split('.').pop();
         const fileName = `${cardData.id}.${fileExt}`;
         const filePath = `${cardData.id}/${fileName}`;
         
-        const { error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('headshots')
-          .upload(filePath, headshot);
+          .upload(filePath, headshot, {
+            cacheControl: '3600',
+            upsert: true
+          });
           
         if (uploadError) {
           console.error('Upload error:', uploadError);
+          toast({
+            title: "Upload Warning",
+            description: "Your card was created but the headshot failed to upload.",
+            variant: "destructive"
+          });
         } else {
+          console.log('Upload successful:', uploadData);
           headshotFilePath = filePath;
           
           // Update card with headshot file path (not URL)
@@ -124,6 +134,8 @@ const RequestForm = () => {
 
           if (updateError) {
             console.error('Error updating headshot URL:', updateError);
+          } else {
+            console.log('Headshot path updated successfully:', headshotFilePath);
           }
         }
       }
