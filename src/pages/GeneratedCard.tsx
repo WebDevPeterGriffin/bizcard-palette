@@ -44,69 +44,52 @@ const GeneratedCard = () => {
         return;
       }
 
-      // Fetch card data via edge function for public access
-      try {
-        const response = await fetch(
-          `https://ichuswmtnolzjbjdxcej.supabase.co/functions/v1/get-public-card?slug=${encodeURIComponent(slug)}`
-        );
-        
-        if (!response.ok) {
-          // Fallback to localStorage (legacy)
-          const storedData = localStorage.getItem(`card_${slug}`);
-          if (storedData) {
-            setCardData(JSON.parse(storedData));
-          }
-          setLoading(false);
-          return;
-        }
+      // Fetch card data directly from Supabase
+      const { data, error } = await supabase
+        .from('cards')
+        .select('*')
+        .eq('slug', slug)
+        .maybeSingle();
 
-        const data = await response.json();
-        if (!data) {
-          // Fallback to localStorage (legacy)
-          const storedData = localStorage.getItem(`card_${slug}`);
-          if (storedData) {
-            setCardData(JSON.parse(storedData));
-          }
-          setLoading(false);
-          return;
-        }
-
-        const socials = (data as any).socials || {};
-        // Convert socials object to array format
-        const socialLinks: SocialLink[] = Object.entries(socials).map(([platform, url]) => ({
-          platform,
-          url: url as string,
-          label: platform.charAt(0).toUpperCase() + platform.slice(1)
-        })).filter(link => link.url && link.url.trim() !== '');
-
-        // Construct full headshot URL if it exists
-        const headshotUrl = data.headshot_url ? 
-          `${supabase.storage.from('headshots').getPublicUrl(data.headshot_url).data.publicUrl}` : 
-          null;
-
-        setCardData({
-          name: data.full_name,
-          title: data.role || '',
-          company: data.company || '',
-          phone: data.phone || '',
-          email: data.email || '',
-          website: data.website || '',
-          socialLinks,
-          style: data.style_id,
-          slug: data.slug,
-          createdAt: data.created_at,
-          headshotUrl: headshotUrl || '',
-        });
-        setLoading(false);
-      } catch (fetchError) {
-        console.error('Error fetching card:', fetchError);
+      if (!data || error) {
         // Fallback to localStorage (legacy)
         const storedData = localStorage.getItem(`card_${slug}`);
         if (storedData) {
           setCardData(JSON.parse(storedData));
+        } else {
+          // Not found
         }
         setLoading(false);
+        return;
       }
+
+      const socials = (data as any).socials || {};
+      const socialLinks: SocialLink[] = Object.entries(socials)
+        .map(([platform, url]) => ({
+          platform,
+          url: url as string,
+          label: platform.charAt(0).toUpperCase() + platform.slice(1),
+        }))
+        .filter((link) => link.url && link.url.trim() !== '');
+
+      const headshotUrl = data.headshot_url
+        ? `${supabase.storage.from('headshots').getPublicUrl(data.headshot_url).data.publicUrl}`
+        : null;
+
+      setCardData({
+        name: data.full_name,
+        title: data.role || '',
+        company: data.company || '',
+        phone: data.phone || '',
+        email: data.email || '',
+        website: data.website || '',
+        socialLinks,
+        style: data.style_id,
+        slug: data.slug,
+        createdAt: data.created_at,
+        headshotUrl: headshotUrl || '',
+      });
+      setLoading(false);
     };
 
     fetchCard();
