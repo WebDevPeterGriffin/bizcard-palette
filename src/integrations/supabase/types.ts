@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cards: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          headshot_url: string | null
+          id: string
+          phone: string | null
+          role: string | null
+          slug: string
+          socials: Json | null
+          style_id: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          headshot_url?: string | null
+          id?: string
+          phone?: string | null
+          role?: string | null
+          slug: string
+          socials?: Json | null
+          style_id: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          headshot_url?: string | null
+          id?: string
+          phone?: string | null
+          role?: string | null
+          slug?: string
+          socials?: Json | null
+          style_id?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
