@@ -6,8 +6,15 @@ import MinimalCard from "@/components/cards/MinimalCard";
 import BoldCard from "@/components/cards/BoldCard";
 import ElegantCard from "@/components/cards/ElegantCard";
 import CreativeCard from "@/components/cards/CreativeCard";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+
+interface SocialLink {
+  platform: string;
+  url: string;
+  label?: string;
+}
 
 interface CardData {
   name: string;
@@ -16,11 +23,11 @@ interface CardData {
   phone: string;
   email: string;
   website: string;
-  linkedin: string;
-  twitter: string;
+  socialLinks: SocialLink[];
   style: string;
   slug: string;
   createdAt: string;
+  headshotUrl?: string;
 }
 
 const GeneratedCard = () => {
@@ -46,6 +53,13 @@ const GeneratedCard = () => {
 
       if (data) {
         const socials = (data as any).socials || {};
+        // Convert socials object to array format
+        const socialLinks: SocialLink[] = Object.entries(socials).map(([platform, url]) => ({
+          platform,
+          url: url as string,
+          label: platform.charAt(0).toUpperCase() + platform.slice(1)
+        })).filter(link => link.url && link.url.trim() !== '');
+
         setCardData({
           name: data.full_name,
           title: data.role || '',
@@ -53,11 +67,11 @@ const GeneratedCard = () => {
           phone: data.phone || '',
           email: data.email || '',
           website: data.website || '',
-          linkedin: socials.linkedin || '',
-          twitter: socials.twitter || '',
+          socialLinks,
           style: data.style_id,
           slug: data.slug,
           createdAt: data.created_at,
+          headshotUrl: data.headshot_url || '',
         });
         setLoading(false);
         return;
@@ -84,8 +98,7 @@ const GeneratedCard = () => {
       phone: cardData.phone,
       email: cardData.email,
       website: cardData.website,
-      linkedin: cardData.linkedin,
-      twitter: cardData.twitter,
+      socialLinks: cardData.socialLinks,
     };
 
     switch (cardData.style) {
@@ -205,8 +218,24 @@ const GeneratedCard = () => {
         </div>
 
         {/* Card Display */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-8">
           {renderCard()}
+        </div>
+
+        {/* QR Code Section */}
+        <div className="flex justify-center mb-8">
+          <div className={`rounded-lg p-6 ${
+            cardData.style === 'bold' || cardData.style === 'creative' ? 
+              'bg-white/10 backdrop-blur-sm border border-white/20' : 
+              'bg-white/80 shadow-card'
+          }`}>
+            <h3 className={`text-lg font-semibold mb-4 text-center ${
+              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white' : ''
+            }`}>
+              Share via QR Code
+            </h3>
+            <QRCodeGenerator url={window.location.href} size={200} />
+          </div>
         </div>
 
         {/* Card Info */}

@@ -1,5 +1,11 @@
-import { Mail, Phone, Globe, Linkedin, Twitter } from "lucide-react";
+import { Mail, Phone, Globe, Linkedin, Twitter, Instagram, Facebook, Youtube, Github } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+
+interface SocialLink {
+  platform: string;
+  url: string;
+  label?: string;
+}
 
 interface BoldCardProps {
   name?: string;
@@ -8,6 +14,8 @@ interface BoldCardProps {
   phone?: string;
   email?: string;
   website?: string;
+  socialLinks?: SocialLink[];
+  // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
 }
@@ -19,9 +27,41 @@ const BoldCard = ({
   phone = "+1 (555) 987-6543",
   email = "sarah.j@designpro.com",
   website = "www.sarahdesigns.com",
+  socialLinks = [],
   linkedin = "linkedin.com/in/sarahjohnson",
   twitter = "@sarahcreates"
 }: BoldCardProps) => {
+  
+  const getSocialIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'linkedin': return <Linkedin className="h-5 w-5" />;
+      case 'twitter': return <Twitter className="h-5 w-5" />;
+      case 'instagram': return <Instagram className="h-5 w-5" />;
+      case 'facebook': return <Facebook className="h-5 w-5" />;
+      case 'youtube': return <Youtube className="h-5 w-5" />;
+      case 'github': return <Github className="h-5 w-5" />;
+      default: return <Globe className="h-5 w-5" />;
+    }
+  };
+
+  const getSocialUrl = (platform: string, url: string) => {
+    const cleanUrl = url.replace(/^https?:\/\//, '').replace(/^www\./, '');
+    switch (platform.toLowerCase()) {
+      case 'twitter': return `https://twitter.com/${cleanUrl.replace('@', '').replace('twitter.com/', '')}`;
+      case 'linkedin': return cleanUrl.startsWith('linkedin.com') ? `https://${cleanUrl}` : `https://linkedin.com/in/${cleanUrl}`;
+      case 'instagram': return `https://instagram.com/${cleanUrl.replace('@', '').replace('instagram.com/', '')}`;
+      case 'facebook': return `https://facebook.com/${cleanUrl.replace('facebook.com/', '')}`;
+      case 'youtube': return cleanUrl.startsWith('youtube.com') ? `https://${cleanUrl}` : `https://youtube.com/${cleanUrl}`;
+      case 'github': return `https://github.com/${cleanUrl.replace('github.com/', '')}`;
+      default: return cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
+    }
+  };
+
+  // Use socialLinks if available, otherwise fall back to legacy props
+  const displaySocialLinks = socialLinks.length > 0 ? socialLinks : [
+    ...(linkedin ? [{ platform: 'linkedin', url: linkedin, label: 'LinkedIn' }] : []),
+    ...(twitter ? [{ platform: 'twitter', url: twitter, label: 'Twitter' }] : [])
+  ];
   return (
     <Card className="mx-auto w-full max-w-md bg-gradient-bold border-bold-accent shadow-card">
       <CardContent className="p-8 text-center">
@@ -60,18 +100,24 @@ const BoldCard = ({
         </div>
 
         {/* Social Links */}
-        <div className="mt-6 border-t border-white/20 pt-6">
-          <div className="flex justify-center space-x-6">
-            <a href={`https://${linkedin}`} className="flex items-center space-x-2 text-bold-accent hover:text-bold-accent/80 transition-colors">
-              <Linkedin className="h-5 w-5" />
-              <span className="text-sm font-medium">LinkedIn</span>
-            </a>
-            <a href={`https://twitter.com/${twitter.replace('@', '')}`} className="flex items-center space-x-2 text-bold-accent hover:text-bold-accent/80 transition-colors">
-              <Twitter className="h-5 w-5" />
-              <span className="text-sm font-medium">Twitter</span>
-            </a>
+        {displaySocialLinks.length > 0 && (
+          <div className="mt-6 border-t border-white/20 pt-6">
+            <div className="flex justify-center flex-wrap gap-4">
+              {displaySocialLinks.map((social, index) => (
+                <a 
+                  key={index}
+                  href={getSocialUrl(social.platform, social.url)} 
+                  className="flex items-center space-x-2 text-bold-accent hover:text-bold-accent/80 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {getSocialIcon(social.platform)}
+                  <span className="text-sm font-medium">{social.label || social.platform}</span>
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

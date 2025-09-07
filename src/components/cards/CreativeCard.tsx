@@ -1,5 +1,11 @@
-import { Mail, Phone, Globe, Linkedin, Twitter, Heart, Sparkles } from "lucide-react";
+import { Mail, Phone, Globe, Linkedin, Twitter, Instagram, Facebook, Youtube, Github, Heart, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+
+interface SocialLink {
+  platform: string;
+  url: string;
+  label?: string;
+}
 
 interface CreativeCardProps {
   name?: string;
@@ -8,6 +14,8 @@ interface CreativeCardProps {
   phone?: string;
   email?: string;
   website?: string;
+  socialLinks?: SocialLink[];
+  // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
 }
@@ -19,9 +27,41 @@ const CreativeCard = ({
   phone = "+1 (555) 369-2580",
   email = "maya@creativepixel.com",
   website = "www.mayachen.design",
+  socialLinks = [],
   linkedin = "linkedin.com/in/mayachen",
   twitter = "@mayauxui"
 }: CreativeCardProps) => {
+  
+  const getSocialIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'linkedin': return <Linkedin className="h-5 w-5" />;
+      case 'twitter': return <Twitter className="h-5 w-5" />;
+      case 'instagram': return <Instagram className="h-5 w-5" />;
+      case 'facebook': return <Facebook className="h-5 w-5" />;
+      case 'youtube': return <Youtube className="h-5 w-5" />;
+      case 'github': return <Github className="h-5 w-5" />;
+      default: return <Globe className="h-5 w-5" />;
+    }
+  };
+
+  const getSocialUrl = (platform: string, url: string) => {
+    const cleanUrl = url.replace(/^https?:\/\//, '').replace(/^www\./, '');
+    switch (platform.toLowerCase()) {
+      case 'twitter': return `https://twitter.com/${cleanUrl.replace('@', '').replace('twitter.com/', '')}`;
+      case 'linkedin': return cleanUrl.startsWith('linkedin.com') ? `https://${cleanUrl}` : `https://linkedin.com/in/${cleanUrl}`;
+      case 'instagram': return `https://instagram.com/${cleanUrl.replace('@', '').replace('instagram.com/', '')}`;
+      case 'facebook': return `https://facebook.com/${cleanUrl.replace('facebook.com/', '')}`;
+      case 'youtube': return cleanUrl.startsWith('youtube.com') ? `https://${cleanUrl}` : `https://youtube.com/${cleanUrl}`;
+      case 'github': return `https://github.com/${cleanUrl.replace('github.com/', '')}`;
+      default: return cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
+    }
+  };
+
+  // Use socialLinks if available, otherwise fall back to legacy props
+  const displaySocialLinks = socialLinks.length > 0 ? socialLinks : [
+    ...(linkedin ? [{ platform: 'linkedin', url: linkedin, label: 'LinkedIn' }] : []),
+    ...(twitter ? [{ platform: 'twitter', url: twitter, label: 'Twitter' }] : [])
+  ];
   return (
     <div className="mx-auto w-full max-w-md">
       <Card className="relative overflow-hidden bg-gradient-creative shadow-card">
@@ -79,18 +119,24 @@ const CreativeCard = ({
           </div>
 
           {/* Social Bubbles */}
-          <div className="flex justify-center space-x-4">
-            <a href={`https://${linkedin}`} className="group">
-              <div className="rounded-full bg-white/20 backdrop-blur-sm p-3 border border-white/30 group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                <Linkedin className="h-5 w-5" />
-              </div>
-            </a>
-            <a href={`https://twitter.com/${twitter.replace('@', '')}`} className="group">
-              <div className="rounded-full bg-white/20 backdrop-blur-sm p-3 border border-white/30 group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                <Twitter className="h-5 w-5" />
-              </div>
-            </a>
-          </div>
+          {displaySocialLinks.length > 0 && (
+            <div className="flex justify-center flex-wrap gap-3">
+              {displaySocialLinks.map((social, index) => (
+                <a 
+                  key={index}
+                  href={getSocialUrl(social.platform, social.url)} 
+                  className="group"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={social.label || social.platform}
+                >
+                  <div className="rounded-full bg-white/20 backdrop-blur-sm p-3 border border-white/30 group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                    {getSocialIcon(social.platform)}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
