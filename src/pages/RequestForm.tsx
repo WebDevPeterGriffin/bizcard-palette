@@ -126,7 +126,6 @@ const RequestForm = () => {
           console.log('Upload successful:', uploadData);
           headshotFilePath = filePath;
           
-          // Update card with headshot file path (not URL)
           const { error: updateError } = await supabase
             .from('cards')
             .update({ headshot_url: headshotFilePath })
@@ -136,6 +135,8 @@ const RequestForm = () => {
             console.error('Error updating headshot URL:', updateError);
           } else {
             console.log('Headshot path updated successfully:', headshotFilePath);
+            // Small delay to ensure database consistency before navigation
+            await new Promise(resolve => setTimeout(resolve, 100));
           }
         }
       }

@@ -99,6 +99,16 @@ const GeneratedCard = () => {
     };
 
     fetchCard();
+    
+    // Auto-refresh after 500ms to catch any delayed database updates (e.g., headshot uploads)
+    const refreshTimer = setTimeout(() => {
+      if (!cardData?.headshotUrl) {
+        console.log('Refreshing card data to check for headshot updates...');
+        fetchCard();
+      }
+    }, 500);
+
+    return () => clearTimeout(refreshTimer);
   }, [slug]);
 
   const renderCard = () => {
