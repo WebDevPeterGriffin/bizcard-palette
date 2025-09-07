@@ -135,6 +135,18 @@ const Index = () => {
               </Card>
             ))}
           </div>
+          
+          <div className="mt-12 text-center">
+            <Button 
+              variant="outline"
+              size="lg"
+              onClick={() => navigate('/styles')}
+              className="bg-background/80 hover:bg-background/90"
+            >
+              View All Styles
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -149,7 +161,7 @@ const Index = () => {
               </div>
               <h3 className="mb-2 text-lg font-semibold">Choose a Style</h3>
               <p className="text-muted-foreground">
-                Browse our 4 beautiful templates and pick the one that matches your personality.
+                Browse our 8 beautiful templates and pick the one that matches your personality.
               </p>
             </div>
             <div className="text-center">

@@ -12,6 +12,10 @@ import PreviewMinimal from "./pages/PreviewMinimal";
 import PreviewElegant from "./pages/PreviewElegant";
 import PreviewBold from "./pages/PreviewBold";
 import PreviewCreative from "./pages/PreviewCreative";
+import PreviewNeon from "./pages/PreviewNeon";
+import PreviewFloating from "./pages/PreviewFloating";
+import PreviewLiquid from "./pages/PreviewLiquid";
+import PreviewCosmic from "./pages/PreviewCosmic";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +34,10 @@ const App = () => (
             <Route path="/preview/elegant" element={<PreviewElegant />} />
             <Route path="/preview/bold" element={<PreviewBold />} />
             <Route path="/preview/creative" element={<PreviewCreative />} />
+            <Route path="/preview/neon" element={<PreviewNeon />} />
+            <Route path="/preview/floating" element={<PreviewFloating />} />
+            <Route path="/preview/liquid" element={<PreviewLiquid />} />
+            <Route path="/preview/cosmic" element={<PreviewCosmic />} />
             <Route path="/request" element={<RequestForm />} />
             <Route path="/card/:slug" element={<GeneratedCard />} />
             <Route path="/:slug" element={<GeneratedCard />} />
