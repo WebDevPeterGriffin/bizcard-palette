@@ -93,14 +93,22 @@ const Styles = () => {
                         </div>
                       </div>
                       
-                      {/* Action Button */}
-                      <Button 
-                        onClick={() => handleRequestStyle(style.id)}
-                        className="w-full"
-                        size="lg"
-                      >
-                        Choose This Style
-                      </Button>
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={() => navigate(`/preview/${style.id}`)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          Preview
+                        </Button>
+                        <Button 
+                          onClick={() => handleRequestStyle(style.id)}
+                          size="sm"
+                        >
+                          Choose This Style
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 );

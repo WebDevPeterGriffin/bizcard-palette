@@ -8,6 +8,10 @@ import Index from "./pages/Index";
 import Styles from "./pages/Styles";
 import RequestForm from "./pages/RequestForm";
 import GeneratedCard from "./pages/GeneratedCard";
+import PreviewMinimal from "./pages/PreviewMinimal";
+import PreviewElegant from "./pages/PreviewElegant";
+import PreviewBold from "./pages/PreviewBold";
+import PreviewCreative from "./pages/PreviewCreative";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +26,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/styles" element={<Styles />} />
+            <Route path="/preview/minimal" element={<PreviewMinimal />} />
+            <Route path="/preview/elegant" element={<PreviewElegant />} />
+            <Route path="/preview/bold" element={<PreviewBold />} />
+            <Route path="/preview/creative" element={<PreviewCreative />} />
             <Route path="/request" element={<RequestForm />} />
             <Route path="/:slug" element={<GeneratedCard />} />
             <Route path="*" element={<NotFound />} />

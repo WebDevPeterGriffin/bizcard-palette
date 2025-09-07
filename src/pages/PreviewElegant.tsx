@@ -1,50 +1,62 @@
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import ElegantCard from "@/components/cards/ElegantCard";
+import SEO from "@/components/SEO";
 
 const PreviewElegant = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-elegant p-4">
-      <div className="container mx-auto max-w-4xl">
+    <>
+      <SEO
+        title="Elegant Professional Style Preview - Digital Business Card"
+        description="Preview the Elegant Professional digital business card style with sophisticated design and luxury aesthetic."
+        canonical="/preview/elegant"
+      />
+      
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <Button variant="outline" onClick={() => navigate('/')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Button>
-          <h1 className="text-2xl font-bold text-gray-800">Elegant Professional Style</h1>
-          <div></div>
-        </div>
-
-        {/* Preview Section */}
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-xl text-gray-600">Preview</h2>
-          <div className="flex justify-center">
-            <ElegantCard />
+        <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <Button variant="ghost" onClick={() => navigate('/styles')}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Styles
+              </Button>
+              <h1 className="text-xl font-semibold">Elegant Professional Preview</h1>
+              <Button onClick={() => navigate('/request?style=elegant')}>
+                Choose This Style
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Description & CTA */}
-        <div className="rounded-lg bg-white/90 p-8 text-center shadow-card border border-elegant-accent/20">
-          <h3 className="mb-4 text-2xl font-bold text-gray-800">Timeless Elegance</h3>
-          <p className="mb-6 text-lg text-gray-600">
-            Sophisticated design with luxury aesthetics and refined typography. 
-            Ideal for executives, lawyers, and professionals in traditional industries.
-          </p>
-          <Button 
-            size="lg"
-            className="bg-elegant-accent text-elegant-accent-foreground hover:bg-elegant-accent/90"
-            onClick={() => navigate('/request?style=elegant')}
-          >
-            Request This Style
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </div>
+        {/* Preview */}
+        <main className="container mx-auto px-4 py-12">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-2">Elegant Professional Style</h2>
+              <p className="text-muted-foreground">Sophisticated design with muted tones and luxury aesthetic</p>
+            </div>
+            
+            <div className="flex justify-center">
+              <ElegantCard />
+            </div>
+
+            <div className="mt-8 text-center">
+              <Button 
+                onClick={() => navigate('/request?style=elegant')}
+                size="lg"
+                className="bg-brand-primary text-brand-primary-foreground hover:bg-brand-primary/90"
+              >
+                Create Your Card with This Style
+              </Button>
+            </div>
+          </div>
+        </main>
       </div>
-    </div>
+    </>
   );
 };
 
