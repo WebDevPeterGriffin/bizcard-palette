@@ -28,7 +28,6 @@ export type Database = {
           socials: Json | null
           style_id: string
           updated_at: string
-          user_id: string | null
           website: string | null
         }
         Insert: {
@@ -44,7 +43,6 @@ export type Database = {
           socials?: Json | null
           style_id: string
           updated_at?: string
-          user_id?: string | null
           website?: string | null
         }
         Update: {
@@ -60,7 +58,6 @@ export type Database = {
           socials?: Json | null
           style_id?: string
           updated_at?: string
-          user_id?: string | null
           website?: string | null
         }
         Relationships: []

@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Leaf, Share2, Zap, Eye, CheckCircle, LogIn, User, LogOut } from "lucide-react";
+import { ArrowRight, Leaf, Share2, Zap, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/components/AuthProvider";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
 
   const cardStyles = [
     {
@@ -45,31 +43,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b px-4 py-4">
-        <div className="container mx-auto max-w-4xl flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Digital Business Cards</h2>
-          <div className="flex items-center gap-2">
-            {user ? (
-              <>
-                <span className="text-sm text-muted-foreground">
-                  Welcome, {user.email}
-                </span>
-                <Button variant="outline" size="sm" onClick={() => signOut()}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </Button>
-              </>
-            ) : (
-              <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
-                <LogIn className="mr-2 h-4 w-4" />
-                Sign In
-              </Button>
-            )}
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero px-4 py-20 text-center">
         <div className="container mx-auto max-w-4xl">
@@ -93,9 +66,9 @@ const Index = () => {
             <Button 
               size="lg"
               className="bg-brand-primary-foreground text-brand-primary hover:bg-brand-primary-foreground/90 shadow-hero"
-              onClick={() => user ? navigate('/request') : navigate('/auth')}
+              onClick={() => navigate('/request')}
             >
-              {user ? 'Create Your Card' : 'Sign In to Get Started'}
+              Request Yours
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -213,9 +186,9 @@ const Index = () => {
           <Button 
             size="lg"
             className="bg-brand-primary-foreground text-brand-primary hover:bg-brand-primary-foreground/90 shadow-hero"
-            onClick={() => user ? navigate('/request') : navigate('/auth')}
+            onClick={() => navigate('/request')}
           >
-            {user ? 'Create Your Card Now' : 'Sign In to Get Started'}
+            Get Started Now
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
