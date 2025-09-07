@@ -269,32 +269,28 @@ const GeneratedCard = () => {
           </div>
         </div>
 
-        {/* Brand CTA Section */}
-        <div className="mt-8 text-center">
-          <div className={`rounded-lg p-8 ${
+        {/* Small Brand CTA */}
+        <div className="mt-6 text-center">
+          <div className={`rounded-lg p-3 ${
             cardData.style === 'bold' || cardData.style === 'creative' ? 
-              'bg-white/10 backdrop-blur-sm border border-white/20' : 
-              'bg-white/80 shadow-card'
+              'bg-white/5 backdrop-blur-sm border border-white/10' : 
+              'bg-white/60 shadow-sm'
           }`}>
-            <h2 className={`text-3xl font-bold mb-2 ${
-              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white' : 'text-foreground'
+            <p className={`text-xs mb-2 ${
+              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white/60' : 'text-muted-foreground'
             }`}>
-              Get Your Own Digital Business Card
-            </h2>
-            <p className={`text-lg mb-6 ${
-              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white/80' : 'text-muted-foreground'
-            }`}>
-              Stand out from the crowd with a professional digital presence
+              Want your own digital business card?
             </p>
             <Button 
               onClick={() => navigate('/')}
-              size="lg"
+              size="sm"
+              variant="outline"
               className={cardData.style === 'bold' || cardData.style === 'creative' ? 
-                "bg-white text-gray-900 hover:bg-white/90 text-lg px-8 py-3" : 
-                "text-lg px-8 py-3"
+                "bg-white/10 text-white/80 border-white/20 hover:bg-white/20 text-xs" : 
+                "text-xs"
               }
             >
-              Create Your Own Now
+              Create Your Own
             </Button>
           </div>
         </div>
