@@ -6,6 +6,10 @@ import MinimalCard from "@/components/cards/MinimalCard";
 import BoldCard from "@/components/cards/BoldCard";
 import ElegantCard from "@/components/cards/ElegantCard";
 import CreativeCard from "@/components/cards/CreativeCard";
+import NeonCard from "@/components/cards/NeonCard";
+import FloatingCard from "@/components/cards/FloatingCard";
+import LiquidCard from "@/components/cards/LiquidCard";
+import CosmicCard from "@/components/cards/CosmicCard";
 import QRCodeGenerator from "@/components/QRCodeGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -155,6 +159,14 @@ const GeneratedCard = () => {
         return <ElegantCard {...props} />;
       case 'creative':
         return <CreativeCard {...props} />;
+      case 'neon':
+        return <NeonCard {...props} />;
+      case 'floating':
+        return <FloatingCard {...props} />;
+      case 'liquid':
+        return <LiquidCard {...props} />;
+      case 'cosmic':
+        return <CosmicCard {...props} />;
       default:
         return <MinimalCard {...props} />;
     }

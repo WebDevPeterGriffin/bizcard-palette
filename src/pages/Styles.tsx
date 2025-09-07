@@ -6,6 +6,10 @@ import MinimalCard from "@/components/cards/MinimalCard";
 import BoldCard from "@/components/cards/BoldCard";
 import ElegantCard from "@/components/cards/ElegantCard";
 import CreativeCard from "@/components/cards/CreativeCard";
+import NeonCard from "@/components/cards/NeonCard";
+import FloatingCard from "@/components/cards/FloatingCard";
+import LiquidCard from "@/components/cards/LiquidCard";
+import CosmicCard from "@/components/cards/CosmicCard";
 import SEO from "@/components/SEO";
 
 const Styles = () => {
@@ -35,6 +39,30 @@ const Styles = () => {
       name: "Creative Colorful",
       description: "Vibrant gradients and playful design elements", 
       component: CreativeCard
+    },
+    {
+      id: "neon",
+      name: "Neon Cyber",
+      description: "Cyberpunk-inspired with electric neon effects and glowing animations",
+      component: NeonCard
+    },
+    {
+      id: "floating",
+      name: "Floating Cloud",
+      description: "Serene floating elements with gentle cloud-like animations",
+      component: FloatingCard
+    },
+    {
+      id: "liquid",
+      name: "Liquid Morph",
+      description: "Dynamic liquid effects with flowing and morphing animations",
+      component: LiquidCard
+    },
+    {
+      id: "cosmic",
+      name: "Cosmic Space",
+      description: "Stellar design with cosmic particles and orbital animations",
+      component: CosmicCard
     }
   ];
 
