@@ -30,8 +30,8 @@ const CreativeCard = ({
   website = "www.mayachen.design",
   socialLinks = [],
   headshotUrl,
-  linkedin = "linkedin.com/in/mayachen",
-  twitter = "@mayauxui"
+  linkedin = "",
+  twitter = ""
 }: CreativeCardProps) => {
   
   const getSocialIcon = (platform: string) => {

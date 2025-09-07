@@ -30,8 +30,8 @@ const BoldCard = ({
   website = "www.sarahdesigns.com",
   socialLinks = [],
   headshotUrl,
-  linkedin = "linkedin.com/in/sarahjohnson",
-  twitter = "@sarahcreates"
+  linkedin = "",
+  twitter = ""
 }: BoldCardProps) => {
   
   const getSocialIcon = (platform: string) => {

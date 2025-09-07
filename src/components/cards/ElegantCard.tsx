@@ -30,8 +30,8 @@ const ElegantCard = ({
   website = "www.reedlawfirm.com",
   socialLinks = [],
   headshotUrl,
-  linkedin = "linkedin.com/in/alexreed",
-  twitter = "@alexreedlaw"
+  linkedin = "",
+  twitter = ""
 }: ElegantCardProps) => {
   
   const getSocialIcon = (platform: string) => {

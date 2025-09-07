@@ -73,12 +73,33 @@ const GeneratedCard = () => {
         }))
         .filter((link) => link.url && link.url.trim() !== '');
 
-      const headshotUrl = data.headshot_url
-        ? `${supabase.storage.from('headshots').getPublicUrl(data.headshot_url).data.publicUrl}`
+      // Resolve headshot: use stored path or discover by listing the folder
+      let headshotPath = (data as any).headshot_url as string | null;
+      const cardId = (data as any).id as string | undefined;
+
+      if (!headshotPath && cardId) {
+        const { data: files, error: listError } = await supabase
+          .storage
+          .from('headshots')
+          .list(`${cardId}`, { limit: 1 });
+
+        if (!listError && files && files.length > 0) {
+          headshotPath = `${cardId}/${files[0].name}`;
+          // Best-effort: persist discovered path
+          await supabase
+            .from('cards')
+            .update({ headshot_url: headshotPath })
+            .eq('id', cardId);
+        }
+      }
+
+      const headshotUrl = headshotPath
+        ? `${supabase.storage.from('headshots').getPublicUrl(headshotPath).data.publicUrl}`
         : null;
       
       console.log('Card data:', { 
-        headshot_url: data.headshot_url, 
+        headshot_url: (data as any).headshot_url, 
+        discovered_path: headshotPath,
         constructed_url: headshotUrl 
       });
 

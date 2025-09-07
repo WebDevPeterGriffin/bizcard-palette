@@ -30,8 +30,8 @@ const MinimalCard = ({
   website = "www.johndoe.com",
   socialLinks = [],
   headshotUrl,
-  linkedin = "linkedin.com/in/johndoe",
-  twitter = "@johndoe"
+  linkedin = "",
+  twitter = ""
 }: MinimalCardProps) => {
   
   const getSocialIcon = (platform: string) => {
