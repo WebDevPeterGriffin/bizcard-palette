@@ -1,4 +1,4 @@
-import { Mail, Phone, Globe, Linkedin, Twitter, Instagram, Facebook, Youtube, Github, Heart, Sparkles } from "lucide-react";
+import { Mail, Phone, Globe, Linkedin, Twitter, Instagram, Facebook, Youtube, Github, MessageCircle, Send, Users, Twitch, Camera, Hash, Bookmark, FileText, Code, Heart, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface SocialLink {
@@ -40,6 +40,19 @@ const CreativeCard = ({
       case 'facebook': return <Facebook className="h-5 w-5" />;
       case 'youtube': return <Youtube className="h-5 w-5" />;
       case 'github': return <Github className="h-5 w-5" />;
+      case 'snapchat': return <Camera className="h-5 w-5" />;
+      case 'whatsapp': return <MessageCircle className="h-5 w-5" />;
+      case 'telegram': return <Send className="h-5 w-5" />;
+      case 'messenger': return <MessageCircle className="h-5 w-5" />;
+      case 'discord': return <Users className="h-5 w-5" />;
+      case 'tiktok': return <Hash className="h-5 w-5" />;
+      case 'twitch': return <Twitch className="h-5 w-5" />;
+      case 'pinterest': return <Bookmark className="h-5 w-5" />;
+      case 'reddit': return <MessageCircle className="h-5 w-5" />;
+      case 'behance': return <Globe className="h-5 w-5" />;
+      case 'dribbble': return <Globe className="h-5 w-5" />;
+      case 'medium': return <FileText className="h-5 w-5" />;
+      case 'dev': return <Code className="h-5 w-5" />;
       default: return <Globe className="h-5 w-5" />;
     }
   };
@@ -53,6 +66,19 @@ const CreativeCard = ({
       case 'facebook': return `https://facebook.com/${cleanUrl.replace('facebook.com/', '')}`;
       case 'youtube': return cleanUrl.startsWith('youtube.com') ? `https://${cleanUrl}` : `https://youtube.com/${cleanUrl}`;
       case 'github': return `https://github.com/${cleanUrl.replace('github.com/', '')}`;
+      case 'snapchat': return `https://snapchat.com/add/${cleanUrl.replace('snapchat.com/add/', '')}`;
+      case 'whatsapp': return cleanUrl.startsWith('wa.me') ? `https://${cleanUrl}` : `https://wa.me/${cleanUrl}`;
+      case 'telegram': return cleanUrl.startsWith('t.me') ? `https://${cleanUrl}` : `https://t.me/${cleanUrl}`;
+      case 'messenger': return cleanUrl.startsWith('m.me') ? `https://${cleanUrl}` : `https://m.me/${cleanUrl}`;
+      case 'discord': return cleanUrl.startsWith('discord.gg') ? `https://${cleanUrl}` : `https://discord.gg/${cleanUrl}`;
+      case 'tiktok': return `https://tiktok.com/@${cleanUrl.replace('@', '').replace('tiktok.com/@', '')}`;
+      case 'twitch': return `https://twitch.tv/${cleanUrl.replace('twitch.tv/', '')}`;
+      case 'pinterest': return `https://pinterest.com/${cleanUrl.replace('pinterest.com/', '')}`;
+      case 'reddit': return `https://reddit.com/user/${cleanUrl.replace('reddit.com/user/', '')}`;
+      case 'behance': return `https://behance.net/${cleanUrl.replace('behance.net/', '')}`;
+      case 'dribbble': return `https://dribbble.com/${cleanUrl.replace('dribbble.com/', '')}`;
+      case 'medium': return `https://medium.com/@${cleanUrl.replace('@', '').replace('medium.com/@', '')}`;
+      case 'dev': return `https://dev.to/${cleanUrl.replace('dev.to/', '')}`;
       default: return cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
     }
   };

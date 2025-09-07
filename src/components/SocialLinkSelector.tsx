@@ -24,8 +24,18 @@ const SOCIAL_PLATFORMS = [
   { id: 'github', name: 'GitHub', placeholder: 'github.com/username' },
   { id: 'youtube', name: 'YouTube', placeholder: 'youtube.com/@username' },
   { id: 'tiktok', name: 'TikTok', placeholder: 'tiktok.com/@username' },
+  { id: 'snapchat', name: 'Snapchat', placeholder: 'snapchat.com/add/username' },
   { id: 'whatsapp', name: 'WhatsApp', placeholder: 'wa.me/1234567890' },
   { id: 'telegram', name: 'Telegram', placeholder: 't.me/username' },
+  { id: 'messenger', name: 'Messenger', placeholder: 'm.me/username' },
+  { id: 'discord', name: 'Discord', placeholder: 'discord.gg/username' },
+  { id: 'twitch', name: 'Twitch', placeholder: 'twitch.tv/username' },
+  { id: 'pinterest', name: 'Pinterest', placeholder: 'pinterest.com/username' },
+  { id: 'reddit', name: 'Reddit', placeholder: 'reddit.com/user/username' },
+  { id: 'behance', name: 'Behance', placeholder: 'behance.net/username' },
+  { id: 'dribbble', name: 'Dribbble', placeholder: 'dribbble.com/username' },
+  { id: 'medium', name: 'Medium', placeholder: 'medium.com/@username' },
+  { id: 'dev', name: 'Dev.to', placeholder: 'dev.to/username' },
   { id: 'custom', name: 'Custom', placeholder: 'Enter URL' },
 ];
 
@@ -107,7 +117,7 @@ const SocialLinkSelector = ({ socialLinks, onChange }: SocialLinkSelectorProps) 
               <SelectTrigger>
                 <SelectValue placeholder="Choose a social platform" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background border shadow-lg z-50">
                 {getAvailablePlatforms().map((platform) => (
                   <SelectItem key={platform.id} value={platform.id}>
                     {platform.name}
