@@ -60,6 +60,11 @@ const GeneratedCard = () => {
           label: platform.charAt(0).toUpperCase() + platform.slice(1)
         })).filter(link => link.url && link.url.trim() !== '');
 
+        // Construct full headshot URL if it exists
+        const headshotUrl = data.headshot_url ? 
+          `${supabase.storage.from('headshots').getPublicUrl(data.headshot_url).data.publicUrl}` : 
+          null;
+
         setCardData({
           name: data.full_name,
           title: data.role || '',
@@ -71,7 +76,7 @@ const GeneratedCard = () => {
           style: data.style_id,
           slug: data.slug,
           createdAt: data.created_at,
-          headshotUrl: data.headshot_url || '',
+          headshotUrl: headshotUrl || '',
         });
         setLoading(false);
         return;
@@ -189,33 +194,19 @@ const GeneratedCard = () => {
     <div className={`min-h-screen ${getBackgroundClass()} p-4`}>
       <div className="container mx-auto max-w-4xl">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex justify-end">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/')}
+            size="sm"
+            onClick={handleShare}
             className={cardData.style === 'bold' || cardData.style === 'creative' ? 
               "bg-white/10 text-white border-white/30 hover:bg-white/20" : 
               ""
             }
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Create Your Own
+            <Share2 className="mr-2 h-4 w-4" />
+            Share
           </Button>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleShare}
-              className={cardData.style === 'bold' || cardData.style === 'creative' ? 
-                "bg-white/10 text-white border-white/30 hover:bg-white/20" : 
-                ""
-              }
-            >
-              <Share2 className="mr-2 h-4 w-4" />
-              Share
-            </Button>
-          </div>
         </div>
 
         {/* Card Display */}
@@ -233,29 +224,34 @@ const GeneratedCard = () => {
             <h3 className={`text-lg font-semibold mb-4 text-center ${
               cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white' : ''
             }`}>
-              Share via QR Code
+              Scan to View Card
             </h3>
-            <QRCodeGenerator url={window.location.href} size={200} />
+            <QRCodeGenerator url={window.location.href} size={200} showControls={false} />
           </div>
         </div>
 
-        {/* Card Info */}
+        {/* Create Your Own CTA */}
         <div className="mt-8 text-center">
           <div className={`rounded-lg p-6 ${
             cardData.style === 'bold' || cardData.style === 'creative' ? 
               'bg-white/10 backdrop-blur-sm border border-white/20' : 
               'bg-white/80 shadow-card'
           }`}>
-            <h2 className={`text-xl font-bold mb-2 ${
+            <h2 className={`text-xl font-bold mb-4 ${
               cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white' : ''
             }`}>
               {cardData.name}'s Digital Business Card
             </h2>
-            <p className={`text-sm ${
-              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white/80' : 'text-muted-foreground'
-            }`}>
-              Share this link: {window.location.href}
-            </p>
+            <Button 
+              onClick={() => navigate('/')}
+              className={cardData.style === 'bold' || cardData.style === 'creative' ? 
+                "bg-white text-gray-900 hover:bg-white/90" : 
+                ""
+              }
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Create Your Own
+            </Button>
           </div>
         </div>
       </div>
