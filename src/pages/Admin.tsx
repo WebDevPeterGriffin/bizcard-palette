@@ -24,27 +24,84 @@ interface CardData {
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("mildtechstudios@gmail.com");
+  const [authCode, setAuthCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
   const [users, setUsers] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
 
-  const ADMIN_PASSWORD = "admin123"; // Simple password for demo
-
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
+    setSendingCode(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('send-admin-code', {
+        body: { email }
+      });
+
+      if (error) throw error;
+
+      setCodeSent(true);
+      toast({
+        title: "Code sent",
+        description: "Check your email for the authentication code",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to send authentication code",
+      });
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Verify the code against the database
+      const { data, error } = await supabase
+        .from('admin_auth_codes')
+        .select('*')
+        .eq('code', authCode)
+        .eq('email', email)
+        .eq('used', false)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (error || !data) {
+        toast({
+          variant: "destructive",
+          title: "Invalid code",
+          description: "The authentication code is invalid or expired",
+        });
+        return;
+      }
+
+      // Mark the code as used
+      await supabase
+        .from('admin_auth_codes')
+        .update({ used: true })
+        .eq('id', data.id);
+
       setIsAuthenticated(true);
       fetchUsers();
       toast({
         title: "Access granted",
         description: "Welcome to the admin panel",
       });
-    } else {
+    } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Access denied",
-        description: "Invalid password",
+        title: "Error",
+        description: error.message || "Failed to verify authentication code",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,25 +146,61 @@ const Admin = () => {
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
               <CardTitle>Admin Access</CardTitle>
-              <CardDescription>Enter password to continue</CardDescription>
+              <CardDescription>
+                {!codeSent ? "Request authentication code" : "Enter the code sent to your email"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter admin password"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Access Admin Panel
-                </Button>
-              </form>
+              {!codeSent ? (
+                <form onSubmit={handleSendCode} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter admin email"
+                      required
+                      disabled
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={sendingCode}>
+                    {sendingCode ? "Sending..." : "Send Authentication Code"}
+                  </Button>
+                </form>
+              ) : (
+                <form onSubmit={handleVerifyCode} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="authCode">Authentication Code</Label>
+                    <Input
+                      id="authCode"
+                      type="text"
+                      value={authCode}
+                      onChange={(e) => setAuthCode(e.target.value)}
+                      placeholder="Enter 6-digit code"
+                      maxLength={6}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? "Verifying..." : "Verify Code"}
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => {
+                        setCodeSent(false);
+                        setAuthCode("");
+                      }}
+                    >
+                      Back to Email
+                    </Button>
+                  </div>
+                </form>
+              )}
             </CardContent>
           </Card>
         </div>
