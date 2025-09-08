@@ -83,6 +83,14 @@ export default {
           accent: "hsl(var(--creative-accent))",
           "accent-foreground": "hsl(var(--creative-accent-foreground))",
         },
+        liquid: {
+          primary: "hsl(var(--liquid-primary))",
+          secondary: "hsl(var(--liquid-secondary))",
+          tertiary: "hsl(var(--liquid-tertiary))",
+          "bg-start": "hsl(var(--liquid-bg-start))",
+          "bg-mid": "hsl(var(--liquid-bg-mid))",
+          "bg-end": "hsl(var(--liquid-bg-end))",
+        },
       },
       backgroundImage: {
         "gradient-hero": "var(--gradient-hero)",
@@ -90,6 +98,8 @@ export default {
         "gradient-bold": "var(--gradient-bold)",
         "gradient-elegant": "var(--gradient-elegant)",
         "gradient-creative": "var(--gradient-creative)",
+        "gradient-liquid": "var(--gradient-liquid)",
+        "gradient-liquid-bg": "var(--gradient-liquid-bg)",
       },
       boxShadow: {
         card: "var(--shadow-card)",

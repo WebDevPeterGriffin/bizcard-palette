@@ -47,8 +47,8 @@ const LiquidCard = ({
       {/* Animated liquid background */}
       <div className="absolute inset-0 overflow-hidden rounded-lg">
         {/* Flowing background waves */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-teal-400 to-cyan-400 animate-liquid-flow"></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-300/30 to-teal-300/50 animate-liquid-flow-reverse"></div>
+        <div className="absolute inset-0 bg-gradient-liquid animate-liquid-flow"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-liquid-secondary/30 to-liquid-tertiary/50 animate-liquid-flow-reverse"></div>
         
         {/* Floating bubbles */}
         <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-white/30 rounded-full animate-bubble-float"></div>

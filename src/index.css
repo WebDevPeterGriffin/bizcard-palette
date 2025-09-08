@@ -32,12 +32,21 @@ All colors MUST be HSL.
     --creative-accent: 280 100% 70%;
     --creative-accent-foreground: 0 0% 100%;
     
+    --liquid-primary: 200 100% 60%;
+    --liquid-secondary: 180 100% 50%;
+    --liquid-tertiary: 195 100% 65%;
+    --liquid-bg-start: 280 100% 15%;
+    --liquid-bg-mid: 320 100% 20%;
+    --liquid-bg-end: 0 100% 25%;
+    
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(var(--brand-primary)) 0%, hsl(var(--brand-secondary)) 50%, hsl(var(--brand-accent)) 100%);
     --gradient-minimal: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(220 14% 96%) 100%);
     --gradient-bold: linear-gradient(135deg, hsl(var(--bold-bg)) 0%, hsl(220 40% 15%) 100%);
     --gradient-elegant: linear-gradient(135deg, hsl(var(--elegant-bg)) 0%, hsl(45 29% 94%) 100%);
     --gradient-creative: linear-gradient(135deg, hsl(280 100% 70%) 0%, hsl(325 77% 67%) 50%, hsl(14 100% 57%) 100%);
+    --gradient-liquid: linear-gradient(135deg, hsl(var(--liquid-primary)) 0%, hsl(var(--liquid-secondary)) 50%, hsl(var(--liquid-tertiary)) 100%);
+    --gradient-liquid-bg: linear-gradient(135deg, hsl(var(--liquid-bg-start)) 0%, hsl(var(--liquid-bg-mid)) 50%, hsl(var(--liquid-bg-end)) 100%);
     
     /* Shadows */
     --shadow-card: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
