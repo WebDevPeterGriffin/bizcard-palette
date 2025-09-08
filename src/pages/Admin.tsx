@@ -7,10 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import SEO from "@/components/SEO";
 import { format } from "date-fns";
-import { Trash2, Calendar, X } from "lucide-react";
+import { Trash2, Calendar, X, ExternalLink, Mail, Phone } from "lucide-react";
 
 interface CardData {
   id: string;
@@ -35,6 +37,8 @@ const Admin = () => {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState<string>("");
 
   const handleDeleteUser = async (userId: string) => {
     setActionLoading(userId);
@@ -127,6 +131,77 @@ const Admin = () => {
   const openScheduleDialog = (userId: string) => {
     setSelectedUserId(userId);
     setIsScheduleDialogOpen(true);
+  };
+
+  const handleSelectUser = (userId: string) => {
+    const newSelected = new Set(selectedUsers);
+    if (newSelected.has(userId)) {
+      newSelected.delete(userId);
+    } else {
+      newSelected.add(userId);
+    }
+    setSelectedUsers(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedUsers.size === users.length) {
+      setSelectedUsers(new Set());
+    } else {
+      setSelectedUsers(new Set(users.map(user => user.id)));
+    }
+  };
+
+  const handleBulkAction = async () => {
+    if (!bulkAction || selectedUsers.size === 0) return;
+
+    setActionLoading('bulk');
+    try {
+      const promises = Array.from(selectedUsers).map(userId => {
+        if (bulkAction === 'delete') {
+          return supabase.functions.invoke('delete-user', {
+            body: { userId, action: 'delete_now' }
+          });
+        } else if (bulkAction === 'schedule') {
+          if (!scheduledDate) throw new Error('Please select a date');
+          return supabase.functions.invoke('delete-user', {
+            body: { 
+              userId, 
+              action: 'schedule_deletion',
+              scheduledDate: new Date(scheduledDate).toISOString()
+            }
+          });
+        }
+      });
+
+      const results = await Promise.allSettled(promises);
+      const failed = results.filter(r => r.status === 'rejected').length;
+      const succeeded = results.filter(r => r.status === 'fulfilled').length;
+
+      if (bulkAction === 'delete') {
+        toast({
+          title: `Bulk deletion complete`,
+          description: `${succeeded} users deleted${failed > 0 ? `, ${failed} failed` : ''}`,
+        });
+      } else if (bulkAction === 'schedule') {
+        toast({
+          title: `Bulk scheduling complete`,
+          description: `${succeeded} users scheduled${failed > 0 ? `, ${failed} failed` : ''}`,
+        });
+      }
+
+      setSelectedUsers(new Set());
+      setBulkAction('');
+      setScheduledDate('');
+      fetchUsers();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Bulk action failed",
+        description: error.message,
+      });
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const handleProcessScheduled = async () => {
@@ -279,9 +354,68 @@ const Admin = () => {
           <Card>
             <CardHeader>
               <CardTitle>User Statistics</CardTitle>
-              <CardDescription>Total users: {users.length}</CardDescription>
+              <CardDescription>
+                Total users: {users.length} 
+                {selectedUsers.size > 0 && (
+                  <span className="ml-4 text-primary">
+                    ({selectedUsers.size} selected)
+                  </span>
+                )}
+              </CardDescription>
             </CardHeader>
             <CardContent>
+              {/* Bulk Actions */}
+              {selectedUsers.size > 0 && (
+                <div className="mb-4 p-4 bg-muted rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Label>Bulk Action:</Label>
+                      <Select value={bulkAction} onValueChange={setBulkAction}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue placeholder="Select action" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="delete">Delete Now</SelectItem>
+                          <SelectItem value="schedule">Schedule Deletion</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {bulkAction === 'schedule' && (
+                      <div className="flex items-center gap-2">
+                        <Label>Date:</Label>
+                        <Input
+                          type="datetime-local"
+                          value={scheduledDate}
+                          onChange={(e) => setScheduledDate(e.target.value)}
+                          min={new Date().toISOString().slice(0, 16)}
+                          className="w-48"
+                        />
+                      </div>
+                    )}
+                    
+                    <Button 
+                      onClick={handleBulkAction}
+                      disabled={!bulkAction || actionLoading === 'bulk' || (bulkAction === 'schedule' && !scheduledDate)}
+                      variant={bulkAction === 'delete' ? 'destructive' : 'default'}
+                    >
+                      {actionLoading === 'bulk' ? 'Processing...' : `${bulkAction === 'delete' ? 'Delete' : 'Schedule'} ${selectedUsers.size} users`}
+                    </Button>
+                    
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedUsers(new Set());
+                        setBulkAction('');
+                        setScheduledDate('');
+                      }}
+                    >
+                      Clear Selection
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {loading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -291,8 +425,15 @@ const Admin = () => {
                    <Table>
                      <TableHeader>
                        <TableRow>
+                         <TableHead className="w-12">
+                           <Checkbox
+                             checked={selectedUsers.size === users.length && users.length > 0}
+                             onCheckedChange={handleSelectAll}
+                           />
+                         </TableHead>
                          <TableHead>Name</TableHead>
                          <TableHead>Email</TableHead>
+                         <TableHead>Phone</TableHead>
                          <TableHead>Company</TableHead>
                          <TableHead>Role</TableHead>
                          <TableHead>Style</TableHead>
@@ -305,10 +446,41 @@ const Admin = () => {
                      <TableBody>
                        {users.map((user) => (
                          <TableRow key={user.id}>
+                           <TableCell>
+                             <Checkbox
+                               checked={selectedUsers.has(user.id)}
+                               onCheckedChange={() => handleSelectUser(user.id)}
+                             />
+                           </TableCell>
                            <TableCell className="font-medium">
                              {user.full_name}
                            </TableCell>
-                           <TableCell>{user.email || "N/A"}</TableCell>
+                           <TableCell>
+                             {user.email ? (
+                               <a 
+                                 href={`mailto:${user.email}`}
+                                 className="text-primary hover:underline flex items-center gap-1"
+                               >
+                                 <Mail className="h-3 w-3" />
+                                 {user.email}
+                               </a>
+                             ) : (
+                               "N/A"
+                             )}
+                           </TableCell>
+                           <TableCell>
+                             {user.phone ? (
+                               <a 
+                                 href={`tel:${user.phone}`}
+                                 className="text-primary hover:underline flex items-center gap-1"
+                               >
+                                 <Phone className="h-3 w-3" />
+                                 {user.phone}
+                               </a>
+                             ) : (
+                               "N/A"
+                             )}
+                           </TableCell>
                            <TableCell>{user.company || "N/A"}</TableCell>
                            <TableCell>{user.role || "N/A"}</TableCell>
                            <TableCell className="capitalize">{user.style_id}</TableCell>
@@ -330,9 +502,17 @@ const Admin = () => {
                              )}
                            </TableCell>
                            <TableCell>
-                             <code className="text-sm bg-muted px-2 py-1 rounded">
-                               {user.slug}
-                             </code>
+                             <a
+                               href={`/card/${user.slug}`}
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               className="inline-flex items-center gap-1 text-primary hover:underline"
+                             >
+                               <code className="text-sm bg-muted px-2 py-1 rounded">
+                                 {user.slug}
+                               </code>
+                               <ExternalLink className="h-3 w-3" />
+                             </a>
                            </TableCell>
                            <TableCell>
                              <div className="flex items-center gap-2">
