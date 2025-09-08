@@ -25,21 +25,17 @@ interface CardData {
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
-  const [passwordVerified, setPasswordVerified] = useState(false);
-  const [email, setEmail] = useState("mildtechstudios@gmail.com");
-  const [authCode, setAuthCode] = useState("");
-  const [codeSent, setCodeSent] = useState(false);
   const [users, setUsers] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [sendingCode, setSendingCode] = useState(false);
 
-  const handleVerifyPassword = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === "SahGarVar14124#") {
-      setPasswordVerified(true);
+      setIsAuthenticated(true);
+      fetchUsers();
       toast({
-        title: "Password verified",
-        description: "You can now request an authentication code",
+        title: "Access granted",
+        description: "Welcome to the admin panel",
       });
     } else {
       toast({
@@ -47,97 +43,6 @@ const Admin = () => {
         title: "Invalid password",
         description: "Please enter the correct password",
       });
-    }
-  };
-
-  const handleSendCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSendingCode(true);
-    
-    try {
-      const { data, error } = await supabase.functions.invoke('send-admin-code', {
-        body: { email }
-      });
-
-      if (error) throw error;
-
-      console.log('Function response:', data);
-      
-      if (data?.code) {
-        setCodeSent(true);
-        toast({
-          title: data?.emailId ? "Code sent and also shown here" : "Code generated (Email may have failed)",
-          description: `Your code is: ${data.code}`,
-        });
-      } else if (data?.emailId) {
-        setCodeSent(true);
-        toast({
-          title: "Code sent successfully",
-          description: "Check your email for the authentication code",
-        });
-      } else {
-        // As a last resort, inform to check logs
-        setCodeSent(true);
-        toast({
-          title: "Code generated",
-          description: "If email didn't arrive, please check function logs.",
-        });
-      }
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to send authentication code",
-      });
-    } finally {
-      setSendingCode(false);
-    }
-  };
-
-  const handleVerifyCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // Verify the code against the database
-      const { data, error } = await supabase
-        .from('admin_auth_codes')
-        .select('*')
-        .eq('code', authCode)
-        .eq('email', email)
-        .eq('used', false)
-        .gt('expires_at', new Date().toISOString())
-        .single();
-
-      if (error || !data) {
-        toast({
-          variant: "destructive",
-          title: "Invalid code",
-          description: "The authentication code is invalid or expired",
-        });
-        return;
-      }
-
-      // Mark the code as used
-      await supabase
-        .from('admin_auth_codes')
-        .update({ used: true })
-        .eq('id', data.id);
-
-      setIsAuthenticated(true);
-      fetchUsers();
-      toast({
-        title: "Access granted",
-        description: "Welcome to the admin panel",
-      });
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to verify authentication code",
-      });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -183,79 +88,26 @@ const Admin = () => {
             <CardHeader className="text-center">
               <CardTitle>Admin Access</CardTitle>
               <CardDescription>
-                {!codeSent ? "Request authentication code" : "Enter the code sent to your email"}
+                Enter your admin password to continue
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {!passwordVerified ? (
-                <form onSubmit={handleVerifyPassword} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Admin Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter admin password"
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Verify Password
-                  </Button>
-                </form>
-              ) : !codeSent ? (
-                <form onSubmit={handleSendCode} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter admin email"
-                      required
-                      disabled
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={sendingCode}>
-                    {sendingCode ? "Sending..." : "Send Authentication Code"}
-                  </Button>
-                </form>
-              ) : (
-                <form onSubmit={handleVerifyCode} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="authCode">Authentication Code</Label>
-                    <Input
-                      id="authCode"
-                      type="text"
-                      value={authCode}
-                      onChange={(e) => setAuthCode(e.target.value)}
-                      placeholder="Enter 6-digit code"
-                      maxLength={6}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? "Verifying..." : "Verify Code"}
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={() => {
-                        setCodeSent(false);
-                        setAuthCode("");
-                        setPasswordVerified(false);
-                        setPassword("");
-                      }}
-                    >
-                      Back to Password
-                    </Button>
-                  </div>
-                </form>
-              )}
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="password">Admin Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter admin password"
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Verifying..." : "Login"}
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </div>
