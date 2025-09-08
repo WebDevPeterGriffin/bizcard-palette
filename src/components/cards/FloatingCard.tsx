@@ -63,7 +63,7 @@ const FloatingCard = ({
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : legacySocials;
 
   return (
-    <div className="relative w-80 h-96">
+    <div className="relative w-80 h-auto min-h-[26rem]">
       {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <Cloud className="absolute top-8 left-4 h-12 w-12 text-blue-200 opacity-60 animate-float" />
@@ -75,11 +75,11 @@ const FloatingCard = ({
       </div>
 
       {/* Main card with floating effect */}
-      <Card className="relative z-10 w-full h-full bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 border-2 border-blue-200 shadow-xl animate-hover-float overflow-visible">
+      <Card className="relative z-10 w-full h-auto min-h-[26rem] bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 border-2 border-blue-200 shadow-xl animate-hover-float overflow-hidden">
         {/* Subtle animated background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-transparent to-indigo-100/30 animate-gradient-shift"></div>
         
-        <div className="relative z-10 p-6 h-full flex flex-col">
+        <div className="relative z-10 p-6 pb-6 flex flex-col">
           {/* Floating header */}
           <div className="text-center mb-6 animate-fade-in-up">
             <div className="relative mb-4">

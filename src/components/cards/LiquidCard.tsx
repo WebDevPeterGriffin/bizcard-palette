@@ -63,7 +63,7 @@ const LiquidCard = ({
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : legacySocials;
 
   return (
-    <div className="relative w-80 h-96">
+    <div className="relative w-80 h-auto min-h-[26rem]">
       {/* Animated liquid background */}
       <div className="absolute inset-0 overflow-hidden rounded-lg">
         {/* Flowing background waves */}
@@ -83,10 +83,10 @@ const LiquidCard = ({
       </div>
 
       {/* Main content card with liquid morphing effect */}
-      <Card className="relative z-10 w-full h-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-visible animate-morph">
+      <Card className="relative z-10 w-full h-auto min-h-[26rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden animate-morph">
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent animate-shimmer"></div>
         
-        <div className="relative z-10 p-6 h-full flex flex-col text-white">
+        <div className="relative z-10 p-6 pb-6 flex flex-col text-white">
           {/* Morphing header */}
           <div className="text-center mb-6 animate-wave-in">
             <div className="relative mb-4">

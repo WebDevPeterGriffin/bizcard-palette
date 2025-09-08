@@ -63,7 +63,7 @@ const NeonCard = ({
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : legacySocials;
 
   return (
-    <Card className="w-80 h-96 bg-black border-2 border-cyan-500 overflow-visible relative group">
+    <Card className="w-80 h-auto min-h-[26rem] bg-black border-2 border-cyan-500 overflow-hidden relative group">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-purple-500/20 to-pink-500/20 animate-pulse"></div>
@@ -82,7 +82,7 @@ const NeonCard = ({
       <div className="absolute bottom-4 left-4 w-2 h-2 bg-pink-400 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
       <div className="absolute top-1/2 left-2 w-1 h-1 bg-purple-400 rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
 
-      <div className="relative z-10 p-6 pb-4 h-full flex flex-col">
+      <div className="relative z-10 p-6 pb-6 flex flex-col">
         {/* Header with electric effect */}
         <div className="text-center mb-6">
           <div className="relative mb-4">

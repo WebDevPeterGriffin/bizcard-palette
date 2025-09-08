@@ -63,7 +63,7 @@ const CosmicCard = ({
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : legacySocials;
 
   return (
-    <div className="relative w-80 h-96 overflow-visible">
+    <div className="relative w-80 h-auto min-h-[26rem] overflow-hidden">
       {/* Cosmic background with moving stars */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-black overflow-hidden">
         {/* Animated starfield */}
@@ -108,12 +108,12 @@ const CosmicCard = ({
       </div>
 
       {/* Main cosmic card */}
-      <Card className="relative z-10 w-full h-full bg-black/30 backdrop-blur-md border border-purple-500/50 shadow-2xl overflow-visible animate-cosmic-float">
+      <Card className="relative z-10 w-full h-auto min-h-[26rem] bg-black/30 backdrop-blur-md border border-purple-500/50 shadow-2xl overflow-hidden animate-cosmic-float">
         {/* Cosmic energy border */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-pink-500/20 animate-energy-flow"></div>
         <div className="absolute inset-0 border border-cyan-400/30 animate-pulse"></div>
         
-        <div className="relative z-10 p-6 h-full flex flex-col text-white">
+        <div className="relative z-10 p-6 pb-6 flex flex-col text-white">
           {/* Cosmic header with orbital elements */}
           <div className="text-center mb-6 animate-cosmic-emerge">
             <div className="relative mb-4">
