@@ -24,12 +24,31 @@ interface CardData {
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordVerified, setPasswordVerified] = useState(false);
   const [email, setEmail] = useState("mildtechstudios@gmail.com");
   const [authCode, setAuthCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [users, setUsers] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
+
+  const handleVerifyPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "SahGarVar14124#") {
+      setPasswordVerified(true);
+      toast({
+        title: "Password verified",
+        description: "You can now request an authentication code",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Invalid password",
+        description: "Please enter the correct password",
+      });
+    }
+  };
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,7 +170,24 @@ const Admin = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {!codeSent ? (
+              {!passwordVerified ? (
+                <form onSubmit={handleVerifyPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Admin Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter admin password"
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Verify Password
+                  </Button>
+                </form>
+              ) : !codeSent ? (
                 <form onSubmit={handleSendCode} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
@@ -194,9 +230,11 @@ const Admin = () => {
                       onClick={() => {
                         setCodeSent(false);
                         setAuthCode("");
+                        setPasswordVerified(false);
+                        setPassword("");
                       }}
                     >
-                      Back to Email
+                      Back to Password
                     </Button>
                   </div>
                 </form>
