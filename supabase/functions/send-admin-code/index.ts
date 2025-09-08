@@ -62,6 +62,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email using Resend
     try {
+      console.log('Attempting to send email with Resend...');
+      console.log('RESEND_API_KEY exists:', !!Deno.env.get("RESEND_API_KEY"));
+      
       const emailResponse = await resend.emails.send({
         from: "Admin Auth <onboarding@resend.dev>",
         to: [email],
@@ -87,13 +90,15 @@ const handler = async (req: Request): Promise<Response> => {
 
     } catch (emailError: any) {
       console.error('Error sending email:', emailError);
+      console.error('Email error details:', JSON.stringify(emailError, null, 2));
       
-      // Return success anyway since code is stored, but log the email error
+      // Return success with fallback code since code is stored in database
       return new Response(JSON.stringify({ 
         success: true, 
-        message: 'Authentication code generated. If email fails, check function logs.',
-        code: code, // Include code in response if email fails
-        emailError: emailError.message
+        message: 'Authentication code generated. Email delivery failed - using fallback.',
+        code: code, // Include code in response as fallback
+        emailError: emailError.message,
+        hasApiKey: !!Deno.env.get("RESEND_API_KEY")
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

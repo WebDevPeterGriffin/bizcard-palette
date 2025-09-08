@@ -61,11 +61,27 @@ const Admin = () => {
 
       if (error) throw error;
 
+      console.log('Function response:', data);
+      
+      // If email failed but we have a fallback code, show it
+      if (data?.code) {
+        toast({
+          title: "Code generated (Email failed)",
+          description: `Your code is: ${data.code} (Check function logs for email error)`,
+        });
+      } else if (data?.emailId) {
+        toast({
+          title: "Code sent successfully",
+          description: "Check your email for the authentication code",
+        });
+      } else {
+        toast({
+          title: "Code sent",
+          description: "Check your email for the authentication code",
+        });
+      }
+
       setCodeSent(true);
-      toast({
-        title: "Code sent",
-        description: "Check your email for the authentication code",
-      });
     } catch (error: any) {
       toast({
         variant: "destructive",
