@@ -1,5 +1,6 @@
 import { Mail, Phone, Globe, Linkedin, Twitter, Instagram, Facebook, Youtube, Github, MessageCircle, Send, Users, Twitch, Camera, Hash, Bookmark, FileText, Code, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { ContactActions } from "@/components/ContactActions";
 
 interface SocialLink {
   platform: string;
@@ -8,6 +9,7 @@ interface SocialLink {
 }
 
 interface ElegantCardProps {
+  cardId?: string;
   name?: string;
   title?: string;
   company?: string;
@@ -16,12 +18,15 @@ interface ElegantCardProps {
   website?: string;
   socialLinks?: SocialLink[];
   headshotUrl?: string;
+  bookingEnabled?: boolean;
+  bookingInstructions?: string;
   // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
 }
 
 const ElegantCard = ({ 
+  cardId,
   name = "Alexander Reed",
   title = "Managing Partner", 
   company = "Reed & Associates Law",
@@ -30,6 +35,8 @@ const ElegantCard = ({
   website = "www.reedlawfirm.com",
   socialLinks = [],
   headshotUrl,
+  bookingEnabled = false,
+  bookingInstructions,
   linkedin = "",
   twitter = ""
 }: ElegantCardProps) => {
@@ -172,6 +179,25 @@ const ElegantCard = ({
                 </a>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Contact Actions */}
+        {cardId && (
+          <div className="mt-6 border-t border-elegant-accent/20 pt-6">
+            <ContactActions
+              cardId={cardId}
+              name={name}
+              title={title}
+              company={company}
+              phone={phone}
+              email={email}
+              website={website}
+              socialLinks={displaySocialLinks}
+              headshotUrl={headshotUrl}
+              bookingEnabled={bookingEnabled}
+              bookingInstructions={bookingInstructions}
+            />
           </div>
         )}
       </CardContent>

@@ -41,8 +41,61 @@ export type Database = {
         }
         Relationships: []
       }
+      appointments: {
+        Row: {
+          appointment_date: string
+          card_id: string
+          created_at: string
+          id: string
+          message: string | null
+          status: string
+          updated_at: string
+          visitor_company: string | null
+          visitor_email: string
+          visitor_name: string
+          visitor_phone: string | null
+        }
+        Insert: {
+          appointment_date: string
+          card_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string
+          updated_at?: string
+          visitor_company?: string | null
+          visitor_email: string
+          visitor_name: string
+          visitor_phone?: string | null
+        }
+        Update: {
+          appointment_date?: string
+          card_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string
+          updated_at?: string
+          visitor_company?: string | null
+          visitor_email?: string
+          visitor_name?: string
+          visitor_phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cards: {
         Row: {
+          booking_calendar_url: string | null
+          booking_enabled: boolean
+          booking_instructions: string | null
           company: string | null
           created_at: string
           email: string | null
@@ -59,6 +112,9 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          booking_calendar_url?: string | null
+          booking_enabled?: boolean
+          booking_instructions?: string | null
           company?: string | null
           created_at?: string
           email?: string | null
@@ -75,6 +131,9 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          booking_calendar_url?: string | null
+          booking_enabled?: boolean
+          booking_instructions?: string | null
           company?: string | null
           created_at?: string
           email?: string | null

@@ -1,6 +1,7 @@
 import { Mail, Phone, Globe, Zap, Star, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
+import { ContactActions } from "@/components/ContactActions";
 
 interface SocialLink {
   platform: string;
@@ -9,6 +10,7 @@ interface SocialLink {
 }
 
 interface NeonCardProps {
+  cardId?: string;
   name?: string;
   title?: string;
   company?: string;
@@ -17,11 +19,14 @@ interface NeonCardProps {
   website?: string;
   socialLinks?: SocialLink[];
   headshotUrl?: string;
+  bookingEnabled?: boolean;
+  bookingInstructions?: string;
   linkedin?: string;
   twitter?: string;
 }
 
 const NeonCard = ({
+  cardId,
   name = "Alex Cyber",
   title = "Digital Architect",
   company = "Neo Corp",
@@ -30,6 +35,8 @@ const NeonCard = ({
   website = "www.alexcyber.dev",
   socialLinks = [],
   headshotUrl,
+  bookingEnabled = false,
+  bookingInstructions,
   linkedin = "",
   twitter = ""
 }: NeonCardProps) => {
@@ -152,6 +159,25 @@ const NeonCard = ({
                 <span className="relative z-10"><SocialIcon platform={social.platform} className="h-3.5 w-3.5" /></span>
               </a>
             ))}
+          </div>
+        )}
+
+        {/* Contact Actions */}
+        {cardId && (
+          <div className="mt-6 border-t border-cyan-500/20 pt-6">
+            <ContactActions
+              cardId={cardId}
+              name={name}
+              title={title}
+              company={company}
+              phone={phone}
+              email={email}
+              website={website}
+              socialLinks={displaySocialLinks}
+              headshotUrl={headshotUrl}
+              bookingEnabled={bookingEnabled}
+              bookingInstructions={bookingInstructions}
+            />
           </div>
         )}
 

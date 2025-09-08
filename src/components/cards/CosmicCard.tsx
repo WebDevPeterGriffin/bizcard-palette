@@ -1,6 +1,7 @@
 import { Mail, Phone, Globe, Star, Sparkles, Zap, Moon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
+import { ContactActions } from "@/components/ContactActions";
 
 interface SocialLink {
   platform: string;
@@ -9,6 +10,7 @@ interface SocialLink {
 }
 
 interface CosmicCardProps {
+  cardId?: string;
   name?: string;
   title?: string;
   company?: string;
@@ -17,11 +19,14 @@ interface CosmicCardProps {
   website?: string;
   socialLinks?: SocialLink[];
   headshotUrl?: string;
+  bookingEnabled?: boolean;
+  bookingInstructions?: string;
   linkedin?: string;
   twitter?: string;
 }
 
 const CosmicCard = ({
+  cardId,
   name = "Nova Stellar",
   title = "Cosmic Designer",
   company = "Galaxy Studios",
@@ -30,6 +35,8 @@ const CosmicCard = ({
   website = "www.novastellar.universe",
   socialLinks = [],
   headshotUrl,
+  bookingEnabled = false,
+  bookingInstructions,
   linkedin = "",
   twitter = ""
 }: CosmicCardProps) => {
@@ -192,9 +199,28 @@ const CosmicCard = ({
                   <span className="relative z-10"><SocialIcon platform={social.platform} className="h-3.5 w-3.5" /></span>
                 </a>
               ))}
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Contact Actions */}
+        {cardId && (
+          <div className="mt-6 border-t border-purple-500/20 pt-6">
+            <ContactActions
+              cardId={cardId}
+              name={name}
+              title={title}
+              company={company}
+              phone={phone}
+              email={email}
+              website={website}
+              socialLinks={displaySocialLinks}
+              headshotUrl={headshotUrl}
+              bookingEnabled={bookingEnabled}
+              bookingInstructions={bookingInstructions}
+            />
+          </div>
+        )}
+      </div>
       </Card>
 
       <style dangerouslySetInnerHTML={{

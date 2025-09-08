@@ -1,6 +1,7 @@
 import { Mail, Phone, Globe, Cloud, Wind, Feather } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
+import { ContactActions } from "@/components/ContactActions";
 
 interface SocialLink {
   platform: string;
@@ -9,6 +10,7 @@ interface SocialLink {
 }
 
 interface FloatingCardProps {
+  cardId?: string;
   name?: string;
   title?: string;
   company?: string;
@@ -17,11 +19,14 @@ interface FloatingCardProps {
   website?: string;
   socialLinks?: SocialLink[];
   headshotUrl?: string;
+  bookingEnabled?: boolean;
+  bookingInstructions?: string;
   linkedin?: string;
   twitter?: string;
 }
 
 const FloatingCard = ({
+  cardId,
   name = "Luna Sky",
   title = "Cloud Architect",
   company = "Elevate Studios",
@@ -30,6 +35,8 @@ const FloatingCard = ({
   website = "www.lunasky.design",
   socialLinks = [],
   headshotUrl,
+  bookingEnabled = false,
+  bookingInstructions,
   linkedin = "",
   twitter = ""
 }: FloatingCardProps) => {
@@ -148,9 +155,28 @@ const FloatingCard = ({
                   <SocialIcon platform={social.platform} className="h-3.5 w-3.5" />
                 </a>
               ))}
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Contact Actions */}
+        {cardId && (
+          <div className="mt-6 border-t border-white/20 pt-6">
+            <ContactActions
+              cardId={cardId}
+              name={name}
+              title={title}
+              company={company}
+              phone={phone}
+              email={email}
+              website={website}
+              socialLinks={displaySocialLinks}
+              headshotUrl={headshotUrl}
+              bookingEnabled={bookingEnabled}
+              bookingInstructions={bookingInstructions}
+            />
+          </div>
+        )}
+      </div>
       </Card>
 
       <style dangerouslySetInnerHTML={{
