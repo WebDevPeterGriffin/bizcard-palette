@@ -77,7 +77,7 @@ async function deleteUserNow(userId: string): Promise<Response> {
     // First, get the user's headshot URL
     const { data: userData, error: fetchError } = await supabase
       .from('cards')
-      .select('headshot_url, slug')
+      .select('id, headshot_url, slug')
       .eq('id', userId)
       .single();
 
@@ -111,26 +111,32 @@ async function deleteUserNow(userId: string): Promise<Response> {
         }
       }
 
-      // Also list every object in this slug folder and queue for removal
-      const prefix = `${userData.slug}/`;
-      const limit = 100;
-      let offset = 0;
-      while (true) {
-        const { data: list, error: listError } = await supabase.storage
-          .from('headshots')
-          .list(prefix, { limit, offset });
+      // Also list every object in both possible folders (by slug and by id) and queue for removal
+      const prefixes = Array.from(new Set([
+        userData.slug ? `${userData.slug}/` : null,
+        userData.id ? `${userData.id}/` : null,
+      ].filter(Boolean) as string[]));
 
-        if (listError) {
-          console.error('Error listing headshots:', listError);
-          break; // continue with whatever we have
+      for (const prefix of prefixes) {
+        const limit = 100;
+        let offset = 0;
+        while (true) {
+          const { data: list, error: listError } = await supabase.storage
+            .from('headshots')
+            .list(prefix, { limit, offset });
+
+          if (listError) {
+            console.error('Error listing headshots for prefix', prefix, listError);
+            break; // continue with whatever we have
+          }
+
+          (list || []).forEach((obj: any) => {
+            if (obj?.name) pathsToRemove.add(`${prefix}${obj.name}`);
+          });
+
+          if (!list || list.length < limit) break;
+          offset += limit;
         }
-
-        (list || []).forEach((obj: any) => {
-          if (obj?.name) pathsToRemove.add(`${prefix}${obj.name}`);
-        });
-
-        if (!list || list.length < limit) break;
-        offset += limit;
       }
 
       if (pathsToRemove.size > 0) {
@@ -278,25 +284,32 @@ async function processScheduledDeletions(): Promise<Response> {
             }
           }
 
-          const prefix = `${user.slug}/`;
-          const limit = 100;
-          let offset = 0;
-          while (true) {
-            const { data: list, error: listError } = await supabase.storage
-              .from('headshots')
-              .list(prefix, { limit, offset });
+          // List all objects in both possible folders (by slug and by id) and queue for removal
+          const prefixes = Array.from(new Set([
+            user.slug ? `${user.slug}/` : null,
+            user.id ? `${user.id}/` : null,
+          ].filter(Boolean) as string[]));
 
-            if (listError) {
-              console.error('Error listing headshots:', listError);
-              break;
+          for (const prefix of prefixes) {
+            const limit = 100;
+            let offset = 0;
+            while (true) {
+              const { data: list, error: listError } = await supabase.storage
+                .from('headshots')
+                .list(prefix, { limit, offset });
+
+              if (listError) {
+                console.error('Error listing headshots for prefix', prefix, listError);
+                break;
+              }
+
+              (list || []).forEach((obj: any) => {
+                if (obj?.name) pathsToRemove.add(`${prefix}${obj.name}`);
+              });
+
+              if (!list || list.length < limit) break;
+              offset += limit;
             }
-
-            (list || []).forEach((obj: any) => {
-              if (obj?.name) pathsToRemove.add(`${prefix}${obj.name}`);
-            });
-
-            if (!list || list.length < limit) break;
-            offset += limit;
           }
 
           if (pathsToRemove.size > 0) {
