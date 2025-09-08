@@ -1,1 +1,10 @@
 project_id = "ichuswmtnolzjbjdxcej"
+
+[functions.send-admin-code]
+verify_jwt = false
+
+[functions.delete-user]
+verify_jwt = false
+
+[functions.get-public-card]
+verify_jwt = false
