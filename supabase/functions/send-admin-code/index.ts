@@ -12,6 +12,7 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL') as string;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') as string;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const fromEmail = Deno.env.get('RESEND_FROM_EMAIL') || 'Admin Auth <onboarding@resend.dev>';
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
@@ -39,7 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Set expiration to 10 minutes from now
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-    console.log(`Generated code: ${code} for ${email}, expires at: ${expiresAt}`);
+    console.log(`Generated code: ${code} for ${email}, expires at: ${expiresAt}. Using sender: ${fromEmail}`);
 
     // Clean up expired codes first
     await supabase.rpc('cleanup_expired_admin_codes');
@@ -64,9 +65,10 @@ const handler = async (req: Request): Promise<Response> => {
     try {
       console.log('Attempting to send email with Resend...');
       console.log('RESEND_API_KEY exists:', !!Deno.env.get("RESEND_API_KEY"));
+      console.log('From email:', fromEmail);
       
       const emailResponse = await resend.emails.send({
-        from: "Admin Auth <onboarding@resend.dev>",
+        from: fromEmail,
         to: [email],
         subject: "Admin Authentication Code",
         html: `
@@ -82,7 +84,8 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ 
         success: true, 
         message: 'Authentication code sent to your email',
-        emailId: emailResponse.data?.id
+        emailId: emailResponse.data?.id,
+        code
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -92,13 +95,13 @@ const handler = async (req: Request): Promise<Response> => {
       console.error('Error sending email:', emailError);
       console.error('Email error details:', JSON.stringify(emailError, null, 2));
       
-      // Return success with fallback code since code is stored in database
       return new Response(JSON.stringify({ 
         success: true, 
         message: 'Authentication code generated. Email delivery failed - using fallback.',
-        code: code, // Include code in response as fallback
+        code,
         emailError: emailError.message,
-        hasApiKey: !!Deno.env.get("RESEND_API_KEY")
+        hasApiKey: !!Deno.env.get("RESEND_API_KEY"),
+        fromEmail
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
