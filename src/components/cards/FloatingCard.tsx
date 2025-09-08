@@ -75,7 +75,7 @@ const FloatingCard = ({
       </div>
 
       {/* Main card with floating effect */}
-      <Card className="relative z-10 w-full h-full bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 border-2 border-blue-200 shadow-xl animate-hover-float overflow-hidden">
+      <Card className="relative z-10 w-full h-full bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 border-2 border-blue-200 shadow-xl animate-hover-float overflow-visible">
         {/* Subtle animated background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-transparent to-indigo-100/30 animate-gradient-shift"></div>
         
@@ -155,7 +155,7 @@ const FloatingCard = ({
 
           {/* Floating social links */}
           {displaySocialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 px-2 pb-2 animate-fade-in-up" style={{animationDelay: '1.4s'}}>
+            <div className="flex flex-wrap justify-center gap-3 px-2 pb-4 animate-fade-in-up" style={{animationDelay: '1.4s'}}>
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}

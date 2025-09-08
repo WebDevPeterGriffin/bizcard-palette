@@ -83,7 +83,7 @@ const LiquidCard = ({
       </div>
 
       {/* Main content card with liquid morphing effect */}
-      <Card className="relative z-10 w-full h-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden animate-morph">
+      <Card className="relative z-10 w-full h-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-visible animate-morph">
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent animate-shimmer"></div>
         
         <div className="relative z-10 p-6 h-full flex flex-col text-white">
@@ -162,7 +162,7 @@ const LiquidCard = ({
 
           {/* Liquid social bubbles */}
           {displaySocialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 px-2 pb-2 animate-bubble-up" style={{animationDelay: '1.4s'}}>
+            <div className="flex flex-wrap justify-center gap-3 px-2 pb-4 animate-bubble-up" style={{animationDelay: '1.4s'}}>
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}
