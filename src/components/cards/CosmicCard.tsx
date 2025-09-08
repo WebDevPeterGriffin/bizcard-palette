@@ -198,19 +198,18 @@ const CosmicCard = ({
 
           {/* Cosmic social constellation */}
           {displaySocialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 px-2 pb-4 animate-cosmic-constellation" style={{animationDelay: '1.2s'}}>
+            <div className="flex flex-wrap justify-center gap-2 px-4 py-2 animate-cosmic-constellation" style={{animationDelay: '1.2s'}}>
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}
                   href={getSocialUrl(social.platform, social.url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm border border-purple-400/40 flex items-center justify-center text-white hover:border-cyan-400/70 hover:bg-purple-500/20 transition-all duration-500 hover:scale-110 hover:rotate-12 animate-cosmic-orbit relative overflow-hidden"
+                  className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-purple-400/40 flex items-center justify-center text-white hover:border-cyan-400/70 hover:bg-purple-500/20 transition-all duration-300 hover:scale-105 animate-cosmic-orbit relative"
                   style={{animationDelay: `${1.4 + index * 0.2}s`}}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-cyan-400/10 animate-energy-flow"></div>
-                  <span className="relative z-10">{getSocialIcon(social.platform)}</span>
-                  <Star className="absolute -top-1 -right-1 h-3 w-3 text-yellow-400 opacity-0 group-hover:opacity-100 animate-twinkle" />
+                  <span className="relative z-10 text-xs">{getSocialIcon(social.platform)}</span>
                 </a>
               ))}
             </div>

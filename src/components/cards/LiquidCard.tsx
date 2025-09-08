@@ -162,17 +162,17 @@ const LiquidCard = ({
 
           {/* Liquid social bubbles */}
           {displaySocialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 px-2 pb-4 animate-bubble-up" style={{animationDelay: '1.4s'}}>
+            <div className="flex flex-wrap justify-center gap-2 px-4 py-2 animate-bubble-up" style={{animationDelay: '1.4s'}}>
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}
                   href={getSocialUrl(social.platform, social.url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white hover:bg-white/25 hover:border-white/50 transition-all duration-500 hover:scale-110 hover:rotate-12 animate-liquid-bubble"
+                  className="w-9 h-9 rounded-full bg-white/15 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white hover:bg-white/25 hover:border-white/50 transition-all duration-300 hover:scale-105 animate-liquid-bubble"
                   style={{animationDelay: `${1.6 + index * 0.2}s`}}
                 >
-                  {getSocialIcon(social.platform)}
+                  <span className="text-xs">{getSocialIcon(social.platform)}</span>
                 </a>
               ))}
             </div>

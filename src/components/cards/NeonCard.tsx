@@ -158,19 +158,18 @@ const NeonCard = ({
 
         {/* Social Links with electric animations */}
         {displaySocialLinks.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-2 px-2 pb-4">
+          <div className="flex flex-wrap justify-center gap-2 px-4 py-2">
             {displaySocialLinks.map((social, index) => (
               <a
                 key={social.platform}
                 href={getSocialUrl(social.platform, social.url)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black border border-cyan-500 flex items-center justify-center text-cyan-400 hover:border-pink-500 hover:text-pink-400 transition-all duration-300 hover:scale-105 hover:rotate-3 hover:shadow-lg hover:shadow-cyan-500/50 relative overflow-hidden group/social"
+                className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-800 to-black border border-cyan-500 flex items-center justify-center text-cyan-400 hover:border-pink-500 hover:text-pink-400 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/50 relative group/social"
                 style={{animationDelay: `${index * 0.1}s`}}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-pink-500/10 opacity-0 group-hover/social:opacity-100 transition-opacity duration-300"></div>
-                <span className="relative z-10">{getSocialIcon(social.platform)}</span>
-                <Star className="absolute -top-1 -right-1 h-3 w-3 text-yellow-400 opacity-0 group-hover/social:opacity-100 group-hover/social:animate-spin transition-all duration-300" />
+                <span className="relative z-10 text-xs">{getSocialIcon(social.platform)}</span>
               </a>
             ))}
           </div>
