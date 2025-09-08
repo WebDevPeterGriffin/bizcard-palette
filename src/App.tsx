@@ -16,6 +16,7 @@ import PreviewNeon from "./pages/PreviewNeon";
 import PreviewFloating from "./pages/PreviewFloating";
 import PreviewLiquid from "./pages/PreviewLiquid";
 import PreviewCosmic from "./pages/PreviewCosmic";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/preview/liquid" element={<PreviewLiquid />} />
             <Route path="/preview/cosmic" element={<PreviewCosmic />} />
             <Route path="/request" element={<RequestForm />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/card/:slug" element={<GeneratedCard />} />
             <Route path="/:slug" element={<GeneratedCard />} />
             <Route path="*" element={<NotFound />} />
