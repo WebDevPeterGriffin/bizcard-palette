@@ -88,30 +88,67 @@ async function deleteUserNow(userId: string): Promise<Response> {
 
     console.log(`Deleting user: ${userData.slug}, headshot: ${userData.headshot_url}`);
 
-    // Delete headshot from storage if it exists
-    if (userData.headshot_url) {
-      try {
-        // Extract the file path from the URL
-        const urlParts = userData.headshot_url.split('/');
-        const fileName = urlParts[urlParts.length - 1];
-        const filePath = `${userData.slug}/${fileName}`;
+    // Try to delete all headshots for this user's slug (robust)
+    try {
+      const pathsToRemove = new Set<string>();
 
-        console.log(`Attempting to delete headshot: ${filePath}`);
+      // If we have a URL, parse it and extract the path after '/headshots/'
+      if (userData.headshot_url) {
+        try {
+          const url = new URL(userData.headshot_url);
+          const path = url.pathname; // e.g. /storage/v1/object/public/headshots/slug/file.png
+          const marker = '/headshots/';
+          const idx = path.indexOf(marker);
+          if (idx !== -1) {
+            const relative = path.substring(idx + marker.length); // slug/file.png
+            pathsToRemove.add(relative);
+          }
+        } catch (_) {
+          // Fallback: simple split without URL()
+          const clean = userData.headshot_url.split('?')[0];
+          const parts = clean.split('/headshots/');
+          if (parts.length === 2) pathsToRemove.add(parts[1]);
+        }
+      }
 
+      // Also list every object in this slug folder and queue for removal
+      const prefix = `${userData.slug}/`;
+      const limit = 100;
+      let offset = 0;
+      while (true) {
+        const { data: list, error: listError } = await supabase.storage
+          .from('headshots')
+          .list(prefix, { limit, offset });
+
+        if (listError) {
+          console.error('Error listing headshots:', listError);
+          break; // continue with whatever we have
+        }
+
+        (list || []).forEach((obj: any) => {
+          if (obj?.name) pathsToRemove.add(`${prefix}${obj.name}`);
+        });
+
+        if (!list || list.length < limit) break;
+        offset += limit;
+      }
+
+      if (pathsToRemove.size > 0) {
+        console.log('Removing headshot files:', Array.from(pathsToRemove));
         const { error: storageError } = await supabase.storage
           .from('headshots')
-          .remove([filePath]);
+          .remove(Array.from(pathsToRemove));
 
         if (storageError) {
-          console.error('Error deleting headshot:', storageError);
-          // Don't throw here, continue with user deletion
+          console.error('Error deleting headshots:', storageError);
         } else {
-          console.log('Headshot deleted successfully');
+          console.log('Headshots deleted successfully');
         }
-      } catch (storageErr) {
-        console.error('Error processing headshot deletion:', storageErr);
-        // Don't throw here, continue with user deletion
+      } else {
+        console.log('No headshot files found to remove for slug', userData.slug);
       }
+    } catch (storageErr) {
+      console.error('Error during headshots cleanup:', storageErr);
     }
 
     // Delete user record from database
@@ -220,15 +257,57 @@ async function processScheduledDeletions(): Promise<Response> {
 
     for (const user of scheduledUsers) {
       try {
-        // Delete headshot if exists
-        if (user.headshot_url) {
-          const urlParts = user.headshot_url.split('/');
-          const fileName = urlParts[urlParts.length - 1];
-          const filePath = `${user.slug}/${fileName}`;
+        // Delete all headshots for this slug (robust)
+        try {
+          const pathsToRemove = new Set<string>();
 
-          await supabase.storage
-            .from('headshots')
-            .remove([filePath]);
+          if (user.headshot_url) {
+            try {
+              const url = new URL(user.headshot_url);
+              const path = url.pathname;
+              const marker = '/headshots/';
+              const idx = path.indexOf(marker);
+              if (idx !== -1) {
+                const relative = path.substring(idx + marker.length);
+                pathsToRemove.add(relative);
+              }
+            } catch (_) {
+              const clean = user.headshot_url.split('?')[0];
+              const parts = clean.split('/headshots/');
+              if (parts.length === 2) pathsToRemove.add(parts[1]);
+            }
+          }
+
+          const prefix = `${user.slug}/`;
+          const limit = 100;
+          let offset = 0;
+          while (true) {
+            const { data: list, error: listError } = await supabase.storage
+              .from('headshots')
+              .list(prefix, { limit, offset });
+
+            if (listError) {
+              console.error('Error listing headshots:', listError);
+              break;
+            }
+
+            (list || []).forEach((obj: any) => {
+              if (obj?.name) pathsToRemove.add(`${prefix}${obj.name}`);
+            });
+
+            if (!list || list.length < limit) break;
+            offset += limit;
+          }
+
+          if (pathsToRemove.size > 0) {
+            console.log('Removing headshot files:', Array.from(pathsToRemove));
+            const { error: storageError } = await supabase.storage
+              .from('headshots')
+              .remove(Array.from(pathsToRemove));
+            if (storageError) console.error('Error deleting headshots:', storageError);
+          }
+        } catch (e) {
+          console.error('Headshots cleanup error:', e);
         }
 
         // Delete user record
