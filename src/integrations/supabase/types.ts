@@ -51,6 +51,7 @@ export type Database = {
           id: string
           phone: string | null
           role: string | null
+          scheduled_deletion_at: string | null
           slug: string
           socials: Json | null
           style_id: string
@@ -66,6 +67,7 @@ export type Database = {
           id?: string
           phone?: string | null
           role?: string | null
+          scheduled_deletion_at?: string | null
           slug: string
           socials?: Json | null
           style_id: string
@@ -81,6 +83,7 @@ export type Database = {
           id?: string
           phone?: string | null
           role?: string | null
+          scheduled_deletion_at?: string | null
           slug?: string
           socials?: Json | null
           style_id?: string
@@ -95,6 +98,10 @@ export type Database = {
     }
     Functions: {
       cleanup_expired_admin_codes: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      process_scheduled_deletions: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }

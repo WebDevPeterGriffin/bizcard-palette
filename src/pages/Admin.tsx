@@ -5,9 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import SEO from "@/components/SEO";
 import { format } from "date-fns";
+import { Trash2, Calendar, X } from "lucide-react";
 
 interface CardData {
   id: string;
@@ -20,6 +23,7 @@ interface CardData {
   slug: string;
   style_id: string;
   created_at: string;
+  scheduled_deletion_at: string | null;
 }
 
 const Admin = () => {
@@ -27,6 +31,103 @@ const Admin = () => {
   const [password, setPassword] = useState("");
   const [users, setUsers] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  const handleDeleteUser = async (userId: string) => {
+    setActionLoading(userId);
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId, action: 'delete_now' }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "User deleted",
+        description: "User and all associated data have been deleted",
+      });
+
+      // Refresh the users list
+      fetchUsers();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to delete user",
+      });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleScheduleDeletion = async () => {
+    if (!selectedUserId || !scheduledDate) return;
+
+    setActionLoading(selectedUserId);
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { 
+          userId: selectedUserId, 
+          action: 'schedule_deletion',
+          scheduledDate: new Date(scheduledDate).toISOString()
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Deletion scheduled",
+        description: `User will be deleted on ${format(new Date(scheduledDate), "MMM dd, yyyy 'at' HH:mm")}`,
+      });
+
+      setIsScheduleDialogOpen(false);
+      setScheduledDate("");
+      setSelectedUserId(null);
+      fetchUsers();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to schedule deletion",
+      });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleCancelSchedule = async (userId: string) => {
+    setActionLoading(userId);
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId, action: 'cancel_schedule' }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Schedule cancelled",
+        description: "User deletion schedule has been cancelled",
+      });
+
+      fetchUsers();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to cancel schedule",
+      });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const openScheduleDialog = (userId: string) => {
+    setSelectedUserId(userId);
+    setIsScheduleDialogOpen(true);
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,53 +249,166 @@ const Admin = () => {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Company</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Style</TableHead>
-                        <TableHead>Joined</TableHead>
-                        <TableHead>Slug</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {users.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell className="font-medium">
-                            {user.full_name}
-                          </TableCell>
-                          <TableCell>{user.email || "N/A"}</TableCell>
-                          <TableCell>{user.company || "N/A"}</TableCell>
-                          <TableCell>{user.role || "N/A"}</TableCell>
-                          <TableCell className="capitalize">{user.style_id}</TableCell>
-                          <TableCell>
-                            {format(new Date(user.created_at), "MMM dd, yyyy")}
-                          </TableCell>
-                          <TableCell>
-                            <code className="text-sm bg-muted px-2 py-1 rounded">
-                              {user.slug}
-                            </code>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                   <Table>
+                     <TableHeader>
+                       <TableRow>
+                         <TableHead>Name</TableHead>
+                         <TableHead>Email</TableHead>
+                         <TableHead>Company</TableHead>
+                         <TableHead>Role</TableHead>
+                         <TableHead>Style</TableHead>
+                         <TableHead>Joined</TableHead>
+                         <TableHead>Status</TableHead>
+                         <TableHead>Slug</TableHead>
+                         <TableHead>Actions</TableHead>
+                       </TableRow>
+                     </TableHeader>
+                     <TableBody>
+                       {users.map((user) => (
+                         <TableRow key={user.id}>
+                           <TableCell className="font-medium">
+                             {user.full_name}
+                           </TableCell>
+                           <TableCell>{user.email || "N/A"}</TableCell>
+                           <TableCell>{user.company || "N/A"}</TableCell>
+                           <TableCell>{user.role || "N/A"}</TableCell>
+                           <TableCell className="capitalize">{user.style_id}</TableCell>
+                           <TableCell>
+                             {format(new Date(user.created_at), "MMM dd, yyyy")}
+                           </TableCell>
+                           <TableCell>
+                             {user.scheduled_deletion_at ? (
+                               <div className="flex items-center gap-2">
+                                 <span className="text-destructive text-sm">
+                                   Scheduled for deletion
+                                 </span>
+                                 <span className="text-xs text-muted-foreground">
+                                   {format(new Date(user.scheduled_deletion_at), "MMM dd, yyyy")}
+                                 </span>
+                               </div>
+                             ) : (
+                               <span className="text-green-600 text-sm">Active</span>
+                             )}
+                           </TableCell>
+                           <TableCell>
+                             <code className="text-sm bg-muted px-2 py-1 rounded">
+                               {user.slug}
+                             </code>
+                           </TableCell>
+                           <TableCell>
+                             <div className="flex items-center gap-2">
+                               {user.scheduled_deletion_at ? (
+                                 <Button
+                                   variant="outline"
+                                   size="sm"
+                                   onClick={() => handleCancelSchedule(user.id)}
+                                   disabled={actionLoading === user.id}
+                                 >
+                                   <X className="h-4 w-4 mr-1" />
+                                   Cancel
+                                 </Button>
+                               ) : (
+                                 <>
+                                   <Button
+                                     variant="outline"
+                                     size="sm"
+                                     onClick={() => openScheduleDialog(user.id)}
+                                     disabled={actionLoading === user.id}
+                                   >
+                                     <Calendar className="h-4 w-4 mr-1" />
+                                     Schedule
+                                   </Button>
+                                   <AlertDialog>
+                                     <AlertDialogTrigger asChild>
+                                       <Button
+                                         variant="destructive"
+                                         size="sm"
+                                         disabled={actionLoading === user.id}
+                                       >
+                                         <Trash2 className="h-4 w-4 mr-1" />
+                                         Delete
+                                       </Button>
+                                     </AlertDialogTrigger>
+                                     <AlertDialogContent>
+                                       <AlertDialogHeader>
+                                         <AlertDialogTitle>Delete User</AlertDialogTitle>
+                                         <AlertDialogDescription>
+                                           Are you sure you want to delete {user.full_name}? This will permanently delete:
+                                           <ul className="list-disc list-inside mt-2 space-y-1">
+                                             <li>Their profile and all data</li>
+                                             <li>Their headshot image</li>
+                                             <li>Their generated business card</li>
+                                           </ul>
+                                           This action cannot be undone.
+                                         </AlertDialogDescription>
+                                       </AlertDialogHeader>
+                                       <AlertDialogFooter>
+                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                         <AlertDialogAction
+                                           onClick={() => handleDeleteUser(user.id)}
+                                           className="bg-destructive hover:bg-destructive/90"
+                                         >
+                                           Delete User
+                                         </AlertDialogAction>
+                                       </AlertDialogFooter>
+                                     </AlertDialogContent>
+                                   </AlertDialog>
+                                 </>
+                               )}
+                             </div>
+                           </TableCell>
+                         </TableRow>
+                       ))}
+                     </TableBody>
+                   </Table>
                   {users.length === 0 && (
                     <div className="text-center py-8 text-muted-foreground">
                       No users found
                     </div>
                   )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </>
-  );
+               )}
+             </CardContent>
+           </Card>
+
+           {/* Schedule Deletion Dialog */}
+           <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
+             <DialogContent>
+               <DialogHeader>
+                 <DialogTitle>Schedule User Deletion</DialogTitle>
+                 <DialogDescription>
+                   Choose when to delete this user. The user and all associated data will be permanently deleted at the specified time.
+                 </DialogDescription>
+               </DialogHeader>
+               <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                   <Label htmlFor="scheduledDate">Deletion Date & Time</Label>
+                   <Input
+                     id="scheduledDate"
+                     type="datetime-local"
+                     value={scheduledDate}
+                     onChange={(e) => setScheduledDate(e.target.value)}
+                     min={new Date().toISOString().slice(0, 16)}
+                   />
+                 </div>
+               </div>
+               <DialogFooter>
+                 <Button variant="outline" onClick={() => setIsScheduleDialogOpen(false)}>
+                   Cancel
+                 </Button>
+                 <Button 
+                   onClick={handleScheduleDeletion}
+                   disabled={!scheduledDate || actionLoading === selectedUserId}
+                 >
+                   {actionLoading === selectedUserId ? "Scheduling..." : "Schedule Deletion"}
+                 </Button>
+               </DialogFooter>
+             </DialogContent>
+           </Dialog>
+         </div>
+       </div>
+     </>
+   );
 };
 
 export default Admin;
