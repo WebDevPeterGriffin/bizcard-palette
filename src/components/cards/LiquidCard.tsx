@@ -162,7 +162,7 @@ const LiquidCard = ({
 
           {/* Liquid social bubbles */}
           {displaySocialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 px-2 animate-bubble-up" style={{animationDelay: '1.4s'}}>
+            <div className="flex flex-wrap justify-center gap-3 px-2 pb-2 animate-bubble-up" style={{animationDelay: '1.4s'}}>
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}

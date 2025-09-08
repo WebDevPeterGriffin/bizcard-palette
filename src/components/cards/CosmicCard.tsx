@@ -198,7 +198,7 @@ const CosmicCard = ({
 
           {/* Cosmic social constellation */}
           {displaySocialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 px-2 animate-cosmic-constellation" style={{animationDelay: '1.2s'}}>
+            <div className="flex flex-wrap justify-center gap-3 px-2 pb-2 animate-cosmic-constellation" style={{animationDelay: '1.2s'}}>
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}

@@ -236,77 +236,148 @@ const GeneratedCard = () => {
         return 'bg-gradient-elegant';
       case 'creative':
         return 'bg-gradient-creative';
+      case 'neon':
+        return 'bg-gray-900';
+      case 'floating':
+        return 'bg-gradient-to-br from-blue-50 to-indigo-100';
+      case 'liquid':
+        return 'bg-gradient-to-br from-cyan-500/10 via-teal-500/10 to-blue-500/10';
+      case 'cosmic':
+        return 'bg-gradient-to-b from-black via-indigo-950 to-black';
       default:
         return 'bg-background';
     }
   };
 
-  return (
-    <div className={`min-h-screen ${getBackgroundClass()} p-4`}>
-      <div className="container mx-auto max-w-4xl">
-        {/* Header */}
-        <div className="mb-8 flex justify-end">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleShare}
-            className={cardData.style === 'bold' || cardData.style === 'creative' ? 
-              "bg-white/10 text-white border-white/30 hover:bg-white/20" : 
-              ""
-            }
-          >
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
-          </Button>
-        </div>
-
-        {/* Card Display */}
-        <div className="flex justify-center mb-8">
-          {renderCard()}
-        </div>
-
-        {/* QR Code Section */}
-        <div className="flex justify-center mb-8">
-          <div className={`rounded-lg p-6 ${
-            cardData.style === 'bold' || cardData.style === 'creative' ? 
-              'bg-white/10 backdrop-blur-sm border border-white/20' : 
-              'bg-white/80 shadow-card'
-          }`}>
-            <h3 className={`text-lg font-semibold mb-4 text-center ${
-              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white' : ''
-            }`}>
-              Scan to View Card
-            </h3>
-            <QRCodeGenerator url={window.location.href} size={200} showControls={false} />
+  const renderBackgroundLayers = () => {
+    switch (cardData.style) {
+      case 'neon':
+        return (
+          <div className="absolute inset-0 opacity-40">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-purple-500/20 to-pink-500/20"></div>
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `linear-gradient(cyan 1px, transparent 1px), linear-gradient(90deg, cyan 1px, transparent 1px)`,
+                backgroundSize: '20px 20px',
+                animation: 'grid-move 6s linear infinite',
+              }}
+            />
+            <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-cyan-500/20 rounded-full blur-2xl animate-pulse" />
+            <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-pink-500/20 rounded-full blur-2xl animate-pulse" />
           </div>
-        </div>
+        );
+      case 'floating':
+        return (
+          <div className="absolute inset-0 opacity-50">
+            <div className="absolute top-20 left-10 w-4 h-4 bg-blue-300 rounded-full animate-bounce" />
+            <div className="absolute top-40 right-20 w-6 h-6 bg-indigo-300 rounded-full animate-bounce delay-1000" />
+            <div className="absolute top-60 left-1/3 w-3 h-3 bg-sky-300 rounded-full animate-bounce delay-2000" />
+            <div className="absolute bottom-40 right-10 w-5 h-5 bg-cyan-300 rounded-full animate-bounce delay-500" />
+            <div className="absolute bottom-20 left-20 w-4 h-4 bg-blue-400 rounded-full animate-bounce delay-1500" />
+            <div className="absolute top-1/2 right-1/4 w-7 h-7 bg-indigo-200 rounded-full animate-bounce delay-3000" />
+          </div>
+        );
+      case 'liquid':
+        return (
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 via-teal-400/20 to-blue-400/20 animate-[pulse_6s_ease-in-out_infinite]" />
+            <div className="absolute -top-10 -left-10 w-64 h-64 bg-cyan-300/20 rounded-full blur-3xl animate-[spin_20s_linear_infinite]" />
+            <div className="absolute -bottom-10 -right-10 w-72 h-72 bg-teal-300/20 rounded-full blur-3xl animate-[spin_25s_linear_infinite_reverse]" />
+          </div>
+        );
+      case 'cosmic':
+        return (
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0" style={{
+              background: `radial-gradient(2px 2px at 20px 30px, white, transparent), radial-gradient(2px 2px at 40px 70px, white, transparent), radial-gradient(1px 1px at 90px 40px, white, transparent)`,
+              backgroundSize: '200px 100px',
+              animation: 'star-move 30s linear infinite'
+            }} />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-blue-500/10 animate-[pulse_8s_ease-in-out_infinite]" />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
-        {/* Small Brand CTA */}
-        <div className="mt-6 text-center">
-          <div className={`rounded-lg p-3 ${
-            cardData.style === 'bold' || cardData.style === 'creative' ? 
-              'bg-white/5 backdrop-blur-sm border border-white/10' : 
-              'bg-white/60 shadow-sm'
-          }`}>
-            <p className={`text-xs mb-2 ${
-              cardData.style === 'bold' || cardData.style === 'creative' ? 'text-white/60' : 'text-muted-foreground'
-            }`}>
-              Want your own digital business card?
-            </p>
+  return (
+    <div className={`relative min-h-screen overflow-hidden ${getBackgroundClass()}`}>
+      {renderBackgroundLayers()}
+      <div className="relative z-10 p-4">
+        <div className="container mx-auto max-w-4xl">
+          {/* Header */}
+          <div className="mb-8 flex justify-end">
             <Button 
-              onClick={() => navigate('/')}
+              variant="outline" 
               size="sm"
-              variant="outline"
-              className={cardData.style === 'bold' || cardData.style === 'creative' ? 
-                "bg-white/10 text-white/80 border-white/20 hover:bg-white/20 text-xs" : 
-                "text-xs"
+              onClick={handleShare}
+              className={(cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
+                "bg-white/10 text-white border-white/30 hover:bg-white/20" : 
+                ""
               }
             >
-              Create Your Own
+              <Share2 className="mr-2 h-4 w-4" />
+              Share
             </Button>
+          </div>
+
+          {/* Card Display */}
+          <div className="flex justify-center mb-8">
+            {renderCard()}
+          </div>
+
+          {/* QR Code Section */}
+          <div className="flex justify-center mb-8">
+            <div className={`rounded-lg p-6 ${
+              (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
+                'bg-white/10 backdrop-blur-sm border border-white/20' : 
+                'bg-white/80 shadow-card'
+            }`}>
+              <h3 className={`text-lg font-semibold mb-4 text-center ${
+                (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 'text-white' : ''
+              }`}>
+                Scan to View Card
+              </h3>
+              <QRCodeGenerator url={window.location.href} size={200} showControls={false} />
+            </div>
+          </div>
+
+          {/* Small Brand CTA */}
+          <div className="mt-6 text-center">
+            <div className={`rounded-lg p-3 ${
+              (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
+                'bg-white/5 backdrop-blur-sm border border-white/10' : 
+                'bg-white/60 shadow-sm'
+            }`}>
+              <p className={`text-xs mb-2 ${
+                (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 'text-white/70' : 'text-muted-foreground'
+              }`}>
+                Want your own digital business card?
+              </p>
+              <Button 
+                onClick={() => navigate('/')}
+                size="sm"
+                variant="outline"
+                className={(cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
+                  "bg-white/10 text-white/80 border-white/20 hover:bg-white/20 text-xs" : 
+                  "text-xs"
+                }
+              >
+                Create Your Own
+              </Button>
+            </div>
           </div>
         </div>
       </div>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @keyframes grid-move { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 20px); } }
+        @keyframes star-move { 0% { transform: translateX(0px) translateY(0px); } 100% { transform: translateX(-200px) translateY(-100px); } }
+        `
+      }} />
     </div>
   );
 };

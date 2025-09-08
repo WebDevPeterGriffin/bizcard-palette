@@ -63,7 +63,7 @@ const NeonCard = ({
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : legacySocials;
 
   return (
-    <Card className="w-80 h-96 bg-black border-2 border-cyan-500 overflow-hidden relative group">
+    <Card className="w-80 h-96 bg-black border-2 border-cyan-500 overflow-visible relative group">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-purple-500/20 to-pink-500/20 animate-pulse"></div>
@@ -82,7 +82,7 @@ const NeonCard = ({
       <div className="absolute bottom-4 left-4 w-2 h-2 bg-pink-400 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
       <div className="absolute top-1/2 left-2 w-1 h-1 bg-purple-400 rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
 
-      <div className="relative z-10 p-6 h-full flex flex-col">
+      <div className="relative z-10 p-6 pb-4 h-full flex flex-col">
         {/* Header with electric effect */}
         <div className="text-center mb-6">
           <div className="relative mb-4">
@@ -158,14 +158,14 @@ const NeonCard = ({
 
         {/* Social Links with electric animations */}
         {displaySocialLinks.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-2 px-2">
+          <div className="flex flex-wrap justify-center gap-2 px-2 pb-2">
             {displaySocialLinks.map((social, index) => (
               <a
                 key={social.platform}
                 href={getSocialUrl(social.platform, social.url)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black border border-cyan-500 flex items-center justify-center text-cyan-400 hover:border-pink-500 hover:text-pink-400 transition-all duration-300 hover:scale-110 hover:rotate-12 hover:shadow-lg hover:shadow-cyan-500/50 relative overflow-hidden group/social"
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black border border-cyan-500 flex items-center justify-center text-cyan-400 hover:border-pink-500 hover:text-pink-400 transition-all duration-300 hover:scale-105 hover:rotate-3 hover:shadow-lg hover:shadow-cyan-500/50 relative overflow-hidden group/social"
                 style={{animationDelay: `${index * 0.1}s`}}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-pink-500/10 opacity-0 group-hover/social:opacity-100 transition-opacity duration-300"></div>
