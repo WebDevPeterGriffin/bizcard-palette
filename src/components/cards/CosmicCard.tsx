@@ -1,5 +1,6 @@
 import { Mail, Phone, Globe, Star, Sparkles, Zap, Moon } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 
 interface SocialLink {
   platform: string;
@@ -33,28 +34,7 @@ const CosmicCard = ({
   twitter = ""
 }: CosmicCardProps) => {
   
-  const getSocialIcon = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case 'linkedin': return <span className="text-sm font-bold">in</span>;
-      case 'twitter': return <span className="text-sm font-bold">𝕏</span>;
-      case 'github': return <span className="text-sm font-bold">⧉</span>;
-      case 'instagram': return <span className="text-sm font-bold">📷</span>;
-      default: return <Globe className="h-4 w-4" />;
-    }
-  };
-
-  const getSocialUrl = (platform: string, url: string) => {
-    if (url.startsWith('http')) return url;
-    
-    const baseUrls: { [key: string]: string } = {
-      linkedin: 'https://linkedin.com/in/',
-      twitter: 'https://twitter.com/',
-      github: 'https://github.com/',
-      instagram: 'https://instagram.com/'
-    };
-    
-    return `${baseUrls[platform.toLowerCase()] || 'https://'}${url}`;
-  };
+  // Social helpers moved to a shared component for consistency
 
   const legacySocials = [];
   if (linkedin) legacySocials.push({ platform: 'linkedin', url: linkedin });
@@ -202,14 +182,14 @@ const CosmicCard = ({
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}
-                  href={getSocialUrl(social.platform, social.url)}
+                  href={buildSocialUrl(social.platform, social.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-purple-400/40 flex items-center justify-center text-white hover:border-cyan-400/70 hover:bg-purple-500/20 transition-all duration-300 hover:scale-105 animate-cosmic-orbit relative"
                   style={{animationDelay: `${1.4 + index * 0.2}s`}}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-cyan-400/10 animate-energy-flow"></div>
-                  <span className="relative z-10 text-xs">{getSocialIcon(social.platform)}</span>
+                  <span className="relative z-10"><SocialIcon platform={social.platform} className="h-3.5 w-3.5" /></span>
                 </a>
               ))}
             </div>

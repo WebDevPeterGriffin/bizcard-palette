@@ -1,5 +1,6 @@
 import { Mail, Phone, Globe, Waves, Droplets, Circle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 
 interface SocialLink {
   platform: string;
@@ -33,28 +34,7 @@ const LiquidCard = ({
   twitter = ""
 }: LiquidCardProps) => {
   
-  const getSocialIcon = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case 'linkedin': return <span className="text-sm font-bold">in</span>;
-      case 'twitter': return <span className="text-sm font-bold">𝕏</span>;
-      case 'github': return <span className="text-sm font-bold">⧉</span>;
-      case 'instagram': return <span className="text-sm font-bold">📷</span>;
-      default: return <Globe className="h-4 w-4" />;
-    }
-  };
-
-  const getSocialUrl = (platform: string, url: string) => {
-    if (url.startsWith('http')) return url;
-    
-    const baseUrls: { [key: string]: string } = {
-      linkedin: 'https://linkedin.com/in/',
-      twitter: 'https://twitter.com/',
-      github: 'https://github.com/',
-      instagram: 'https://instagram.com/'
-    };
-    
-    return `${baseUrls[platform.toLowerCase()] || 'https://'}${url}`;
-  };
+  // Social helpers moved to a shared component for consistency
 
   const legacySocials = [];
   if (linkedin) legacySocials.push({ platform: 'linkedin', url: linkedin });
@@ -166,13 +146,13 @@ const LiquidCard = ({
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}
-                  href={getSocialUrl(social.platform, social.url)}
+                  href={buildSocialUrl(social.platform, social.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-white/15 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white hover:bg-white/25 hover:border-white/50 transition-all duration-300 hover:scale-105 animate-liquid-bubble"
                   style={{animationDelay: `${1.6 + index * 0.2}s`}}
                 >
-                  <span className="text-xs">{getSocialIcon(social.platform)}</span>
+                  <SocialIcon platform={social.platform} className="h-3.5 w-3.5" />
                 </a>
               ))}
             </div>

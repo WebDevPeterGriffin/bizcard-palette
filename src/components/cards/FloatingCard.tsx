@@ -1,5 +1,6 @@
 import { Mail, Phone, Globe, Cloud, Wind, Feather } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 
 interface SocialLink {
   platform: string;
@@ -33,28 +34,7 @@ const FloatingCard = ({
   twitter = ""
 }: FloatingCardProps) => {
   
-  const getSocialIcon = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case 'linkedin': return <span className="text-sm font-bold">in</span>;
-      case 'twitter': return <span className="text-sm font-bold">𝕏</span>;
-      case 'github': return <span className="text-sm font-bold">⧉</span>;
-      case 'instagram': return <span className="text-sm font-bold">📷</span>;
-      default: return <Globe className="h-4 w-4" />;
-    }
-  };
-
-  const getSocialUrl = (platform: string, url: string) => {
-    if (url.startsWith('http')) return url;
-    
-    const baseUrls: { [key: string]: string } = {
-      linkedin: 'https://linkedin.com/in/',
-      twitter: 'https://twitter.com/',
-      github: 'https://github.com/',
-      instagram: 'https://instagram.com/'
-    };
-    
-    return `${baseUrls[platform.toLowerCase()] || 'https://'}${url}`;
-  };
+  // Social helpers moved to a shared component for consistency
 
   const legacySocials = [];
   if (linkedin) legacySocials.push({ platform: 'linkedin', url: linkedin });
@@ -159,13 +139,13 @@ const FloatingCard = ({
               {displaySocialLinks.map((social, index) => (
                 <a
                   key={social.platform}
-                  href={getSocialUrl(social.platform, social.url)}
+                  href={buildSocialUrl(social.platform, social.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-gradient-to-br from-white to-blue-50 border-2 border-blue-300 flex items-center justify-center text-blue-700 hover:border-blue-500 hover:text-blue-900 transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg animate-float-gentle"
                   style={{animationDelay: `${1.6 + index * 0.2}s`}}
                 >
-                  <span className="text-xs">{getSocialIcon(social.platform)}</span>
+                  <SocialIcon platform={social.platform} className="h-3.5 w-3.5" />
                 </a>
               ))}
             </div>
