@@ -22,22 +22,35 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`User deletion request: action=${action}, userId=${userId}, scheduledDate=${scheduledDate}`);
 
-    if (!userId) {
-      return new Response(JSON.stringify({ error: 'User ID is required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    // Parameter validation is handled per action below
 
     // Handle different actions
     switch (action) {
       case 'delete_now':
+        if (!userId) {
+          return new Response(JSON.stringify({ error: 'User ID is required for delete_now' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
         return await deleteUserNow(userId);
       
       case 'schedule_deletion':
+        if (!userId || !scheduledDate) {
+          return new Response(JSON.stringify({ error: 'User ID and scheduledDate are required for schedule_deletion' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
         return await scheduleUserDeletion(userId, scheduledDate);
       
       case 'cancel_schedule':
+        if (!userId) {
+          return new Response(JSON.stringify({ error: 'User ID is required for cancel_schedule' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
         return await cancelScheduledDeletion(userId);
       
       case 'process_scheduled':
@@ -187,21 +200,23 @@ async function cancelScheduledDeletion(userId: string): Promise<Response> {
 async function processScheduledDeletions(): Promise<Response> {
   try {
     // Get all users scheduled for deletion that are due
-    const { data: scheduledUsers, error: fetchError } = await supabase
+    const nowIso = new Date().toISOString();
+    const { data: scheduledUsersRaw, error: fetchError } = await supabase
       .from('cards')
       .select('id, headshot_url, slug, scheduled_deletion_at')
       .not('scheduled_deletion_at', 'is', null)
-      .lte('scheduled_deletion_at', new Date().toISOString());
+      .lte('scheduled_deletion_at', nowIso);
 
     if (fetchError) {
       console.error('Error fetching scheduled users:', fetchError);
       throw new Error('Failed to fetch scheduled users');
     }
 
-    console.log(`Found ${scheduledUsers.length} users scheduled for deletion`);
+    const scheduledUsers = scheduledUsersRaw ?? [];
+    console.log(`Found ${scheduledUsers.length} users scheduled for deletion at/before ${nowIso}`);
 
-    const deletedUsers = [];
-    const errors = [];
+    const deletedUsers: string[] = [];
+    const errors: { userId: string; error: string }[] = [];
 
     for (const user of scheduledUsers) {
       try {
