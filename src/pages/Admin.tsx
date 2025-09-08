@@ -129,6 +129,36 @@ const Admin = () => {
     setIsScheduleDialogOpen(true);
   };
 
+  const handleProcessScheduled = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { action: 'process_scheduled' }
+      });
+
+      if (error) throw error;
+
+      const message = data?.deletedUsers?.length > 0 
+        ? `Processed ${data.deletedUsers.length} scheduled deletions`
+        : 'No scheduled deletions to process';
+
+      toast({
+        title: "Processing complete",
+        description: message,
+      });
+
+      fetchUsers();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to process scheduled deletions",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === "SahGarVar14124#") {
@@ -229,12 +259,21 @@ const Admin = () => {
               <h1 className="text-3xl font-bold">Admin Dashboard</h1>
               <p className="text-muted-foreground">Manage users and view statistics</p>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsAuthenticated(false)}
-            >
-              Logout
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={handleProcessScheduled}
+                disabled={loading}
+              >
+                Process Scheduled Deletions
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsAuthenticated(false)}
+              >
+                Logout
+              </Button>
+            </div>
           </div>
 
           <Card>
