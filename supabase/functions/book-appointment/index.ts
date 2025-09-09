@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "npm:resend@2.0.0";
 import { corsHeaders } from "../_shared/cors.ts";
 
 const supabase = createClient(
@@ -8,7 +7,9 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+// Gmail SMTP configuration
+const GMAIL_EMAIL = Deno.env.get("GMAIL_EMAIL");
+const GMAIL_APP_PASSWORD = Deno.env.get("GMAIL_APP_PASSWORD");
 
 interface BookingRequest {
   card_id: string;
@@ -107,9 +108,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send confirmation email to visitor
     try {
-      await resend.emails.send({
-        from: Deno.env.get("RESEND_FROM_EMAIL") || "appointments@resend.dev",
-        to: [bookingData.visitor_email],
+      await sendGmailSMTP({
+        to: bookingData.visitor_email,
         subject: `Appointment Confirmation with ${card.full_name}`,
         html: `
           <h1>Appointment Confirmed!</h1>
@@ -139,7 +139,7 @@ const handler = async (req: Request): Promise<Response> => {
         attachments: [
           {
             filename: "appointment.ics",
-            content: Buffer.from(icsContent).toString('base64'),
+            content: icsContent,
           },
         ],
       });
@@ -150,9 +150,8 @@ const handler = async (req: Request): Promise<Response> => {
     // Send notification email to card owner (if they have an email)
     if (card.email) {
       try {
-        await resend.emails.send({
-          from: Deno.env.get("RESEND_FROM_EMAIL") || "appointments@resend.dev",
-          to: [card.email],
+        await sendGmailSMTP({
+          to: card.email,
           subject: `New Appointment Booking from ${bookingData.visitor_name}`,
           html: `
             <h1>New Appointment Booking</h1>
@@ -181,7 +180,7 @@ const handler = async (req: Request): Promise<Response> => {
           attachments: [
             {
               filename: "appointment.ics",
-              content: Buffer.from(icsContent).toString('base64'),
+              content: icsContent,
             },
           ],
         });
@@ -248,6 +247,107 @@ END:VEVENT
 END:VCALENDAR`;
 
   return ics;
+}
+
+// Gmail SMTP email sending function
+async function sendGmailSMTP(options: {
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: Array<{
+    filename: string;
+    content: string;
+  }>;
+}): Promise<void> {
+  const { to, subject, html, attachments = [] } = options;
+
+  // Create email message
+  const boundary = "----=_NextPart_" + Math.random().toString(36);
+  const fromEmail = GMAIL_EMAIL;
+  
+  let message = `From: ${fromEmail}\r\n`;
+  message += `To: ${to}\r\n`;
+  message += `Subject: ${subject}\r\n`;
+  message += `MIME-Version: 1.0\r\n`;
+  message += `Content-Type: multipart/mixed; boundary="${boundary}"\r\n\r\n`;
+  
+  // HTML body
+  message += `--${boundary}\r\n`;
+  message += `Content-Type: text/html; charset=UTF-8\r\n`;
+  message += `Content-Transfer-Encoding: quoted-printable\r\n\r\n`;
+  message += html + "\r\n\r\n";
+  
+  // Add attachments
+  for (const attachment of attachments) {
+    message += `--${boundary}\r\n`;
+    message += `Content-Type: text/calendar; name="${attachment.filename}"\r\n`;
+    message += `Content-Transfer-Encoding: base64\r\n`;
+    message += `Content-Disposition: attachment; filename="${attachment.filename}"\r\n\r\n`;
+    message += btoa(attachment.content) + "\r\n\r\n";
+  }
+  
+  message += `--${boundary}--\r\n`;
+  
+  // Send via Gmail SMTP
+  const conn = await Deno.connect({
+    hostname: "smtp.gmail.com",
+    port: 587,
+  });
+
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  try {
+    // Start TLS connection
+    await conn.write(encoder.encode("EHLO lovable.dev\r\n"));
+    await readResponse(conn, decoder);
+    
+    await conn.write(encoder.encode("STARTTLS\r\n"));
+    await readResponse(conn, decoder);
+    
+    const tlsConn = await Deno.startTls(conn, { hostname: "smtp.gmail.com" });
+    
+    // Authenticate
+    await tlsConn.write(encoder.encode("EHLO lovable.dev\r\n"));
+    await readResponse(tlsConn, decoder);
+    
+    await tlsConn.write(encoder.encode("AUTH LOGIN\r\n"));
+    await readResponse(tlsConn, decoder);
+    
+    await tlsConn.write(encoder.encode(btoa(fromEmail!) + "\r\n"));
+    await readResponse(tlsConn, decoder);
+    
+    await tlsConn.write(encoder.encode(btoa(GMAIL_APP_PASSWORD!) + "\r\n"));
+    await readResponse(tlsConn, decoder);
+    
+    // Send email
+    await tlsConn.write(encoder.encode(`MAIL FROM:<${fromEmail}>\r\n`));
+    await readResponse(tlsConn, decoder);
+    
+    await tlsConn.write(encoder.encode(`RCPT TO:<${to}>\r\n`));
+    await readResponse(tlsConn, decoder);
+    
+    await tlsConn.write(encoder.encode("DATA\r\n"));
+    await readResponse(tlsConn, decoder);
+    
+    await tlsConn.write(encoder.encode(message + ".\r\n"));
+    await readResponse(tlsConn, decoder);
+    
+    await tlsConn.write(encoder.encode("QUIT\r\n"));
+    await readResponse(tlsConn, decoder);
+    
+    tlsConn.close();
+  } catch (error) {
+    conn.close();
+    throw error;
+  }
+}
+
+async function readResponse(conn: Deno.Conn, decoder: TextDecoder): Promise<string> {
+  const buffer = new Uint8Array(1024);
+  const bytesRead = await conn.read(buffer);
+  if (bytesRead === null) throw new Error("Connection closed");
+  return decoder.decode(buffer.subarray(0, bytesRead));
 }
 
 serve(handler);
