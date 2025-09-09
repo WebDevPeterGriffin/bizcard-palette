@@ -21,6 +21,7 @@ interface SocialLink {
 }
 
 interface CardData {
+  cardId: string;
   name: string;
   title: string;
   company: string;
@@ -32,6 +33,8 @@ interface CardData {
   slug: string;
   createdAt: string;
   headshotUrl?: string;
+  bookingEnabled: boolean;
+  bookingInstructions?: string;
 }
 
 const GeneratedCard = () => {
@@ -108,6 +111,7 @@ const GeneratedCard = () => {
       });
 
       setCardData({
+        cardId: data.id,
         name: data.full_name,
         title: data.role || '',
         company: data.company || '',
@@ -119,6 +123,8 @@ const GeneratedCard = () => {
         slug: data.slug,
         createdAt: data.created_at,
         headshotUrl: headshotUrl || '',
+        bookingEnabled: !!data.booking_enabled,
+        bookingInstructions: data.booking_instructions || '',
       });
       setLoading(false);
     };
@@ -140,6 +146,7 @@ const GeneratedCard = () => {
     if (!cardData) return null;
 
     const props = {
+      cardId: cardData.cardId,
       name: cardData.name,
       title: cardData.title,
       company: cardData.company,
@@ -148,6 +155,8 @@ const GeneratedCard = () => {
       website: cardData.website,
       socialLinks: cardData.socialLinks,
       headshotUrl: cardData.headshotUrl,
+      bookingEnabled: cardData.bookingEnabled,
+      bookingInstructions: cardData.bookingInstructions,
     };
 
     switch (cardData.style) {
