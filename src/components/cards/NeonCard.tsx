@@ -177,6 +177,7 @@ const NeonCard = ({
               headshotUrl={headshotUrl}
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
+              style="neon"
             />
           </div>
         )}

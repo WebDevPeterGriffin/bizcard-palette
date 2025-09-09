@@ -188,6 +188,7 @@ const BoldCard = ({
               headshotUrl={headshotUrl}
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
+              style="bold"
             />
           </div>
         )}

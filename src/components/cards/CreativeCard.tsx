@@ -211,6 +211,7 @@ const CreativeCard = ({
                 headshotUrl={headshotUrl}
                 bookingEnabled={bookingEnabled}
                 bookingInstructions={bookingInstructions}
+                style="creative"
               />
             </div>
           )}

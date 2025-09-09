@@ -180,6 +180,7 @@ const LiquidCard = ({
               headshotUrl={headshotUrl}
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
+              style="liquid"
             />
           </div>
         )}

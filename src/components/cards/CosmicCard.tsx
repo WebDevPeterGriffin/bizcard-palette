@@ -217,6 +217,7 @@ const CosmicCard = ({
               headshotUrl={headshotUrl}
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
+              style="cosmic"
             />
           </div>
         )}

@@ -182,6 +182,7 @@ const MinimalCard = ({
               headshotUrl={headshotUrl}
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
+              style="minimal"
             />
           </div>
         )}

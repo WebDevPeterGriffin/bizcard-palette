@@ -173,6 +173,7 @@ const FloatingCard = ({
               headshotUrl={headshotUrl}
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
+              style="floating"
             />
           </div>
         )}

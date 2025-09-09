@@ -185,19 +185,20 @@ const ElegantCard = ({
         {/* Contact Actions */}
         {cardId && (
           <div className="mt-6 border-t border-elegant-accent/20 pt-6">
-            <ContactActions
-              cardId={cardId}
-              name={name}
-              title={title}
-              company={company}
-              phone={phone}
-              email={email}
-              website={website}
-              socialLinks={displaySocialLinks}
-              headshotUrl={headshotUrl}
-              bookingEnabled={bookingEnabled}
-              bookingInstructions={bookingInstructions}
-            />
+              <ContactActions
+                cardId={cardId}
+                name={name}
+                title={title}
+                company={company}
+                phone={phone}
+                email={email}
+                website={website}
+                socialLinks={displaySocialLinks}
+                headshotUrl={headshotUrl}
+                bookingEnabled={bookingEnabled}
+                bookingInstructions={bookingInstructions}
+                style="elegant"
+              />
           </div>
         )}
       </CardContent>
