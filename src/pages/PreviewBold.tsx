@@ -41,7 +41,11 @@ const PreviewBold = () => {
             </div>
             
             <div className="flex justify-center">
-              <BoldCard />
+              <BoldCard 
+                cardId="preview-bold"
+                bookingEnabled={true}
+                bookingInstructions="Please select your preferred time slot. I'm available Monday-Friday, 9 AM - 5 PM EST."
+              />
             </div>
 
             <div className="mt-8 text-center">

@@ -41,7 +41,11 @@ const PreviewCreative = () => {
             </div>
             
             <div className="flex justify-center">
-              <CreativeCard />
+              <CreativeCard 
+                cardId="preview-creative"
+                bookingEnabled={true}
+                bookingInstructions="Ready to bring your creative vision to life? Book a discovery call and let's make something amazing together!"
+              />
             </div>
 
             <div className="mt-8 text-center">

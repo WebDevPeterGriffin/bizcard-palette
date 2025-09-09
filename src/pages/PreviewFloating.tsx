@@ -44,7 +44,11 @@ const PreviewFloating = () => {
         {/* Full Screen Preview */}
         <div className="relative flex-1 flex items-center justify-center p-4 z-10">
           <div className="w-full h-full max-w-lg max-h-screen">
-            <FloatingCard />
+            <FloatingCard 
+              cardId="preview-floating"
+              bookingEnabled={true}
+              bookingInstructions="I'm here to help you achieve your goals. Schedule a peaceful consultation at your convenience."
+            />
           </div>
         </div>
       </div>

@@ -42,7 +42,11 @@ const PreviewLiquid = () => {
         {/* Full Screen Preview */}
         <div className="relative flex-1 flex items-center justify-center p-4 z-10">
           <div className="w-full h-full max-w-lg max-h-screen">
-            <LiquidCard />
+            <LiquidCard 
+              cardId="preview-liquid"
+              bookingEnabled={true}
+              bookingInstructions="Let's flow into a productive conversation. Book your session and let's create something fluid and dynamic!"
+            />
           </div>
         </div>
       </div>

@@ -44,7 +44,11 @@ const PreviewCosmic = () => {
         {/* Full Screen Preview */}
         <div className="relative flex-1 flex items-center justify-center p-4 z-10">
           <div className="w-full h-full max-w-lg max-h-screen">
-            <CosmicCard />
+            <CosmicCard 
+              cardId="preview-cosmic"
+              bookingEnabled={true}
+              bookingInstructions="Ready to explore infinite possibilities? Schedule a cosmic consultation and let's launch your project into orbit!"
+            />
           </div>
         </div>
       </div>

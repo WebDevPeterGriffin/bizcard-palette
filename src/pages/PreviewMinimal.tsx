@@ -42,6 +42,7 @@ const PreviewMinimal = () => {
             
             <div className="flex justify-center">
               <MinimalCard 
+                cardId="preview-minimal"
                 name="Sarah Johnson"
                 title="Senior Product Manager"
                 company="Tech Innovations Inc."
@@ -50,6 +51,8 @@ const PreviewMinimal = () => {
                 website="www.sarahjohnson.com"
                 linkedin="linkedin.com/in/sarahjohnson"
                 twitter="@sarahjohnson"
+                bookingEnabled={true}
+                bookingInstructions="Let's schedule a time to discuss your project needs. I'm available for consultations Monday through Friday."
               />
             </div>
 
