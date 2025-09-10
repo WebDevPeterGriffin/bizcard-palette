@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Resend } from "npm:resend@2.0.0";
 import { corsHeaders } from "../_shared/cors.ts";
 
 const supabase = createClient(
@@ -7,9 +8,8 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
-// Gmail SMTP configuration
-const GMAIL_EMAIL = Deno.env.get("GMAIL_EMAIL") ?? "";
-const GMAIL_APP_PASSWORD = Deno.env.get("GMAIL_APP_PASSWORD") ?? "";
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const RESEND_FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "MildTech Studios <notifications@yourdomain.com>";
 
 interface BookingRequest {
   card_id: string;
@@ -232,7 +232,7 @@ END:VCALENDAR`;
   return ics;
 }
 
-// Simplified email sending using fetch (no external dependencies)
+// Send email using Resend
 async function sendEmailSimple(options: {
   to: string;
   subject: string;
@@ -240,20 +240,20 @@ async function sendEmailSimple(options: {
 }): Promise<void> {
   const { to, subject, text } = options;
 
-  if (!GMAIL_EMAIL || !GMAIL_APP_PASSWORD) {
-    throw new Error("Gmail credentials are not configured");
-  }
+  try {
+    const emailResponse = await resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to: [to],
+      subject: subject,
+      html: text.replace(/\n/g, '<br>'),
+      text: text,
+    });
 
-  // Use a simple HTTP email service or fallback approach
-  // For now, we'll just log the email instead of actually sending it
-  // until we get proper SMTP working
-  console.log(`Email would be sent to: ${to}`);
-  console.log(`Subject: ${subject}`);
-  console.log(`Body: ${text}`);
-  console.log(`From: MildTech Studios <${GMAIL_EMAIL}>`);
-  
-  // Simulate successful email sending for now
-  await new Promise(resolve => setTimeout(resolve, 100));
+    console.log("Email sent successfully:", emailResponse);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 }
 
 serve(handler);
