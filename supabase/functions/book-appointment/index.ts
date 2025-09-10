@@ -9,7 +9,7 @@ const supabase = createClient(
 );
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-const RESEND_FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "MildTech Studios <notifications@dbc.mildtechstudios.com>";
+const RESEND_FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "MildTech Studios <onboarding@resend.dev>";
 
 interface BookingRequest {
   card_id: string;
@@ -241,7 +241,7 @@ async function sendEmailSimple(options: {
   const { to, subject, text } = options;
 
   try {
-    const emailResponse = await resend.emails.send({
+    const { data, error: sendError } = await resend.emails.send({
       from: RESEND_FROM_EMAIL,
       to: [to],
       subject: subject,
@@ -249,7 +249,12 @@ async function sendEmailSimple(options: {
       text: text,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    if (sendError) {
+      console.error("Resend send error:", sendError);
+      throw new Error(sendError.message ?? "Failed to send email");
+    }
+
+    console.log("Email sent successfully:", data);
   } catch (error) {
     console.error("Error sending email:", error);
     throw error;
