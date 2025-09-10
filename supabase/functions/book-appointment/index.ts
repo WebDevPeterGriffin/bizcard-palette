@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "npm:resend@4.0.0";
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 
 const supabase = createClient(
@@ -8,10 +8,21 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
-// Resend configuration
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
-const RESEND_FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "Lovable <onboarding@resend.dev>";
-const resend = new Resend(RESEND_API_KEY);
+// Gmail SMTP configuration
+const GMAIL_EMAIL = Deno.env.get("GMAIL_EMAIL") ?? "";
+const GMAIL_APP_PASSWORD = Deno.env.get("GMAIL_APP_PASSWORD") ?? "";
+
+const client = new SMTPClient({
+  connection: {
+    hostname: "smtp.gmail.com",
+    port: 587,
+    tls: true,
+    auth: {
+      username: GMAIL_EMAIL,
+      password: GMAIL_APP_PASSWORD,
+    },
+  },
+});
 
 interface BookingRequest {
   card_id: string;
@@ -108,9 +119,9 @@ const handler = async (req: Request): Promise<Response> => {
       attendee: bookingData.visitor_email,
     });
 
-    // Send confirmation email to visitor (via Resend)
+    // Send confirmation email to visitor (via Gmail SMTP)
     try {
-      await sendEmailResend({
+      await sendEmailGmail({
         to: bookingData.visitor_email,
         subject: `Appointment Confirmation with ${card.full_name}`,
         html: `
@@ -139,7 +150,7 @@ const handler = async (req: Request): Promise<Response> => {
           <p>Best regards,<br>${card.full_name}</p>
         `,
         attachments: [
-          { filename: "appointment.ics", content: icsContent, type: "text/calendar" },
+          { filename: "appointment.ics", content: icsContent },
         ],
       });
     } catch (emailError) {
@@ -149,7 +160,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send notification email to card owner (if they have an email)
     if (card.email) {
       try {
-        await sendEmailResend({
+        await sendEmailGmail({
           to: card.email,
           subject: `New Appointment Booking from ${bookingData.visitor_name}`,
           html: `
@@ -174,10 +185,10 @@ const handler = async (req: Request): Promise<Response> => {
             
             <p>Please reach out to ${bookingData.visitor_name} to confirm the appointment details.</p>
             
-            <p>Best regards,<br>Your Digital Business Card System</p>
+            <p>Best regards,<br>MildTech Studios</p>
           `,
           attachments: [
-            { filename: "appointment.ics", content: icsContent, type: "text/calendar" },
+            { filename: "appointment.ics", content: icsContent },
           ],
         });
       } catch (emailError) {
@@ -245,38 +256,41 @@ END:VCALENDAR`;
   return ics;
 }
 
-// Resend email sending function
-async function sendEmailResend(options: {
+// Gmail SMTP email sending function
+async function sendEmailGmail(options: {
   to: string;
   subject: string;
   html: string;
   attachments?: Array<{
     filename: string;
     content: string;
-    type?: string;
   }>;
 }): Promise<void> {
   const { to, subject, html, attachments = [] } = options;
 
-  if (!RESEND_API_KEY) {
-    throw new Error("RESEND_API_KEY is not configured");
+  if (!GMAIL_EMAIL || !GMAIL_APP_PASSWORD) {
+    throw new Error("Gmail credentials are not configured");
   }
 
-  const res: any = await resend.emails.send({
-    from: RESEND_FROM_EMAIL,
+  const emailOptions: any = {
+    from: `MildTech Studios <${GMAIL_EMAIL}>`,
     to: [to],
     subject,
+    content: "text/html",
     html,
-    attachments: attachments.map((a) => ({
-      filename: a.filename,
-      content: a.content,
-      contentType: a.type ?? "text/plain",
-    })),
-  } as any);
+  };
 
-  if (res?.error) {
-    throw new Error(res.error?.message || "Resend email error");
+  // Add attachments if provided
+  if (attachments.length > 0) {
+    emailOptions.attachments = attachments.map((attachment) => ({
+      filename: attachment.filename,
+      content: attachment.content,
+      encoding: "base64",
+      contentType: "text/calendar",
+    }));
   }
+
+  await client.send(emailOptions);
 }
 
 serve(handler);
