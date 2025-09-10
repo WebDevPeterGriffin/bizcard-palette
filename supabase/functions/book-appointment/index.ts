@@ -9,7 +9,18 @@ const supabase = createClient(
 );
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-const RESEND_FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "MildTech Studios <onboarding@resend.dev>";
+const DEFAULT_FROM = "MildTech Studios <onboarding@resend.dev>";
+const envFrom = Deno.env.get("RESEND_FROM_EMAIL")?.trim();
+function isValidFrom(from?: string | null): boolean {
+  if (!from) return false;
+  const simpleEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const nameEmail = /^.{1,100}\s<[^\s@]+@[^\s@]+\.[^\s@]+>$/;
+  return simpleEmail.test(from) || nameEmail.test(from);
+}
+const RESEND_FROM_EMAIL = isValidFrom(envFrom) ? (envFrom as string) : DEFAULT_FROM;
+if (!envFrom || !isValidFrom(envFrom)) {
+  console.log("Resend: using default 'from' address (onboarding@resend.dev)");
+}
 
 interface BookingRequest {
   card_id: string;
@@ -241,6 +252,7 @@ async function sendEmailSimple(options: {
   const { to, subject, text } = options;
 
   try {
+    console.log("Resend: sending email", { to, subject });
     const { data, error: sendError } = await resend.emails.send({
       from: RESEND_FROM_EMAIL,
       to: [to],
