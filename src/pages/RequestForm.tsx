@@ -93,6 +93,7 @@ const RequestForm = () => {
           website: formData.website,
           style_id: formData.style_id,
           slug: slug,
+          booking_enabled: true,
           socials: Object.fromEntries(
             socialLinks.map(link => [link.platform, link.url])
           )
