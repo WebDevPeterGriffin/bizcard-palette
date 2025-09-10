@@ -9,7 +9,7 @@ const supabase = createClient(
 );
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-const RESEND_FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "MildTech Studios <notifications@yourdomain.com>";
+const RESEND_FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "MildTech Studios <notifications@mildtechstudios.com>";
 
 interface BookingRequest {
   card_id: string;
