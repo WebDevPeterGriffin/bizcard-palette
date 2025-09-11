@@ -16,12 +16,12 @@ const PreviewLiquid = () => {
       />
       
       <div className="min-h-screen bg-gradient-liquid-bg flex flex-col relative overflow-hidden">
-        {/* Full screen liquid effects */}
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-10 left-1/4 w-20 h-20 bg-liquid-primary/30 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute top-1/3 right-10 w-16 h-16 bg-liquid-secondary/30 rounded-full blur-xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-1/4 left-10 w-24 h-24 bg-liquid-tertiary/30 rounded-full blur-xl animate-pulse delay-2000"></div>
-          <div className="absolute bottom-10 right-1/3 w-18 h-18 bg-liquid-primary/30 rounded-full blur-xl animate-pulse delay-500"></div>
+        {/* Subtle liquid effects */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-1/4 w-16 h-16 bg-liquid-primary/20 rounded-full blur-lg animate-pulse"></div>
+          <div className="absolute top-1/3 right-10 w-12 h-12 bg-liquid-secondary/20 rounded-full blur-lg animate-pulse delay-1000"></div>
+          <div className="absolute bottom-1/4 left-10 w-20 h-20 bg-liquid-tertiary/20 rounded-full blur-lg animate-pulse delay-2000"></div>
+          <div className="absolute bottom-10 right-1/3 w-14 h-14 bg-liquid-primary/20 rounded-full blur-lg animate-pulse delay-500"></div>
         </div>
         {/* Header */}
         <div className="relative border-b border-liquid-primary/30 bg-black/50 backdrop-blur z-10">

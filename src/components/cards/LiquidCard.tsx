@@ -51,27 +51,25 @@ const LiquidCard = ({
 
   return (
     <div className="relative w-80 h-auto min-h-[26rem]">
-      {/* Animated liquid background */}
+      {/* Subtle animated liquid background */}
       <div className="absolute inset-0 overflow-hidden rounded-lg">
-        {/* Flowing background waves */}
-        <div className="absolute inset-0 bg-gradient-liquid animate-liquid-flow"></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-liquid-secondary/30 to-liquid-tertiary/50 animate-liquid-flow-reverse"></div>
+        {/* Flowing background waves - more subtle */}
+        <div className="absolute inset-0 bg-gradient-liquid-bg animate-liquid-flow"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-liquid-primary/10 to-liquid-secondary/15 animate-liquid-flow-reverse"></div>
         
-        {/* Floating bubbles */}
-        <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-white/30 rounded-full animate-bubble-float"></div>
-        <div className="absolute top-3/4 right-1/4 w-6 h-6 bg-white/20 rounded-full animate-bubble-float-delayed"></div>
-        <div className="absolute top-1/2 left-1/6 w-3 h-3 bg-white/40 rounded-full animate-bubble-float-slow"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-2 h-2 bg-white/50 rounded-full animate-bubble-float"></div>
+        {/* Fewer, more subtle floating bubbles */}
+        <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-white/20 rounded-full animate-bubble-float"></div>
+        <div className="absolute top-3/4 right-1/4 w-4 h-4 bg-white/15 rounded-full animate-bubble-float-delayed"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-2 h-2 bg-white/25 rounded-full animate-bubble-float"></div>
         
-        {/* Liquid drops */}
-        <Droplets className="absolute top-8 right-8 h-6 w-6 text-white/40 animate-drip" />
-        <Circle className="absolute bottom-8 left-8 h-4 w-4 text-white/30 animate-pulse" />
-        <Waves className="absolute top-1/2 right-4 h-5 w-5 text-white/40 animate-wave" />
+        {/* Subtle liquid drops */}
+        <Droplets className="absolute top-8 right-8 h-5 w-5 text-white/20 animate-drip" />
+        <Waves className="absolute bottom-8 left-8 h-4 w-4 text-white/25 animate-wave" />
       </div>
 
-      {/* Main content card with liquid morphing effect */}
-      <Card className="relative z-10 w-full h-auto min-h-[26rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden animate-morph">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent animate-shimmer"></div>
+      {/* Main content card with subtle liquid morphing effect */}
+      <Card className="relative z-10 w-full h-auto min-h-[26rem] bg-white/15 backdrop-blur-lg border border-white/30 shadow-2xl overflow-hidden animate-morph">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent animate-shimmer"></div>
         
         <div className="relative z-10 p-6 pb-6 flex flex-col text-white">
           {/* Morphing header */}
@@ -87,21 +85,21 @@ const LiquidCard = ({
                   <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 animate-liquid-overlay"></div>
                 </div>
               ) : (
-                <div className="w-20 h-20 mx-auto rounded-full border-2 border-white/50 bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center shadow-xl animate-liquid-morph backdrop-blur-sm">
-                  <span className="text-2xl font-bold text-white">{name.charAt(0)}</span>
+                <div className="w-20 h-20 mx-auto rounded-full border-2 border-white/60 bg-gradient-to-br from-white/30 to-white/20 flex items-center justify-center shadow-xl animate-liquid-morph backdrop-blur-sm">
+                  <span className="text-2xl font-bold text-white drop-shadow-lg">{name.charAt(0)}</span>
                 </div>
               )}
               {/* Liquid ripple effect */}
               <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ripple"></div>
             </div>
             
-            <h2 className="text-xl font-bold text-white mb-1 animate-text-wave" style={{animationDelay: '0.2s'}}>
+            <h2 className="text-xl font-bold text-white mb-1 animate-text-wave drop-shadow-md" style={{animationDelay: '0.2s'}}>
               {name}
             </h2>
-            <p className="text-white/90 text-sm font-medium mb-1 animate-text-wave" style={{animationDelay: '0.4s'}}>
+            <p className="text-white/95 text-sm font-medium mb-1 animate-text-wave drop-shadow-sm" style={{animationDelay: '0.4s'}}>
               {title}
             </p>
-            <p className="text-white/80 text-xs animate-text-wave" style={{animationDelay: '0.6s'}}>
+            <p className="text-white/90 text-xs animate-text-wave drop-shadow-sm" style={{animationDelay: '0.6s'}}>
               {company}
             </p>
           </div>
@@ -110,12 +108,12 @@ const LiquidCard = ({
           <div className="space-y-4 mb-6 flex-1">
             {phone && (
               <div className="flex items-center space-x-3 animate-flow-in hover:scale-105 transition-all duration-500" style={{animationDelay: '0.8s'}}>
-                <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-all duration-300 animate-liquid-pulse">
-                  <Phone className="h-4 w-4 text-white" />
+                <div className="w-8 h-8 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-all duration-300 animate-liquid-pulse border border-white/40">
+                  <Phone className="h-4 w-4 text-white drop-shadow-sm" />
                 </div>
                 <a 
                   href={`tel:${phone}`} 
-                  className="text-sm text-white/90 hover:text-white transition-colors duration-200 truncate"
+                  className="text-sm text-white/95 hover:text-white transition-colors duration-200 truncate drop-shadow-sm"
                 >
                   {phone}
                 </a>
@@ -124,12 +122,12 @@ const LiquidCard = ({
             
             {email && (
               <div className="flex items-center space-x-3 animate-flow-in hover:scale-105 transition-all duration-500" style={{animationDelay: '1s'}}>
-                <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-all duration-300 animate-liquid-pulse">
-                  <Mail className="h-4 w-4 text-white" />
+                <div className="w-8 h-8 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-all duration-300 animate-liquid-pulse border border-white/40">
+                  <Mail className="h-4 w-4 text-white drop-shadow-sm" />
                 </div>
                 <a 
                   href={`mailto:${email}`} 
-                  className="text-sm text-white/90 hover:text-white transition-colors duration-200 truncate"
+                  className="text-sm text-white/95 hover:text-white transition-colors duration-200 truncate drop-shadow-sm"
                 >
                   {email}
                 </a>
@@ -138,14 +136,14 @@ const LiquidCard = ({
             
             {website && (
               <div className="flex items-center space-x-3 animate-flow-in hover:scale-105 transition-all duration-500" style={{animationDelay: '1.2s'}}>
-                <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-all duration-300 animate-liquid-pulse">
-                  <Globe className="h-4 w-4 text-white" />
+                <div className="w-8 h-8 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-all duration-300 animate-liquid-pulse border border-white/40">
+                  <Globe className="h-4 w-4 text-white drop-shadow-sm" />
                 </div>
                 <a 
                   href={`https://${website}`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-sm text-white/90 hover:text-white transition-colors duration-200 truncate"
+                  className="text-sm text-white/95 hover:text-white transition-colors duration-200 truncate drop-shadow-sm"
                 >
                   {website}
                 </a>
@@ -162,7 +160,7 @@ const LiquidCard = ({
                   href={buildSocialUrl(social.platform, social.url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-white/15 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white hover:bg-white/25 hover:border-white/50 transition-all duration-300 hover:scale-105 animate-liquid-bubble"
+                  className="w-9 h-9 rounded-full bg-white/25 backdrop-blur-sm border border-white/40 flex items-center justify-center text-white hover:bg-white/35 hover:border-white/60 transition-all duration-300 hover:scale-105 animate-liquid-bubble"
                   style={{animationDelay: `${1.6 + index * 0.2}s`}}
                 >
                   <SocialIcon platform={social.platform} className="h-3.5 w-3.5" />
