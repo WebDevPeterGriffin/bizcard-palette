@@ -35,6 +35,10 @@ const SEO = ({
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       
+      {/* PWA Home Screen Title */}
+      <meta name="apple-mobile-web-app-title" content={title} />
+      <meta name="application-name" content={title} />
+      
       {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
