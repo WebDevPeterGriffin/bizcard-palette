@@ -103,7 +103,7 @@ const ElegantCard = ({
         {/* Header with gold accent line */}
         <div className="border-b-2 border-elegant-accent pb-6 mb-6">
           <div className="text-center">
-            <div className="mx-auto mb-4 h-20 w-20 rounded-full bg-elegant-accent/20 flex items-center justify-center border-2 border-elegant-accent/30 overflow-hidden">
+            <div className="mx-auto mb-4 h-28 w-28 md:h-20 md:w-20 rounded-full bg-elegant-accent/20 flex items-center justify-center border-2 border-elegant-accent/30 overflow-hidden">
               {headshotUrl ? (
                 <img 
                   src={headshotUrl} 
