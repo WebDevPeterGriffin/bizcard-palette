@@ -250,7 +250,7 @@ const GeneratedCard = () => {
       case 'floating':
         return 'bg-gradient-to-br from-blue-50 to-indigo-100';
       case 'liquid':
-        return 'bg-gradient-to-br from-cyan-500/10 via-teal-500/10 to-blue-500/10';
+        return 'bg-gradient-liquid-bg';
       case 'cosmic':
         return 'bg-gradient-to-b from-black via-indigo-950 to-black';
       default:
@@ -289,10 +289,11 @@ const GeneratedCard = () => {
         );
       case 'liquid':
         return (
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 via-teal-400/20 to-blue-400/20 animate-[pulse_6s_ease-in-out_infinite]" />
-            <div className="absolute -top-10 -left-10 w-64 h-64 bg-cyan-300/20 rounded-full blur-3xl animate-[spin_20s_linear_infinite]" />
-            <div className="absolute -bottom-10 -right-10 w-72 h-72 bg-teal-300/20 rounded-full blur-3xl animate-[spin_25s_linear_infinite_reverse]" />
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-10 left-1/4 w-16 h-16 bg-liquid-primary/20 rounded-full blur-lg animate-pulse"></div>
+            <div className="absolute top-1/3 right-10 w-12 h-12 bg-liquid-secondary/20 rounded-full blur-lg animate-pulse delay-1000"></div>
+            <div className="absolute bottom-1/4 left-10 w-20 h-20 bg-liquid-tertiary/20 rounded-full blur-lg animate-pulse delay-2000"></div>
+            <div className="absolute bottom-10 right-1/3 w-14 h-14 bg-liquid-primary/20 rounded-full blur-lg animate-pulse delay-500"></div>
           </div>
         );
       case 'cosmic':
