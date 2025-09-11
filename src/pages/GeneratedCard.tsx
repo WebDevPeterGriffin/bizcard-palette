@@ -11,6 +11,7 @@ import FloatingCard from "@/components/cards/FloatingCard";
 import LiquidCard from "@/components/cards/LiquidCard";
 import CosmicCard from "@/components/cards/CosmicCard";
 import QRCodeGenerator from "@/components/QRCodeGenerator";
+import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -312,83 +313,139 @@ const GeneratedCard = () => {
     }
   };
 
+  const generateSEOData = () => {
+    if (!cardData) return null;
+
+    // Generate dynamic title
+    const title = cardData.title && cardData.company 
+      ? `${cardData.name} - ${cardData.title} at ${cardData.company} | Digital Business Card`
+      : cardData.title
+      ? `${cardData.name} - ${cardData.title} | Digital Business Card`
+      : `${cardData.name}'s Digital Business Card`;
+
+    // Generate dynamic description
+    const description = cardData.title && cardData.company
+      ? `Connect with ${cardData.name}, ${cardData.title} at ${cardData.company}. View contact information, social links${cardData.bookingEnabled ? ', and book appointments' : ''}.`
+      : cardData.title
+      ? `Connect with ${cardData.name}, ${cardData.title}. View contact information, social links${cardData.bookingEnabled ? ', and book appointments' : ''}.`
+      : `Connect with ${cardData.name}. View contact information, social links${cardData.bookingEnabled ? ', and book appointments' : ''}.`;
+
+    // Generate dynamic keywords
+    const keywords = [
+      cardData.name.toLowerCase(),
+      cardData.title?.toLowerCase(),
+      cardData.company?.toLowerCase(),
+      'digital business card',
+      'virtual business card',
+      'contactless networking',
+      'QR code card'
+    ].filter(Boolean).join(', ');
+
+    // JSON-LD Person schema
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": cardData.name,
+      ...(cardData.title && { "jobTitle": cardData.title }),
+      ...(cardData.company && { "worksFor": { "@type": "Organization", "name": cardData.company } }),
+      ...(cardData.email && { "email": cardData.email }),
+      ...(cardData.phone && { "telephone": cardData.phone }),
+      ...(cardData.website && { "url": cardData.website }),
+      ...(cardData.headshotUrl && { "image": cardData.headshotUrl }),
+      "sameAs": cardData.socialLinks.map(link => link.url),
+      "additionalType": "BusinessCard"
+    };
+
+    return {
+      title,
+      description,
+      keywords,
+      canonical: `/${cardData.slug}`,
+      image: cardData.headshotUrl || '/og-image.jpg',
+      jsonLd
+    };
+  };
+
   return (
-    <div className={`relative min-h-screen overflow-hidden ${getBackgroundClass()}`}>
-      {renderBackgroundLayers()}
-      <div className="relative z-10 p-4">
-        <div className="container mx-auto max-w-4xl">
-          {/* Header */}
-          <div className="mb-8 flex justify-end">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleShare}
-              className={(cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
-                "bg-white/10 text-white border-white/30 hover:bg-white/20" : 
-                ""
-              }
-            >
-              <Share2 className="mr-2 h-4 w-4" />
-              Share
-            </Button>
-          </div>
-
-          {/* Card Display */}
-          <div className="flex justify-center mb-8">
-            {renderCard()}
-          </div>
-
-          {/* QR Code Section */}
-          <div className="flex justify-center mb-8">
-            <div className={`rounded-lg p-6 ${
-              (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
-                'bg-white/10 backdrop-blur-sm border border-white/20' : 
-                'bg-white/80 shadow-card'
-            }`}>
-              <h3 className={`text-lg font-semibold mb-4 text-center ${
-                (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 'text-white' : ''
-              }`}>
-                Scan to View Card
-              </h3>
-              <QRCodeGenerator url={window.location.href} size={200} showControls={false} />
-            </div>
-          </div>
-
-          {/* Small Brand CTA */}
-          <div className="mt-6 text-center">
-            <div className={`rounded-lg p-3 ${
-              (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
-                'bg-white/5 backdrop-blur-sm border border-white/10' : 
-                'bg-white/60 shadow-sm'
-            }`}>
-              <p className={`text-xs mb-2 ${
-                (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 'text-white/70' : 'text-muted-foreground'
-              }`}>
-                Want your own digital business card?
-              </p>
+    <>
+      {cardData && <SEO {...generateSEOData()!} />}
+      <div className={`relative min-h-screen overflow-hidden ${getBackgroundClass()}`}>
+        {renderBackgroundLayers()}
+        <div className="relative z-10 p-4">
+          <div className="container mx-auto max-w-4xl">
+            {/* Header */}
+            <div className="mb-8 flex justify-end">
               <Button 
-                onClick={() => navigate('/')}
+                variant="outline" 
                 size="sm"
-                variant="outline"
+                onClick={handleShare}
                 className={(cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
-                  "bg-white/10 text-white/80 border-white/20 hover:bg-white/20 text-xs" : 
-                  "text-xs"
+                  "bg-white/10 text-white border-white/30 hover:bg-white/20" : 
+                  ""
                 }
               >
-                Create Your Own
+                <Share2 className="mr-2 h-4 w-4" />
+                Share
               </Button>
+            </div>
+
+            {/* Card Display */}
+            <div className="flex justify-center mb-8">
+              {renderCard()}
+            </div>
+
+            {/* QR Code Section */}
+            <div className="flex justify-center mb-8">
+              <div className={`rounded-lg p-6 ${
+                (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
+                  'bg-white/10 backdrop-blur-sm border border-white/20' : 
+                  'bg-white/80 shadow-card'
+              }`}>
+                <h3 className={`text-lg font-semibold mb-4 text-center ${
+                  (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 'text-white' : ''
+                }`}>
+                  Scan to View Card
+                </h3>
+                <QRCodeGenerator url={window.location.href} size={200} showControls={false} />
+              </div>
+            </div>
+
+            {/* Small Brand CTA */}
+            <div className="mt-6 text-center">
+              <div className={`rounded-lg p-3 ${
+                (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
+                  'bg-white/5 backdrop-blur-sm border border-white/10' : 
+                  'bg-white/60 shadow-sm'
+              }`}>
+                <p className={`text-xs mb-2 ${
+                  (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 'text-white/70' : 'text-muted-foreground'
+                }`}>
+                  Want your own digital business card?
+                </p>
+                <Button 
+                  onClick={() => navigate('/')}
+                  size="sm"
+                  variant="outline"
+                  className={(cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
+                    "bg-white/10 text-white/80 border-white/20 hover:bg-white/20 text-xs" : 
+                    "text-xs"
+                  }
+                >
+                  Create Your Own
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @keyframes grid-move { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 20px); } }
-        @keyframes star-move { 0% { transform: translateX(0px) translateY(0px); } 100% { transform: translateX(-200px) translateY(-100px); } }
-        `
-      }} />
-    </div>
+        <style dangerouslySetInnerHTML={{
+          __html: `
+          @keyframes grid-move { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 20px); } }
+          @keyframes star-move { 0% { transform: translateX(0px) translateY(0px); } 100% { transform: translateX(-200px) translateY(-100px); } }
+          `
+        }} />
+      </div>
+    </>
   );
 };
 
