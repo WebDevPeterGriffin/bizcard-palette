@@ -32,12 +32,12 @@ All colors MUST be HSL.
     --creative-accent: 280 100% 70%;
     --creative-accent-foreground: 0 0% 100%;
     
-    --liquid-primary: 200 100% 60%;
-    --liquid-secondary: 180 100% 50%;
-    --liquid-tertiary: 195 100% 65%;
-    --liquid-bg-start: 280 100% 15%;
-    --liquid-bg-mid: 320 100% 20%;
-    --liquid-bg-end: 0 100% 25%;
+    --liquid-primary: 200 100% 70%;
+    --liquid-secondary: 220 100% 75%;
+    --liquid-tertiary: 240 100% 80%;
+    --liquid-bg-start: 220 100% 15%;
+    --liquid-bg-mid: 200 100% 25%;
+    --liquid-bg-end: 180 100% 35%;
     
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(var(--brand-primary)) 0%, hsl(var(--brand-secondary)) 50%, hsl(var(--brand-accent)) 100%);
