@@ -104,43 +104,49 @@ const NeonCard = ({
 
         {/* Contact Info with glowing effects */}
         <div className="space-y-3 mb-6 flex-1">
-          <div className="flex items-center space-x-3 group/item hover:scale-105 transition-transform duration-200">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center group-hover/item:shadow-lg group-hover/item:shadow-cyan-500/50 transition-all duration-300">
-              <Phone className="h-4 w-4 text-white" />
+          {phone && (
+            <div className="flex items-center space-x-3 group/item hover:scale-105 transition-transform duration-200">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center group-hover/item:shadow-lg group-hover/item:shadow-cyan-500/50 transition-all duration-300">
+                <Phone className="h-4 w-4 text-white" />
+              </div>
+              <a 
+                href={`tel:${phone}`} 
+                className="text-sm text-gray-300 hover:text-cyan-300 transition-colors duration-200 truncate"
+              >
+                {phone}
+              </a>
             </div>
-            <a 
-              href={`tel:${phone}`} 
-              className="text-sm text-gray-300 hover:text-cyan-300 transition-colors duration-200 truncate"
-            >
-              {phone}
-            </a>
-          </div>
+          )}
           
-          <div className="flex items-center space-x-3 group/item hover:scale-105 transition-transform duration-200">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center group-hover/item:shadow-lg group-hover/item:shadow-purple-500/50 transition-all duration-300">
-              <Mail className="h-4 w-4 text-white" />
+          {email && (
+            <div className="flex items-center space-x-3 group/item hover:scale-105 transition-transform duration-200">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center group-hover/item:shadow-lg group-hover/item:shadow-purple-500/50 transition-all duration-300">
+                <Mail className="h-4 w-4 text-white" />
+              </div>
+              <a 
+                href={`mailto:${email}`} 
+                className="text-sm text-gray-300 hover:text-purple-300 transition-colors duration-200 truncate"
+              >
+                {email}
+              </a>
             </div>
-            <a 
-              href={`mailto:${email}`} 
-              className="text-sm text-gray-300 hover:text-purple-300 transition-colors duration-200 truncate"
-            >
-              {email}
-            </a>
-          </div>
+          )}
           
-          <div className="flex items-center space-x-3 group/item hover:scale-105 transition-transform duration-200">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 flex items-center justify-center group-hover/item:shadow-lg group-hover/item:shadow-pink-500/50 transition-all duration-300">
-              <Globe className="h-4 w-4 text-white" />
+          {website && (
+            <div className="flex items-center space-x-3 group/item hover:scale-105 transition-transform duration-200">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 flex items-center justify-center group-hover/item:shadow-lg group-hover/item:shadow-pink-500/50 transition-all duration-300">
+                <Globe className="h-4 w-4 text-white" />
+              </div>
+              <a 
+                href={`https://${website}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-sm text-gray-300 hover:text-pink-300 transition-colors duration-200 truncate"
+              >
+                {website}
+              </a>
             </div>
-            <a 
-              href={`https://${website}`} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-sm text-gray-300 hover:text-pink-300 transition-colors duration-200 truncate"
-            >
-              {website}
-            </a>
-          </div>
+          )}
         </div>
 
         {/* Social Links with electric animations */}
