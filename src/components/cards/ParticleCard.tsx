@@ -13,29 +13,29 @@ interface SocialLink {
 
 interface ParticleCardProps {
   cardId?: string;
-  name: string;
-  title: string;
-  company: string;
-  phone: string;
-  email: string;
-  website: string;
-  location: string;
+  name?: string;
+  title?: string;
+  company?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  location?: string;
   headshotUrl?: string;
-  socialLinks: SocialLink[];
+  socialLinks?: SocialLink[];
   slug?: string;
 }
 
 export const ParticleCard = ({
   cardId,
-  name,
-  title,
-  company,
-  phone,
-  email,
-  website,
-  location,
+  name = "Jane Smith",
+  title = "Data Scientist",
+  company = "Analytics Corp",
+  phone = "+1 (555) 987-6543",
+  email = "jane@analytics.com",
+  website = "www.janesmith.com",
+  location = "New York, NY",
   headshotUrl,
-  socialLinks,
+  socialLinks = [],
   slug
 }: ParticleCardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);

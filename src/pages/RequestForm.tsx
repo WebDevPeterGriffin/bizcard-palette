@@ -40,7 +40,10 @@ const RequestForm = () => {
     { id: "neon", name: "Neon Cyber" },
     { id: "floating", name: "Floating Cloud" },
     { id: "liquid", name: "Liquid Morph" },
-    { id: "cosmic", name: "Cosmic Space" }
+    { id: "cosmic", name: "Cosmic Space" },
+    { id: "holographic", name: "Holographic Glow" },
+    { id: "particle", name: "Particle Storm" },
+    { id: "morphing", name: "Morphing Liquid" }
   ];
 
   const generateSlug = (name: string) => {

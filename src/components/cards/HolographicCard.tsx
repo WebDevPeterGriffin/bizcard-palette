@@ -12,29 +12,29 @@ interface SocialLink {
 
 interface HolographicCardProps {
   cardId?: string;
-  name: string;
-  title: string;
-  company: string;
-  phone: string;
-  email: string;
-  website: string;
-  location: string;
+  name?: string;
+  title?: string;
+  company?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  location?: string;
   headshotUrl?: string;
-  socialLinks: SocialLink[];
+  socialLinks?: SocialLink[];
   slug?: string;
 }
 
 export const HolographicCard = ({
   cardId,
-  name,
-  title,
-  company,
-  phone,
-  email,
-  website,
-  location,
+  name = "John Doe",
+  title = "Software Engineer",
+  company = "Tech Company",
+  phone = "+1 (555) 123-4567",
+  email = "john@tech.com",
+  website = "www.johndoe.com",
+  location = "San Francisco, CA",
   headshotUrl,
-  socialLinks,
+  socialLinks = [],
   slug
 }: HolographicCardProps) => {
   return (

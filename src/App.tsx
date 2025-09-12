@@ -16,6 +16,9 @@ import PreviewNeon from "./pages/PreviewNeon";
 import PreviewFloating from "./pages/PreviewFloating";
 import PreviewLiquid from "./pages/PreviewLiquid";
 import PreviewCosmic from "./pages/PreviewCosmic";
+import PreviewHolographic from "./pages/PreviewHolographic";
+import PreviewParticle from "./pages/PreviewParticle";
+import PreviewMorphing from "./pages/PreviewMorphing";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -39,6 +42,9 @@ const App = () => (
             <Route path="/preview/floating" element={<PreviewFloating />} />
             <Route path="/preview/liquid" element={<PreviewLiquid />} />
             <Route path="/preview/cosmic" element={<PreviewCosmic />} />
+            <Route path="/preview/holographic" element={<PreviewHolographic />} />
+            <Route path="/preview/particle" element={<PreviewParticle />} />
+            <Route path="/preview/morphing" element={<PreviewMorphing />} />
             <Route path="/request" element={<RequestForm />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/card/:slug" element={<GeneratedCard />} />

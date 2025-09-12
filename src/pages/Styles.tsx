@@ -10,6 +10,9 @@ import NeonCard from "@/components/cards/NeonCard";
 import FloatingCard from "@/components/cards/FloatingCard";
 import LiquidCard from "@/components/cards/LiquidCard";
 import CosmicCard from "@/components/cards/CosmicCard";
+import { HolographicCard } from "@/components/cards/HolographicCard";
+import { ParticleCard } from "@/components/cards/ParticleCard";
+import { MorphingCard } from "@/components/cards/MorphingCard";
 import SEO from "@/components/SEO";
 
 const Styles = () => {
@@ -63,6 +66,24 @@ const Styles = () => {
       name: "Cosmic Space",
       description: "Stellar design with cosmic particles and orbital animations",
       component: CosmicCard
+    },
+    {
+      id: "holographic",
+      name: "Holographic Glow",
+      description: "Futuristic holographic effects with animated glowing borders and floating particles",
+      component: HolographicCard
+    },
+    {
+      id: "particle",
+      name: "Particle Storm",
+      description: "Dynamic particle system with morphing shapes and orbital animations",
+      component: ParticleCard
+    },
+    {
+      id: "morphing",
+      name: "Morphing Liquid",
+      description: "Liquid morphing backgrounds with shape-shifting borders and fluid transitions",
+      component: MorphingCard
     }
   ];
 
@@ -117,7 +138,48 @@ const Styles = () => {
                       {/* Preview */}
                       <div className="flex justify-center bg-muted/30 p-6 rounded-lg">
                         <div className="scale-75 origin-center">
-                          <CardComponent />
+                          {style.id === "holographic" ? (
+                            <HolographicCard
+                              name="Alex Chen"
+                              title="Creative Director"
+                              company="Future Corp"
+                              phone="+1 (555) 123-4567"
+                              email="alex@future.com"
+                              website="www.alex.com"
+                              location="SF, CA"
+                              socialLinks={[
+                                { platform: "linkedin", url: "alex", label: "LinkedIn" }
+                              ]}
+                            />
+                          ) : style.id === "particle" ? (
+                            <ParticleCard
+                              name="Maya Rodriguez"
+                              title="Data Scientist"
+                              company="Quantum Labs"
+                              phone="+1 (555) 987-6543"
+                              email="maya@quantum.com"
+                              website="www.maya.com"
+                              location="Austin, TX"
+                              socialLinks={[
+                                { platform: "github", url: "maya", label: "GitHub" }
+                              ]}
+                            />
+                          ) : style.id === "morphing" ? (
+                            <MorphingCard
+                              name="Jordan Kim"
+                              title="UX Designer"
+                              company="Design Labs"
+                              phone="+1 (555) 456-7890"
+                              email="jordan@labs.com"
+                              website="www.jordan.design"
+                              location="Seattle, WA"
+                              socialLinks={[
+                                { platform: "dribbble", url: "jordan", label: "Dribbble" }
+                              ]}
+                            />
+                          ) : (
+                            <CardComponent />
+                          )}
                         </div>
                       </div>
                       

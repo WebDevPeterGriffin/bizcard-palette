@@ -12,29 +12,29 @@ interface SocialLink {
 
 interface MorphingCardProps {
   cardId?: string;
-  name: string;
-  title: string;
-  company: string;
-  phone: string;
-  email: string;
-  website: string;
-  location: string;
+  name?: string;
+  title?: string;
+  company?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  location?: string;
   headshotUrl?: string;
-  socialLinks: SocialLink[];
+  socialLinks?: SocialLink[];
   slug?: string;
 }
 
 export const MorphingCard = ({
   cardId,
-  name,
-  title,
-  company,
-  phone,
-  email,
-  website,
-  location,
+  name = "Alex Rivera",
+  title = "Creative Director",
+  company = "Design Studio",
+  phone = "+1 (555) 456-7890",
+  email = "alex@design.com",
+  website = "www.alexrivera.com",
+  location = "Los Angeles, CA",
   headshotUrl,
-  socialLinks,
+  socialLinks = [],
   slug
 }: MorphingCardProps) => {
   return (
