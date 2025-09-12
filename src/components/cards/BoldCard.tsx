@@ -102,7 +102,7 @@ const BoldCard = ({
       <CardContent className="p-8 text-center">
         {/* Profile Section */}
         <div className="mb-6">
-          <div className="mx-auto mb-4 h-32 w-32 md:h-24 md:w-24 rounded-full bg-bold-accent flex items-center justify-center overflow-hidden">
+          <div className="mx-auto mb-4 h-24 w-24 md:h-24 md:w-24 rounded-full bg-bold-accent flex items-center justify-center overflow-hidden">
             {headshotUrl ? (
               <img 
                 src={headshotUrl} 

@@ -111,7 +111,7 @@ const CreativeCard = ({
         <CardContent className="relative p-8 text-center text-white">
           {/* Profile Section */}
           <div className="mb-6">
-            <div className="mx-auto mb-4 h-32 w-32 md:h-24 md:w-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-4 ring-white/30 overflow-hidden">
+            <div className="mx-auto mb-4 h-24 w-24 md:h-24 md:w-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-4 ring-white/30 overflow-hidden">
               {headshotUrl ? (
                 <img 
                   src={headshotUrl} 

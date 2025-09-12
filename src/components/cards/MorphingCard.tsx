@@ -65,21 +65,25 @@ export const MorphingCard = ({
         <div className="relative z-10 space-y-6">
           {/* Profile section with morphing border */}
           <div className="text-center space-y-4">
-            {headshotUrl && (
-              <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28 group">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-[morphing-border_6s_ease-in-out_infinite] p-1">
-                  <div className="w-full h-full rounded-full bg-black/20 backdrop-blur-sm p-1">
+            <div className="relative mx-auto w-24 h-24 md:w-24 md:h-24 group">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-[morphing-border_6s_ease-in-out_infinite] p-1">
+                <div className="w-full h-full rounded-full bg-black/20 backdrop-blur-sm p-1 flex items-center justify-center overflow-hidden">
+                  {headshotUrl ? (
                     <img
                       src={headshotUrl}
                       alt={name}
                       className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
-                  </div>
+                  ) : (
+                    <span className="text-xl font-bold text-white/90">
+                      {name?.trim()?.split(' ').slice(0,2).map(n => n.charAt(0)).join('') || 'NA'}
+                    </span>
+                  )}
                 </div>
-                {/* Morphing aura effect */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-400/40 via-purple-400/40 to-pink-400/40 animate-[aura-pulse_3s_ease-in-out_infinite] blur-md scale-150 opacity-50"></div>
               </div>
-            )}
+              {/* Morphing aura effect */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-400/40 via-purple-400/40 to-pink-400/40 animate-[aura-pulse_3s_ease-in-out_infinite] blur-md scale-150 opacity-50"></div>
+            </div>
             
             <div className="space-y-2">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent animate-[text-shimmer_3s_ease-in-out_infinite]">
@@ -122,7 +126,7 @@ export const MorphingCard = ({
               </div>
             )}
             
-            {location && (
+            {cardId && location && (
               <div className="flex items-center space-x-3 group hover:translate-x-2 transition-all duration-700 animate-[liquid-slide_4s_ease-out] relative">
                 <div className="p-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 border border-cyan-400/30 group-hover:from-cyan-500/40 group-hover:to-indigo-500/40 group-hover:border-cyan-400/60 transition-all duration-500 relative overflow-hidden">
                   <MapPin size={16} className="text-cyan-300 relative z-10" />
@@ -164,31 +168,33 @@ export const MorphingCard = ({
           )}
 
           {/* Actions with liquid animation */}
-          <div className="pt-4 space-y-4 animate-[fade-in_5s_ease-out]">
-            <ContactActions
-              cardId={cardId || "morphing-preview"}
-              name={name}
-              phone={phone}
-              email={email}
-              website={website}
-              company={company}
-              title={title}
-              socialLinks={socialLinks}
-              headshotUrl={headshotUrl}
-              style="minimal"
-              bookingEnabled={true}
-              bookingInstructions="Schedule a creative consultation to discuss your design vision and bring your ideas to life."
-            />
-            
-            {slug && (
-              <div className="flex justify-center">
-                <div className="relative p-3 rounded-2xl bg-black/20 backdrop-blur-sm border border-indigo-400/30 group hover:border-purple-400/50 transition-all duration-500">
-                  <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-400/20 via-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-[morph_4s_ease-in-out_infinite]"></div>
+          {cardId && (
+            <div className="pt-4 space-y-4 animate-[fade-in_5s_ease-out]">
+              <ContactActions
+                cardId={cardId}
+                name={name}
+                phone={phone}
+                email={email}
+                website={website}
+                company={company}
+                title={title}
+                socialLinks={socialLinks}
+                headshotUrl={headshotUrl}
+                style="minimal"
+                bookingEnabled={true}
+                bookingInstructions="Schedule a creative consultation to discuss your design vision and bring your ideas to life."
+              />
+              
+              {slug && (
+                <div className="flex justify-center">
+                  <div className="relative p-3 rounded-2xl bg-black/20 backdrop-blur-sm border border-indigo-400/30 group hover:border-purple-400/50 transition-all duration-500">
+                    <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-400/20 via-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-[morph_4s_ease-in-out_infinite]"></div>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </Card>
       

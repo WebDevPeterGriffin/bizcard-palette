@@ -50,7 +50,7 @@ const LiquidCard = ({
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : legacySocials;
 
   return (
-    <div className="relative w-80 h-auto min-h-[26rem]">
+    <div className="relative w-80 h-auto min-h-[26rem] mx-auto">
       {/* Subtle animated liquid background */}
       <div className="absolute inset-0 overflow-hidden rounded-lg">
         {/* Flowing background waves - more subtle */}
@@ -76,7 +76,7 @@ const LiquidCard = ({
           <div className="text-center mb-6 animate-wave-in">
             <div className="relative mb-4">
               {headshotUrl ? (
-                <div className="w-28 h-28 md:w-20 md:h-20 mx-auto rounded-full border-2 border-white/50 overflow-hidden shadow-xl animate-liquid-morph relative">
+                <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-2 border-white/50 overflow-hidden shadow-xl animate-liquid-morph relative">
                   <img 
                     src={headshotUrl} 
                     alt={name} 
@@ -85,7 +85,7 @@ const LiquidCard = ({
                   <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 animate-liquid-overlay"></div>
                 </div>
               ) : (
-                <div className="w-28 h-28 md:w-20 md:h-20 mx-auto rounded-full border-2 border-white/60 bg-gradient-to-br from-white/30 to-white/20 flex items-center justify-center shadow-xl animate-liquid-morph backdrop-blur-sm">
+                <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-2 border-white/60 bg-gradient-to-br from-white/30 to-white/20 flex items-center justify-center shadow-xl animate-liquid-morph backdrop-blur-sm">
                   <span className="text-2xl font-bold text-white drop-shadow-lg">{name.charAt(0)}</span>
                 </div>
               )}

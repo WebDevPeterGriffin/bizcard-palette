@@ -156,24 +156,30 @@ export const ParticleCard = ({
         <div className="relative z-10 space-y-6">
           {/* Profile section */}
           <div className="text-center space-y-4">
-            {headshotUrl && (
-              <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28 group">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse p-0.5">
-                  <img
-                    src={headshotUrl}
-                    alt={name}
-                    className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                {/* Orbiting particles around profile */}
-                <div className="absolute inset-0 animate-[spin_8s_linear_infinite]">
-                  <div className="absolute top-0 left-1/2 w-2 h-2 bg-blue-400 rounded-full -translate-x-1/2 -translate-y-1"></div>
-                </div>
-                <div className="absolute inset-0 animate-[spin_6s_linear_infinite_reverse]">
-                  <div className="absolute top-1/2 right-0 w-1.5 h-1.5 bg-purple-400 rounded-full translate-x-1 -translate-y-1/2"></div>
+            <div className="relative mx-auto w-24 h-24 md:w-24 md:h-24 group">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse p-0.5">
+                <div className="w-full h-full rounded-full bg-slate-900/60 flex items-center justify-center overflow-hidden">
+                  {headshotUrl ? (
+                    <img
+                      src={headshotUrl}
+                      alt={name}
+                      className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-500"
+                    />
+                  ) : (
+                    <span className="text-xl font-bold text-white/90">
+                      {name?.trim()?.split(' ').slice(0,2).map(n => n.charAt(0)).join('') || 'NA'}
+                    </span>
+                  )}
                 </div>
               </div>
-            )}
+              {/* Orbiting particles around profile */}
+              <div className="absolute inset-0 animate-[spin_8s_linear_infinite]">
+                <div className="absolute top-0 left-1/2 w-2 h-2 bg-blue-400 rounded-full -translate-x-1/2 -translate-y-1"></div>
+              </div>
+              <div className="absolute inset-0 animate-[spin_6s_linear_infinite_reverse]">
+                <div className="absolute top-1/2 right-0 w-1.5 h-1.5 bg-purple-400 rounded-full translate-x-1 -translate-y-1/2"></div>
+              </div>
+            </div>
             
             <div className="space-y-2">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent animate-[fade-in_1s_ease-out]">
@@ -216,7 +222,7 @@ export const ParticleCard = ({
               </div>
             )}
             
-            {location && (
+            {cardId && location && (
               <div className="flex items-center space-x-3 group hover:translate-x-2 transition-all duration-500 animate-[slide-in-right_4s_ease-out] relative">
                 <div className="p-2 rounded-lg bg-green-500/20 border border-green-400/30 group-hover:bg-green-500/40 group-hover:border-green-400/60 transition-all duration-300 relative">
                   <MapPin size={16} className="text-green-300" />
@@ -258,31 +264,33 @@ export const ParticleCard = ({
           )}
 
           {/* Actions with animated border */}
-          <div className="pt-4 space-y-4 animate-[fade-in_5s_ease-out]">
-            <ContactActions
-              cardId={cardId || "particle-preview"}
-              name={name}
-              phone={phone}
-              email={email}
-              website={website}
-              company={company}
-              title={title}
-              socialLinks={socialLinks}
-              headshotUrl={headshotUrl}
-              style="minimal"
-              bookingEnabled={true}
-              bookingInstructions="Book a consultation to explore data-driven solutions and analytics opportunities."
-            />
-            
-            {slug && (
-              <div className="flex justify-center">
-                <div className="relative p-3 rounded-2xl bg-slate-800/50 backdrop-blur-sm border border-blue-400/30">
-                  <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+          {cardId && (
+            <div className="pt-4 space-y-4 animate-[fade-in_5s_ease-out]">
+              <ContactActions
+                cardId={cardId}
+                name={name}
+                phone={phone}
+                email={email}
+                website={website}
+                company={company}
+                title={title}
+                socialLinks={socialLinks}
+                headshotUrl={headshotUrl}
+                style="minimal"
+                bookingEnabled={true}
+                bookingInstructions="Book a consultation to explore data-driven solutions and analytics opportunities."
+              />
+              
+              {slug && (
+                <div className="flex justify-center">
+                  <div className="relative p-3 rounded-2xl bg-slate-800/50 backdrop-blur-sm border border-blue-400/30">
+                    <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </Card>
     </div>

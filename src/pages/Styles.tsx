@@ -2,90 +2,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import MinimalCard from "@/components/cards/MinimalCard";
-import BoldCard from "@/components/cards/BoldCard";
-import ElegantCard from "@/components/cards/ElegantCard";
-import CreativeCard from "@/components/cards/CreativeCard";
-import NeonCard from "@/components/cards/NeonCard";
-import FloatingCard from "@/components/cards/FloatingCard";
-import LiquidCard from "@/components/cards/LiquidCard";
-import CosmicCard from "@/components/cards/CosmicCard";
-import { HolographicCard } from "@/components/cards/HolographicCard";
-import { ParticleCard } from "@/components/cards/ParticleCard";
-import { MorphingCard } from "@/components/cards/MorphingCard";
+import { CARD_COMPONENTS, CARD_META } from "@/components/cards/registry";
 import SEO from "@/components/SEO";
 
 const Styles = () => {
   const navigate = useNavigate();
 
-  const cardStyles = [
-    {
-      id: "minimal",
-      name: "Minimal Clean",
-      description: "Clean, professional design with subtle borders and elegant typography",
-      component: MinimalCard
-    },
-    {
-      id: "bold", 
-      name: "Bold Modern",
-      description: "Dark background with bright accents and strong visual impact",
-      component: BoldCard
-    },
-    {
-      id: "elegant",
-      name: "Elegant Professional", 
-      description: "Sophisticated design with muted tones and luxury aesthetic",
-      component: ElegantCard
-    },
-    {
-      id: "creative",
-      name: "Creative Colorful",
-      description: "Vibrant gradients and playful design elements", 
-      component: CreativeCard
-    },
-    {
-      id: "neon",
-      name: "Neon Cyber",
-      description: "Cyberpunk-inspired with electric neon effects and glowing animations",
-      component: NeonCard
-    },
-    {
-      id: "floating",
-      name: "Floating Cloud",
-      description: "Serene floating elements with gentle cloud-like animations",
-      component: FloatingCard
-    },
-    {
-      id: "liquid",
-      name: "Liquid Morph",
-      description: "Dynamic liquid effects with flowing and morphing animations",
-      component: LiquidCard
-    },
-    {
-      id: "cosmic",
-      name: "Cosmic Space",
-      description: "Stellar design with cosmic particles and orbital animations",
-      component: CosmicCard
-    },
-    {
-      id: "holographic",
-      name: "Holographic Glow",
-      description: "Futuristic holographic effects with animated glowing borders and floating particles",
-      component: HolographicCard
-    },
-    {
-      id: "particle",
-      name: "Particle Storm",
-      description: "Dynamic particle system with morphing shapes and orbital animations",
-      component: ParticleCard
-    },
-    {
-      id: "morphing",
-      name: "Morphing Liquid",
-      description: "Liquid morphing backgrounds with shape-shifting borders and fluid transitions",
-      component: MorphingCard
-    }
-  ];
+  const cardStyles = (Object.keys(CARD_COMPONENTS) as Array<keyof typeof CARD_COMPONENTS>).map((id) => ({
+    id,
+    name: CARD_META[id].name,
+    description: CARD_META[id].description,
+    component: CARD_COMPONENTS[id]
+  }));
 
   const handleRequestStyle = (styleId: string) => {
     navigate(`/request?style=${styleId}`);
@@ -137,49 +65,8 @@ const Styles = () => {
                     <CardContent className="space-y-6">
                       {/* Preview */}
                       <div className="flex justify-center bg-muted/30 p-6 rounded-lg">
-                        <div className="scale-75 origin-center">
-                          {style.id === "holographic" ? (
-                            <HolographicCard
-                              name="Alex Chen"
-                              title="Creative Director"
-                              company="Future Corp"
-                              phone="+1 (555) 123-4567"
-                              email="alex@future.com"
-                              website="www.alex.com"
-                              location="SF, CA"
-                              socialLinks={[
-                                { platform: "linkedin", url: "alex", label: "LinkedIn" }
-                              ]}
-                            />
-                          ) : style.id === "particle" ? (
-                            <ParticleCard
-                              name="Maya Rodriguez"
-                              title="Data Scientist"
-                              company="Quantum Labs"
-                              phone="+1 (555) 987-6543"
-                              email="maya@quantum.com"
-                              website="www.maya.com"
-                              location="Austin, TX"
-                              socialLinks={[
-                                { platform: "github", url: "maya", label: "GitHub" }
-                              ]}
-                            />
-                          ) : style.id === "morphing" ? (
-                            <MorphingCard
-                              name="Jordan Kim"
-                              title="UX Designer"
-                              company="Design Labs"
-                              phone="+1 (555) 456-7890"
-                              email="jordan@labs.com"
-                              website="www.jordan.design"
-                              location="Seattle, WA"
-                              socialLinks={[
-                                { platform: "dribbble", url: "jordan", label: "Dribbble" }
-                              ]}
-                            />
-                          ) : (
-                            <CardComponent />
-                          )}
+                        <div className="scale-75 origin-center w-80 mx-auto">
+                          {<CardComponent />}
                         </div>
                       </div>
                       

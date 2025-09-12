@@ -37,9 +37,6 @@ const Index = () => {
     }
   ];
 
-  const scrollToStyles = () => {
-    document.getElementById('styles')?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,7 +55,7 @@ const Index = () => {
               size="lg" 
               variant="outline"
               className="bg-background/10 text-brand-primary-foreground border-brand-primary-foreground/30 hover:bg-background/20"
-              onClick={scrollToStyles}
+              onClick={() => navigate('/styles')}
             >
               <Eye className="mr-2 h-5 w-5" />
               View Digital Business Cards

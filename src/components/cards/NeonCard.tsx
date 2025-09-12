@@ -50,7 +50,7 @@ const NeonCard = ({
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : legacySocials;
 
   return (
-    <Card className="w-80 h-auto min-h-[26rem] bg-black border-2 border-cyan-500 overflow-hidden relative group">
+    <Card className="w-80 h-auto min-h-[26rem] bg-black border-2 border-cyan-500 overflow-hidden relative group mx-auto">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-purple-500/20 to-pink-500/20 animate-pulse"></div>
@@ -74,7 +74,7 @@ const NeonCard = ({
         <div className="text-center mb-6">
           <div className="relative mb-4">
             {headshotUrl ? (
-              <div className="w-28 h-28 md:w-20 md:h-20 mx-auto rounded-full border-2 border-cyan-400 overflow-hidden relative group-hover:border-pink-400 transition-all duration-300">
+              <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-2 border-cyan-400 overflow-hidden relative group-hover:border-pink-400 transition-all duration-300">
                 <img 
                   src={headshotUrl} 
                   alt={name} 
@@ -83,7 +83,7 @@ const NeonCard = ({
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-pink-400/20 animate-pulse"></div>
               </div>
             ) : (
-              <div className="w-28 h-28 md:w-20 md:h-20 mx-auto rounded-full border-2 border-cyan-400 bg-gradient-to-br from-cyan-900 to-purple-900 flex items-center justify-center group-hover:border-pink-400 transition-all duration-300 relative overflow-hidden">
+              <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-2 border-cyan-400 bg-gradient-to-br from-cyan-900 to-purple-900 flex items-center justify-center group-hover:border-pink-400 transition-all duration-300 relative overflow-hidden">
                 <span className="text-2xl font-bold text-cyan-300 z-10">{name.charAt(0)}</span>
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-pink-400/20 animate-pulse"></div>
               </div>

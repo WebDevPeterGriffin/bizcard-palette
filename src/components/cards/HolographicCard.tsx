@@ -68,19 +68,23 @@ export const HolographicCard = ({
         <div className="relative z-10 space-y-6">
           {/* Profile section with holographic border */}
           <div className="text-center space-y-4">
-            {headshotUrl && (
-              <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 animate-[spin_3s_linear_infinite] p-1">
-                  <div className="w-full h-full rounded-full bg-black p-1">
+            <div className="relative mx-auto w-24 h-24 md:w-24 md:h-24">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 animate-[spin_3s_linear_infinite] p-1">
+                <div className="w-full h-full rounded-full bg-black p-1 flex items-center justify-center overflow-hidden">
+                  {headshotUrl ? (
                     <img
                       src={headshotUrl}
                       alt={name}
                       className="w-full h-full object-cover rounded-full hover:scale-110 transition-transform duration-500"
                     />
-                  </div>
+                  ) : (
+                    <span className="text-xl font-bold text-white/90">
+                      {name?.trim()?.split(' ').slice(0,2).map(n => n.charAt(0)).join('') || 'NA'}
+                    </span>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
             
             <div className="space-y-2">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent animate-[fade-in_1s_ease-out]">
@@ -120,7 +124,7 @@ export const HolographicCard = ({
               </div>
             )}
             
-            {location && (
+            {cardId && location && (
               <div className="flex items-center space-x-3 group hover:translate-x-2 transition-transform duration-300 animate-[fade-in_4s_ease-out]">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-white/10 group-hover:from-purple-500/40 group-hover:to-cyan-500/40 transition-all duration-300">
                   <MapPin size={16} className="text-purple-200" />
@@ -159,30 +163,32 @@ export const HolographicCard = ({
           )}
 
           {/* Actions with QR code */}
-          <div className="pt-4 space-y-4 animate-[fade-in_5s_ease-out]">
-            <ContactActions
-              cardId={cardId || "holographic-preview"}
-              name={name}
-              phone={phone}
-              email={email}
-              website={website}
-              company={company}
-              title={title}
-              socialLinks={socialLinks}
-              headshotUrl={headshotUrl}
-              style="minimal"
-              bookingEnabled={true}
-              bookingInstructions="Schedule a meeting to discuss your next project or collaboration opportunity."
-            />
-            
-            {slug && (
-              <div className="flex justify-center">
-                <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20">
-                  <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
+          {cardId && (
+            <div className="pt-4 space-y-4 animate-[fade-in_5s_ease-out]">
+              <ContactActions
+                cardId={cardId}
+                name={name}
+                phone={phone}
+                email={email}
+                website={website}
+                company={company}
+                title={title}
+                socialLinks={socialLinks}
+                headshotUrl={headshotUrl}
+                style="minimal"
+                bookingEnabled={true}
+                bookingInstructions="Schedule a meeting to discuss your next project or collaboration opportunity."
+              />
+              
+              {slug && (
+                <div className="flex justify-center">
+                  <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20">
+                    <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </Card>
       

@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
-import MinimalCard from "@/components/cards/MinimalCard";
-import BoldCard from "@/components/cards/BoldCard";
-import ElegantCard from "@/components/cards/ElegantCard";
-import CreativeCard from "@/components/cards/CreativeCard";
-import NeonCard from "@/components/cards/NeonCard";
-import FloatingCard from "@/components/cards/FloatingCard";
-import LiquidCard from "@/components/cards/LiquidCard";
-import CosmicCard from "@/components/cards/CosmicCard";
+import { CARD_COMPONENTS } from "@/components/cards/registry";
 import QRCodeGenerator from "@/components/QRCodeGenerator";
 import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
@@ -158,28 +151,10 @@ const GeneratedCard = () => {
       headshotUrl: cardData.headshotUrl,
       bookingEnabled: cardData.bookingEnabled,
       bookingInstructions: cardData.bookingInstructions,
-    };
+    } as const;
 
-    switch (cardData.style) {
-      case 'minimal':
-        return <MinimalCard {...props} />;
-      case 'bold':
-        return <BoldCard {...props} />;
-      case 'elegant':
-        return <ElegantCard {...props} />;
-      case 'creative':
-        return <CreativeCard {...props} />;
-      case 'neon':
-        return <NeonCard {...props} />;
-      case 'floating':
-        return <FloatingCard {...props} />;
-      case 'liquid':
-        return <LiquidCard {...props} />;
-      case 'cosmic':
-        return <CosmicCard {...props} />;
-      default:
-        return <MinimalCard {...props} />;
-    }
+    const Comp = (CARD_COMPONENTS as any)[cardData.style] || CARD_COMPONENTS.minimal;
+    return <Comp {...(props as any)} />;
   };
 
   const handleShare = async () => {
