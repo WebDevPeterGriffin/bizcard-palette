@@ -259,20 +259,20 @@ export const ParticleCard = ({
 
           {/* Actions with animated border */}
           <div className="pt-4 space-y-4 animate-[fade-in_5s_ease-out]">
-            {cardId && (
-              <ContactActions
-                cardId={cardId}
-                name={name}
-                phone={phone}
-                email={email}
-                website={website}
-                company={company}
-                title={title}
-                socialLinks={socialLinks}
-                headshotUrl={headshotUrl}
-                style="minimal"
-              />
-            )}
+            <ContactActions
+              cardId={cardId || "particle-preview"}
+              name={name}
+              phone={phone}
+              email={email}
+              website={website}
+              company={company}
+              title={title}
+              socialLinks={socialLinks}
+              headshotUrl={headshotUrl}
+              style="minimal"
+              bookingEnabled={true}
+              bookingInstructions="Book a consultation to explore data-driven solutions and analytics opportunities."
+            />
             
             {slug && (
               <div className="flex justify-center">
