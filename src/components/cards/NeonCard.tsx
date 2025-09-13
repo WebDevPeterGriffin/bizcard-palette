@@ -74,7 +74,7 @@ const NeonCard = ({
         <div className="text-center mb-6">
           <div className="relative mb-4">
             {headshotUrl ? (
-              <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-2 border-cyan-400 overflow-hidden relative group-hover:border-pink-400 transition-all duration-300">
+              <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-2 border-cyan-400 overflow-hidden relative group-hover:border-pink-400 transition-all duration-300">
                 <img 
                   src={headshotUrl} 
                   alt={name} 
@@ -83,7 +83,7 @@ const NeonCard = ({
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-pink-400/20 animate-pulse"></div>
               </div>
             ) : (
-              <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-2 border-cyan-400 bg-gradient-to-br from-cyan-900 to-purple-900 flex items-center justify-center group-hover:border-pink-400 transition-all duration-300 relative overflow-hidden">
+              <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-2 border-cyan-400 bg-gradient-to-br from-cyan-900 to-purple-900 flex items-center justify-center group-hover:border-pink-400 transition-all duration-300 relative overflow-hidden">
                 <span className="text-2xl font-bold text-cyan-300 z-10">{name.charAt(0)}</span>
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-pink-400/20 animate-pulse"></div>
               </div>

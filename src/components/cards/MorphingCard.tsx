@@ -65,7 +65,7 @@ export const MorphingCard = ({
         <div className="relative z-10 space-y-6">
           {/* Profile section with morphing border */}
           <div className="text-center space-y-4">
-            <div className="relative mx-auto w-24 h-24 md:w-24 md:h-24 group">
+            <div className="relative mx-auto w-32 h-32 md:w-36 md:h-36 group">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-[morphing-border_6s_ease-in-out_infinite] p-1">
                 <div className="w-full h-full rounded-full bg-black/20 backdrop-blur-sm p-1 flex items-center justify-center overflow-hidden">
                   {headshotUrl ? (

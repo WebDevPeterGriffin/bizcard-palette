@@ -71,7 +71,7 @@ const FloatingCard = ({
           <div className="text-center mb-6 animate-fade-in-up">
             <div className="relative mb-4">
               {headshotUrl ? (
-                <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-3 border-blue-300 overflow-hidden shadow-lg animate-float-gentle relative">
+                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-3 border-blue-300 overflow-hidden shadow-lg animate-float-gentle relative">
                   <img 
                     src={headshotUrl} 
                     alt={name} 
@@ -80,7 +80,7 @@ const FloatingCard = ({
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-200/20 to-indigo-200/20"></div>
                 </div>
               ) : (
-                <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-3 border-blue-300 bg-gradient-to-br from-blue-200 to-indigo-300 flex items-center justify-center shadow-lg animate-float-gentle">
+                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-3 border-blue-300 bg-gradient-to-br from-blue-200 to-indigo-300 flex items-center justify-center shadow-lg animate-float-gentle">
                   <span className="text-2xl font-bold text-blue-800">{name.charAt(0)}</span>
                 </div>
               )}

@@ -64,7 +64,7 @@ const PrismCard = ({
       <div className="relative z-10 p-6 text-white flex flex-col items-center">
         {/* Avatar */}
         <div className="text-center mb-6">
-          <div className="relative mx-auto w-24 h-24 md:w-24 md:h-24">
+          <div className="relative mx-auto w-32 h-32 md:w-36 md:h-36">
             <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-r from-amber-400 via-violet-400 to-cyan-400 animate-[spin_12s_linear_infinite]">
               <div className="w-full h-full rounded-full bg-black/70 backdrop-blur-sm flex items-center justify-center overflow-hidden">
                 {headshotUrl ? (

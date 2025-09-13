@@ -68,7 +68,7 @@ export const HolographicCard = ({
         <div className="relative z-10 space-y-6">
           {/* Profile section with holographic border */}
           <div className="text-center space-y-4">
-            <div className="relative mx-auto w-24 h-24 md:w-24 md:h-24">
+            <div className="relative mx-auto w-32 h-32 md:w-36 md:h-36">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 animate-[spin_3s_linear_infinite] p-1">
                 <div className="w-full h-full rounded-full bg-black p-1 flex items-center justify-center overflow-hidden">
                   {headshotUrl ? (

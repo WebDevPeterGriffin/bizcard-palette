@@ -105,7 +105,7 @@ const CosmicCard = ({
           <div className="text-center mb-6 animate-cosmic-emerge">
             <div className="relative mb-4">
               {headshotUrl ? (
-                <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-2 border-purple-400 overflow-hidden shadow-xl animate-cosmic-rotate relative">
+                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-2 border-purple-400 overflow-hidden shadow-xl animate-cosmic-rotate relative">
                   <img 
                     src={headshotUrl} 
                     alt={name} 
@@ -114,7 +114,7 @@ const CosmicCard = ({
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-blue-400/20 animate-cosmic-glow"></div>
                 </div>
               ) : (
-                <div className="w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full border-2 border-purple-400 bg-gradient-to-br from-purple-800/50 to-blue-800/50 flex items-center justify-center shadow-xl animate-cosmic-rotate backdrop-blur-sm">
+                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-2 border-purple-400 bg-gradient-to-br from-purple-800/50 to-blue-800/50 flex items-center justify-center shadow-xl animate-cosmic-rotate backdrop-blur-sm">
                   <span className="text-2xl font-bold text-white">{name.charAt(0)}</span>
                 </div>
               )}
