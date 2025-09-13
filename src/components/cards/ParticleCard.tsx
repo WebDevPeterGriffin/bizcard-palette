@@ -222,15 +222,6 @@ export const ParticleCard = ({
               </div>
             )}
             
-            {cardId && location && (
-              <div className="flex items-center space-x-3 group hover:translate-x-2 transition-all duration-500 animate-[slide-in-right_4s_ease-out] relative">
-                <div className="p-2 rounded-lg bg-green-500/20 border border-green-400/30 group-hover:bg-green-500/40 group-hover:border-green-400/60 transition-all duration-300 relative">
-                  <MapPin size={16} className="text-green-300" />
-                  <div className="absolute inset-0 bg-green-400/20 rounded-lg opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300"></div>
-                </div>
-                <span className="text-white/90">{location}</span>
-              </div>
-            )}
           </div>
 
           {/* Social links with particle trails */}

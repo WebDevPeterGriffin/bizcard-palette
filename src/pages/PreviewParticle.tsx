@@ -40,7 +40,7 @@ const PreviewParticle = () => {
             phone="+1 (555) 987-6543"
             email="maya@quantum.com"
             website="www.mayarodriguez.com"
-            location="Austin, TX"
+            
             socialLinks={[
               { platform: "linkedin", url: "mayarodriguez", label: "LinkedIn" },
               { platform: "github", url: "mayarodriguez", label: "GitHub" },

@@ -40,7 +40,7 @@ const PreviewHolographic = () => {
             phone="+1 (555) 123-4567"
             email="alex@futuretech.com"
             website="www.alexchen.com"
-            location="San Francisco, CA"
+            
             socialLinks={[
               { platform: "linkedin", url: "alexchen", label: "LinkedIn" },
               { platform: "twitter", url: "alexchen", label: "Twitter" },

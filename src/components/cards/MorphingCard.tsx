@@ -126,15 +126,6 @@ export const MorphingCard = ({
               </div>
             )}
             
-            {cardId && location && (
-              <div className="flex items-center space-x-3 group hover:translate-x-2 transition-all duration-700 animate-[liquid-slide_4s_ease-out] relative">
-                <div className="p-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 border border-cyan-400/30 group-hover:from-cyan-500/40 group-hover:to-indigo-500/40 group-hover:border-cyan-400/60 transition-all duration-500 relative overflow-hidden">
-                  <MapPin size={16} className="text-cyan-300 relative z-10" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/30 to-indigo-400/30 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
-                </div>
-                <span className="text-white/90 group-hover:text-white transition-colors duration-300">{location}</span>
-              </div>
-            )}
           </div>
 
           {/* Social links with morphing effects */}

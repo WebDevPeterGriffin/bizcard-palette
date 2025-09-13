@@ -40,7 +40,7 @@ const PreviewMorphing = () => {
             phone="+1 (555) 456-7890"
             email="jordan@designlabs.com"
             website="www.jordankim.design"
-            location="Seattle, WA"
+            
             socialLinks={[
               { platform: "dribbble", url: "jordankim", label: "Dribbble" },
               { platform: "behance", url: "jordankim", label: "Behance" },

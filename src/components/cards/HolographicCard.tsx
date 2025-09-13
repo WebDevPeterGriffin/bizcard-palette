@@ -124,14 +124,6 @@ export const HolographicCard = ({
               </div>
             )}
             
-            {cardId && location && (
-              <div className="flex items-center space-x-3 group hover:translate-x-2 transition-transform duration-300 animate-[fade-in_4s_ease-out]">
-                <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-white/10 group-hover:from-purple-500/40 group-hover:to-cyan-500/40 transition-all duration-300">
-                  <MapPin size={16} className="text-purple-200" />
-                </div>
-                <span className="text-white/90">{location}</span>
-              </div>
-            )}
           </div>
 
           {/* Social links with holographic effect */}
