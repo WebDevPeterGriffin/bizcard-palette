@@ -8,6 +8,7 @@ import FloatingCard from "./FloatingCard";
 import LiquidCard from "./LiquidCard";
 import CosmicCard from "./CosmicCard";
 import PrismCard from "./PrismCard";
+import LiquidGlassCard from "./LiquidGlassCard";
 import { HolographicCard } from "./HolographicCard";
 import { ParticleCard } from "./ParticleCard";
 import { MorphingCard } from "./MorphingCard";
@@ -24,7 +25,8 @@ export type CardStyleId =
   | 'holographic'
   | 'particle'
   | 'morphing'
-  | 'prism';
+  | 'prism'
+  | 'liquid-glass';
 
 export type CardComponent = (props: BaseCardProps) => JSX.Element;
 
@@ -41,6 +43,7 @@ export const CARD_COMPONENTS: Record<CardStyleId, CardComponent> = {
   particle: ParticleCard as unknown as CardComponent,
   morphing: MorphingCard as unknown as CardComponent,
   prism: PrismCard as unknown as CardComponent,
+  "liquid-glass": LiquidGlassCard as unknown as CardComponent,
 };
 
 export const CARD_META: Record<CardStyleId, { name: string; description: string }> = {
@@ -56,6 +59,7 @@ export const CARD_META: Record<CardStyleId, { name: string; description: string 
   particle: { name: "Particle Storm", description: "Dynamic particle system with morphing shapes and orbital animations" },
   morphing: { name: "Morphing Liquid", description: "Liquid morphing backgrounds with shape-shifting borders and fluid transitions" },
   prism: { name: "Prismatic Motion", description: "Conic gradients, light beams, and floating prism shapes" },
+  "liquid-glass": { name: "Liquid Glass", description: "iOS 26-inspired translucent glass effects with blur and smooth animations" },
 };
 
 
