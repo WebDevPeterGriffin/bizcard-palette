@@ -37,6 +37,7 @@ const RequestForm = () => {
     { id: "bold", name: "Bold Modern" },
     { id: "elegant", name: "Elegant Professional" },
     { id: "creative", name: "Creative Colorful" },
+    { id: "liquid-glass", name: "Liquid Glass" },
     { id: "neon", name: "Neon Cyber" },
     { id: "floating", name: "Floating Cloud" },
     { id: "liquid", name: "Liquid Morph" },
