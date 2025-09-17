@@ -19,55 +19,52 @@ const LiquidGlassCard = ({
 }: BaseCardProps) => {
   return (
     <div className="relative w-80 h-auto min-h-[28rem] mx-auto perspective-1000">
-      {/* Floating glass orbs background */}
+      {/* Subtle floating glass orbs background */}
       <div className="absolute inset-0 overflow-hidden rounded-2xl">
-        <div className="absolute top-1/4 left-1/5 w-16 h-16 bg-gradient-to-br from-liquid-primary/40 to-liquid-secondary/20 rounded-full blur-sm animate-float-slow"></div>
-        <div className="absolute top-1/2 right-1/4 w-12 h-12 bg-gradient-to-br from-liquid-secondary/30 to-liquid-tertiary/20 rounded-full blur-sm animate-float-slower"></div>
-        <div className="absolute bottom-1/3 left-1/3 w-20 h-20 bg-gradient-to-br from-liquid-tertiary/25 to-liquid-primary/15 rounded-full blur-md animate-float-slowest"></div>
-        
-        {/* Subtle animated background gradient */}
-        <div className="absolute inset-0 bg-gradient-liquid opacity-10 animate-gradient-shift"></div>
+        <div className="absolute top-1/4 left-1/5 w-16 h-16 bg-white/5 rounded-full blur-sm animate-float-slow"></div>
+        <div className="absolute top-1/2 right-1/4 w-12 h-12 bg-white/3 rounded-full blur-sm animate-float-slower"></div>
+        <div className="absolute bottom-1/3 left-1/3 w-20 h-20 bg-white/4 rounded-full blur-md animate-float-slowest"></div>
       </div>
 
       {/* Main glass card */}
-      <Card className="relative z-10 w-full h-auto min-h-[28rem] bg-gradient-to-br from-liquid-primary/15 via-liquid-secondary/10 to-liquid-tertiary/15 backdrop-blur-2xl border border-liquid-primary/30 shadow-2xl overflow-hidden rounded-2xl hover:shadow-3xl transition-all duration-500 animate-glass-entrance">
+      <Card className="relative z-10 w-full h-auto min-h-[28rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden rounded-2xl hover:shadow-3xl transition-all duration-500 animate-glass-entrance">
         {/* Glass reflection effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-liquid-primary/25 via-transparent to-liquid-tertiary/20 animate-glass-shimmer pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 animate-glass-shimmer pointer-events-none"></div>
         
-        {/* Subtle liquid ripple effect */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-liquid-secondary/60 to-transparent animate-liquid-ripple"></div>
+        {/* Subtle highlight strip */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-liquid-ripple"></div>
         
-        <div className="relative z-10 p-8 flex flex-col text-slate-800 dark:text-slate-100">
+        <div className="relative z-10 p-8 flex flex-col text-white">
           {/* Profile section with glass morphing */}
           <div className="text-center mb-8 animate-fade-in-up">
             <div className="relative mb-6">
               {headshotUrl ? (
-                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-2 border-liquid-primary/50 overflow-hidden shadow-xl backdrop-blur-sm bg-gradient-to-br from-liquid-primary/20 to-liquid-secondary/10 animate-glass-morph">
+                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border border-white/30 overflow-hidden shadow-xl backdrop-blur-sm bg-white/10 animate-glass-morph">
                   <img 
                     src={headshotUrl} 
                     alt={name} 
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-br from-liquid-primary/15 to-transparent animate-glass-overlay"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent animate-glass-overlay"></div>
                 </div>
               ) : (
-                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-2 border-liquid-primary/50 bg-gradient-to-br from-liquid-primary/25 to-liquid-secondary/15 backdrop-blur-sm flex items-center justify-center shadow-xl animate-glass-morph">
-                  <span className="text-3xl font-light text-slate-700 dark:text-slate-200">{name.charAt(0)}</span>
+                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border border-white/30 bg-white/10 backdrop-blur-sm flex items-center justify-center shadow-xl animate-glass-morph">
+                  <span className="text-3xl font-light text-white/90">{name.charAt(0)}</span>
                 </div>
               )}
               
               {/* Glass reflection highlights */}
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-4 bg-liquid-primary/40 rounded-full blur-sm animate-glass-highlight"></div>
-              <Sparkles className="absolute -top-2 -right-2 h-5 w-5 text-liquid-secondary/80 animate-sparkle" />
+              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-4 bg-white/20 rounded-full blur-sm animate-glass-highlight"></div>
+              <Sparkles className="absolute -top-2 -right-2 h-5 w-5 text-white/60 animate-sparkle" />
             </div>
             
-            <h2 className="text-2xl font-light text-slate-800 dark:text-slate-100 mb-2 animate-text-float" style={{animationDelay: '0.2s'}}>
+            <h2 className="text-2xl font-light text-white mb-2 animate-text-float" style={{animationDelay: '0.2s'}}>
               {name}
             </h2>
-            <p className="text-slate-600 dark:text-slate-300 text-base font-light mb-1 animate-text-float" style={{animationDelay: '0.4s'}}>
+            <p className="text-white/80 text-base font-light mb-1 animate-text-float" style={{animationDelay: '0.4s'}}>
               {title}
             </p>
-            <p className="text-slate-500 dark:text-slate-400 text-sm font-light animate-text-float" style={{animationDelay: '0.6s'}}>
+            <p className="text-white/60 text-sm font-light animate-text-float" style={{animationDelay: '0.6s'}}>
               {company}
             </p>
           </div>
@@ -75,13 +72,13 @@ const LiquidGlassCard = ({
           {/* Glass contact info panels */}
           <div className="space-y-4 mb-8 flex-1">
             {phone && (
-              <div className="flex items-center space-x-4 p-3 rounded-xl bg-gradient-to-r from-liquid-primary/20 to-liquid-secondary/15 backdrop-blur-sm border border-liquid-primary/25 hover:bg-gradient-to-r hover:from-liquid-primary/30 hover:to-liquid-secondary/25 transition-all duration-300 animate-glass-slide-in" style={{animationDelay: '0.8s'}}>
-                <div className="w-10 h-10 rounded-full bg-liquid-primary/30 backdrop-blur-sm flex items-center justify-center border border-liquid-primary/40">
-                  <Phone className="h-4 w-4 text-slate-700 dark:text-slate-200" />
+              <div className="flex items-center space-x-4 p-3 rounded-xl bg-white/8 backdrop-blur-sm border border-white/15 hover:bg-white/12 transition-all duration-300 animate-glass-slide-in" style={{animationDelay: '0.8s'}}>
+                <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                  <Phone className="h-4 w-4 text-white/80" />
                 </div>
                 <a 
                   href={`tel:${phone}`} 
-                  className="text-sm text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200 flex-1"
+                  className="text-sm text-white/90 hover:text-white transition-colors duration-200 flex-1"
                 >
                   {phone}
                 </a>
@@ -89,13 +86,13 @@ const LiquidGlassCard = ({
             )}
             
             {email && (
-              <div className="flex items-center space-x-4 p-3 rounded-xl bg-gradient-to-r from-liquid-secondary/20 to-liquid-tertiary/15 backdrop-blur-sm border border-liquid-secondary/25 hover:bg-gradient-to-r hover:from-liquid-secondary/30 hover:to-liquid-tertiary/25 transition-all duration-300 animate-glass-slide-in" style={{animationDelay: '1s'}}>
-                <div className="w-10 h-10 rounded-full bg-liquid-secondary/30 backdrop-blur-sm flex items-center justify-center border border-liquid-secondary/40">
-                  <Mail className="h-4 w-4 text-slate-700 dark:text-slate-200" />
+              <div className="flex items-center space-x-4 p-3 rounded-xl bg-white/8 backdrop-blur-sm border border-white/15 hover:bg-white/12 transition-all duration-300 animate-glass-slide-in" style={{animationDelay: '1s'}}>
+                <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                  <Mail className="h-4 w-4 text-white/80" />
                 </div>
                 <a 
                   href={`mailto:${email}`} 
-                  className="text-sm text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200 flex-1 truncate"
+                  className="text-sm text-white/90 hover:text-white transition-colors duration-200 flex-1 truncate"
                 >
                   {email}
                 </a>
@@ -103,15 +100,15 @@ const LiquidGlassCard = ({
             )}
             
             {website && (
-              <div className="flex items-center space-x-4 p-3 rounded-xl bg-gradient-to-r from-liquid-tertiary/20 to-liquid-primary/15 backdrop-blur-sm border border-liquid-tertiary/25 hover:bg-gradient-to-r hover:from-liquid-tertiary/30 hover:to-liquid-primary/25 transition-all duration-300 animate-glass-slide-in" style={{animationDelay: '1.2s'}}>
-                <div className="w-10 h-10 rounded-full bg-liquid-tertiary/30 backdrop-blur-sm flex items-center justify-center border border-liquid-tertiary/40">
-                  <Globe className="h-4 w-4 text-slate-700 dark:text-slate-200" />
+              <div className="flex items-center space-x-4 p-3 rounded-xl bg-white/8 backdrop-blur-sm border border-white/15 hover:bg-white/12 transition-all duration-300 animate-glass-slide-in" style={{animationDelay: '1.2s'}}>
+                <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                  <Globe className="h-4 w-4 text-white/80" />
                 </div>
                 <a 
                   href={`https://${website}`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-sm text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200 flex-1 truncate"
+                  className="text-sm text-white/90 hover:text-white transition-colors duration-200 flex-1 truncate"
                 >
                   {website}
                 </a>
@@ -128,7 +125,7 @@ const LiquidGlassCard = ({
                   href={buildSocialUrl(social.platform, social.url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full bg-gradient-to-br from-liquid-primary/25 to-liquid-secondary/20 backdrop-blur-sm border border-liquid-primary/35 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-gradient-to-br hover:from-liquid-primary/35 hover:to-liquid-secondary/30 hover:border-liquid-primary/50 transition-all duration-300 hover:scale-105 animate-glass-social"
+                  className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white/80 hover:bg-white/15 hover:border-white/30 hover:text-white transition-all duration-300 hover:scale-105 animate-glass-social"
                   style={{animationDelay: `${1.6 + index * 0.1}s`}}
                 >
                   <SocialIcon platform={social.platform} className="h-4 w-4" />
@@ -139,7 +136,7 @@ const LiquidGlassCard = ({
 
           {/* Contact Actions */}
           {cardId && (
-            <div className="border-t border-liquid-primary/25 pt-6">
+            <div className="border-t border-white/20 pt-6">
               <ContactActions
                 cardId={cardId}
                 name={name}
