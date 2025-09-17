@@ -64,7 +64,11 @@ const Styles = () => {
                     </CardHeader>
                     <CardContent className="space-y-6">
                       {/* Preview */}
-                      <div className="flex justify-center bg-muted/30 p-6 rounded-lg">
+                      <div className={`flex justify-center p-6 rounded-lg ${
+                        style.id === 'liquid-glass' 
+                          ? 'bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900' 
+                          : 'bg-muted/30'
+                      }`}>
                         <div className="scale-75 origin-center w-80 mx-auto">
                           {<CardComponent />}
                         </div>
