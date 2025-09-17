@@ -71,8 +71,8 @@ export function ContactActions({
         };
       case 'liquid':
         return {
-          save: "bg-gradient-to-r from-liquid-primary/20 to-liquid-secondary/15 text-slate-100 border-liquid-primary/40 hover:from-liquid-primary/30 hover:to-liquid-secondary/25 backdrop-blur-sm",
-          book: "bg-gradient-to-r from-liquid-primary to-liquid-secondary text-white hover:from-liquid-secondary hover:to-liquid-tertiary"
+          save: "bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm",
+          book: "bg-white/20 text-white border-white/40 hover:bg-white/30 backdrop-blur-sm"
         };
       case 'cosmic':
         return {
