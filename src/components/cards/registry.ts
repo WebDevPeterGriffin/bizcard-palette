@@ -46,20 +46,90 @@ export const CARD_COMPONENTS: Record<CardStyleId, CardComponent> = {
   "liquid-glass": LiquidGlassCard as unknown as CardComponent,
 };
 
-export const CARD_META: Record<CardStyleId, { name: string; description: string }> = {
-  minimal: { name: "Minimal Clean", description: "Clean, professional design with subtle borders and elegant typography" },
-  bold: { name: "Bold Modern", description: "Dark background with bright accents and strong visual impact" },
-  elegant: { name: "Elegant Professional", description: "Sophisticated design with muted tones and luxury aesthetic" },
-  creative: { name: "Creative Colorful", description: "Vibrant gradients and playful design elements" },
-  neon: { name: "Neon Cyber", description: "Cyberpunk-inspired with electric neon effects and glowing animations" },
-  floating: { name: "Floating Cloud", description: "Serene floating elements with gentle cloud-like animations" },
-  liquid: { name: "Liquid Morph", description: "Dynamic liquid effects with flowing and morphing animations" },
-  cosmic: { name: "Cosmic Space", description: "Stellar design with cosmic particles and orbital animations" },
-  holographic: { name: "Holographic Glow", description: "Futuristic holographic effects with animated glowing borders and floating particles" },
-  particle: { name: "Particle Storm", description: "Dynamic particle system with morphing shapes and orbital animations" },
-  morphing: { name: "Morphing Liquid", description: "Liquid morphing backgrounds with shape-shifting borders and fluid transitions" },
-  prism: { name: "Prismatic Motion", description: "Conic gradients, light beams, and floating prism shapes" },
-  "liquid-glass": { name: "Liquid Glass", description: "iOS 26-inspired translucent glass effects with blur and smooth animations" },
+export const CARD_META: Record<CardStyleId, { 
+  name: string; 
+  description: string; 
+  category: string;
+  gradient: string;
+}> = {
+  minimal: { 
+    name: "Minimal Clean", 
+    description: "Clean, professional design with subtle borders and elegant typography",
+    category: "Professional",
+    gradient: "bg-gradient-minimal"
+  },
+  bold: { 
+    name: "Bold Modern", 
+    description: "Dark background with bright accents and strong visual impact",
+    category: "Modern",
+    gradient: "bg-gradient-bold"
+  },
+  elegant: { 
+    name: "Elegant Professional", 
+    description: "Sophisticated design with muted tones and luxury aesthetic",
+    category: "Professional",
+    gradient: "bg-gradient-elegant"
+  },
+  creative: { 
+    name: "Creative Colorful", 
+    description: "Vibrant gradients and playful design elements",
+    category: "Creative",
+    gradient: "bg-gradient-creative"
+  },
+  neon: { 
+    name: "Neon Cyber", 
+    description: "Cyberpunk-inspired with electric neon effects and glowing animations",
+    category: "Modern",
+    gradient: "bg-gradient-to-br from-purple-900 via-blue-900 to-black"
+  },
+  floating: { 
+    name: "Floating Cloud", 
+    description: "Serene floating elements with gentle cloud-like animations",
+    category: "Creative",
+    gradient: "bg-gradient-to-br from-blue-100 via-cyan-50 to-purple-100"
+  },
+  liquid: { 
+    name: "Liquid Morph", 
+    description: "Dynamic liquid effects with flowing and morphing animations",
+    category: "Creative",
+    gradient: "bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600"
+  },
+  cosmic: { 
+    name: "Cosmic Space", 
+    description: "Stellar design with cosmic particles and orbital animations",
+    category: "Modern",
+    gradient: "bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900"
+  },
+  holographic: { 
+    name: "Holographic Glow", 
+    description: "Futuristic holographic effects with animated glowing borders and floating particles",
+    category: "Modern",
+    gradient: "bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500"
+  },
+  particle: { 
+    name: "Particle Storm", 
+    description: "Dynamic particle system with morphing shapes and orbital animations",
+    category: "Modern",
+    gradient: "bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+  },
+  morphing: { 
+    name: "Morphing Liquid", 
+    description: "Liquid morphing backgrounds with shape-shifting borders and fluid transitions",
+    category: "Creative",
+    gradient: "bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600"
+  },
+  prism: { 
+    name: "Prismatic Motion", 
+    description: "Conic gradients, light beams, and floating prism shapes",
+    category: "Creative",
+    gradient: "bg-gradient-to-br from-amber-400 via-pink-400 to-purple-600"
+  },
+  "liquid-glass": { 
+    name: "Liquid Glass", 
+    description: "iOS 26-inspired translucent glass effects with blur and smooth animations",
+    category: "Modern",
+    gradient: "bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900"
+  },
 };
 
 

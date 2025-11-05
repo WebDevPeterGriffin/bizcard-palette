@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import ImageUpload from "@/components/ImageUpload";
 import SocialLinkSelector from "@/components/SocialLinkSelector";
 import SEO from "@/components/SEO";
+import ProgressIndicator from "@/components/ProgressIndicator";
+import { CARD_META } from "@/components/cards/registry";
 
 const RequestForm = () => {
   const navigate = useNavigate();
@@ -32,20 +34,10 @@ const RequestForm = () => {
   const [headshotPreview, setHeadshotPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const cardStyles = [
-    { id: "minimal", name: "Minimal Clean" },
-    { id: "bold", name: "Bold Modern" },
-    { id: "elegant", name: "Elegant Professional" },
-    { id: "creative", name: "Creative Colorful" },
-    { id: "liquid-glass", name: "Liquid Glass" },
-    { id: "neon", name: "Neon Cyber" },
-    { id: "floating", name: "Floating Cloud" },
-    { id: "liquid", name: "Liquid Morph" },
-    { id: "cosmic", name: "Cosmic Space" },
-    { id: "holographic", name: "Holographic Glow" },
-    { id: "particle", name: "Particle Storm" },
-    { id: "morphing", name: "Morphing Liquid" }
-  ];
+  const cardStyles = Object.entries(CARD_META).map(([id, meta]) => ({
+    id,
+    name: meta.name
+  }));
 
   const generateSlug = (name: string) => {
     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
@@ -152,11 +144,11 @@ const RequestForm = () => {
 
       toast({
         title: "Card Created!",
-        description: `Your digital business card is ready at /${slug}`,
+        description: `Your digital business card is ready!`,
       });
 
-      // Redirect to the generated card
-      navigate(`/${slug}`);
+      // Redirect to the success page
+      navigate(`/success/${slug}`);
 
     } catch (error) {
       console.error('Error creating card:', error);
@@ -188,7 +180,7 @@ const RequestForm = () => {
       />
       
       <div className="min-h-screen bg-background p-4">
-        <div className="container mx-auto max-w-2xl">
+        <div className="container mx-auto max-w-3xl">
           {/* Header */}
           <div className="mb-8 flex items-center justify-between">
             <Button variant="outline" onClick={() => navigate('/')}>
@@ -198,6 +190,12 @@ const RequestForm = () => {
             <h1 className="text-2xl font-bold">Create Your Digital Card</h1>
             <div></div>
           </div>
+
+          {/* Progress Indicator */}
+          <ProgressIndicator 
+            currentStep={formData.style_id ? (headshot || headshotPreview ? 3 : 2) : 1}
+            steps={["Choose Style", "Add Info", "Finalize"]}
+          />
 
           {/* Form */}
           <Card className="shadow-card">

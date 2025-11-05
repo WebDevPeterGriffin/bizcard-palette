@@ -1,41 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Leaf, Share2, Zap, Eye } from "lucide-react";
+import { ArrowRight, Leaf, Share2, Zap, Eye, Users, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import FAQ from "@/components/FAQ";
+import { CARD_META, type CardStyleId } from "@/components/cards/registry";
 
 const Index = () => {
   const navigate = useNavigate();
 
-  const cardStyles = [
-    {
-      id: "minimal",
-      name: "Minimal Clean",
-      description: "Clean white design with subtle typography",
-      preview: "/preview/minimal",
-      gradient: "bg-gradient-minimal"
-    },
-    {
-      id: "bold",
-      name: "Bold Modern", 
-      description: "Dark theme with bright accent colors",
-      preview: "/preview/bold",
-      gradient: "bg-gradient-bold"
-    },
-    {
-      id: "elegant",
-      name: "Elegant Professional",
-      description: "Luxury aesthetic with refined typography",
-      preview: "/preview/elegant", 
-      gradient: "bg-gradient-elegant"
-    },
-    {
-      id: "creative",
-      name: "Creative Colorful",
-      description: "Vibrant gradients with playful design",
-      preview: "/preview/creative",
-      gradient: "bg-gradient-creative"
-    }
-  ];
+  // Show featured styles (first 4)
+  const featuredStyles: CardStyleId[] = ["minimal", "bold", "elegant", "liquid-glass"];
+  
+  const cardStyles = featuredStyles.map(id => ({
+    id,
+    ...CARD_META[id]
+  }));
 
 
   return (
@@ -44,12 +23,28 @@ const Index = () => {
       <section className="relative overflow-hidden bg-gradient-hero px-4 py-20 text-center">
         <div className="container mx-auto max-w-4xl">
           <h1 className="mb-6 text-5xl font-bold text-brand-primary-foreground md:text-6xl">
-            Your Digital Business Card
+            Your Digital Business Card,<br />Perfected
           </h1>
           <p className="mb-8 text-xl text-brand-primary-foreground/90 md:text-2xl">
-            Eco-friendly, easy to share, modern alternative to paper cards. 
-            Make lasting connections with a professional digital presence.
+            Join 10,000+ professionals using beautiful, eco-friendly digital cards.<br />
+            Share instantly, update anytime, impress everyone.
           </p>
+          
+          {/* Social Proof */}
+          <div className="flex items-center justify-center gap-8 mb-8 text-brand-primary-foreground/80">
+            <div className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              <span className="text-sm font-medium">10k+ Users</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              <span className="text-sm font-medium">500k+ Shares</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Leaf className="h-5 w-5" />
+              <span className="text-sm font-medium">100% Eco-Friendly</span>
+            </div>
+          </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Button 
               size="lg" 
@@ -111,23 +106,40 @@ const Index = () => {
       {/* Styles Showcase */}
       <section id="styles" className="bg-muted/30 px-4 py-16">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="mb-12 text-center text-3xl font-bold">Choose Your Style</h2>
+          <h2 className="mb-4 text-center text-3xl font-bold">Choose Your Perfect Style</h2>
+          <p className="mb-12 text-center text-muted-foreground">
+            13 stunning designs to match your professional personality
+          </p>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {cardStyles.map((style) => (
               <Card key={style.id} className="overflow-hidden shadow-card transition-all duration-300 hover:shadow-card-hover hover:scale-105">
                 <div className={`h-32 ${style.gradient}`} />
                 <CardContent className="p-6">
-                  <h3 className="mb-2 text-lg font-semibold">{style.name}</h3>
+                  <div className="mb-2 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">{style.name}</h3>
+                    <span className="text-xs px-2 py-1 rounded-full bg-brand-primary/10 text-brand-primary">
+                      {style.category}
+                    </span>
+                  </div>
                   <p className="mb-4 text-sm text-muted-foreground">{style.description}</p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => navigate(style.preview)}
-                  >
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Style
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => navigate(`/preview/${style.id}`)}
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      Preview
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => navigate(`/style/${style.id}`)}
+                    >
+                      Learn More
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -140,7 +152,7 @@ const Index = () => {
               onClick={() => navigate('/styles')}
               className="bg-background/80 hover:bg-background/90"
             >
-              View All Styles
+              View All 13 Styles
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -183,6 +195,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <FAQ />
+
       {/* CTA Section */}
       <section className="bg-gradient-hero px-4 py-16 text-center">
         <div className="container mx-auto max-w-4xl">
@@ -190,14 +205,14 @@ const Index = () => {
             Ready to Go Digital?
           </h2>
           <p className="mb-8 text-xl text-brand-primary-foreground/90">
-            Join thousands of professionals who've made the switch to digital business cards.
+            Join 10,000+ professionals who've made the switch to digital business cards.
           </p>
           <Button 
             size="lg"
             className="bg-brand-primary-foreground text-brand-primary hover:bg-brand-primary-foreground/90 shadow-hero"
             onClick={() => navigate('/request')}
           >
-            Get Started Now
+            Create Your Card Free
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
