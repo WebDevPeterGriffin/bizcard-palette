@@ -122,24 +122,15 @@ const Index = () => {
                     </span>
                   </div>
                   <p className="mb-4 text-sm text-muted-foreground">{style.description}</p>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex-1"
-                      onClick={() => navigate(`/preview/${style.id}`)}
-                    >
-                      <Eye className="mr-2 h-4 w-4" />
-                      Preview
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      className="flex-1"
-                      onClick={() => navigate(`/style/${style.id}`)}
-                    >
-                      Learn More
-                    </Button>
-                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={() => navigate(`/preview/${style.id}`)}
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    Preview
+                  </Button>
                 </CardContent>
               </Card>
             ))}
