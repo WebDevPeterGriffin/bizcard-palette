@@ -23,11 +23,11 @@ const Index = () => {
       <section className="relative overflow-hidden bg-gradient-hero px-4 py-20 text-center">
         <div className="container mx-auto max-w-4xl">
           <h1 className="mb-6 text-5xl font-bold text-brand-primary-foreground md:text-6xl">
-            Digital Business Cards<br />& Landing Pages
+            Your Digital Business Card,<br />Perfected
           </h1>
           <p className="mb-8 text-xl text-brand-primary-foreground/90 md:text-2xl">
-            Create stunning digital business cards and SEO-optimized landing pages.<br />
-            Professional templates, instant sharing, and beautiful designs.
+            Join 10,000+ professionals using beautiful, eco-friendly digital cards.<br />
+            Share instantly, update anytime, impress everyone.
           </p>
           
           {/* Social Proof */}
@@ -52,22 +52,15 @@ const Index = () => {
               className="bg-background/10 text-brand-primary-foreground border-brand-primary-foreground/30 hover:bg-background/20"
               onClick={() => navigate('/styles')}
             >
-              Business Cards
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="bg-background/10 text-brand-primary-foreground border-brand-primary-foreground/30 hover:bg-background/20"
-              onClick={() => navigate('/landing-pages')}
-            >
-              Landing Pages
+              <Eye className="mr-2 h-5 w-5" />
+              View Digital Business Cards
             </Button>
             <Button 
               size="lg"
               className="bg-brand-primary-foreground text-brand-primary hover:bg-brand-primary-foreground/90 shadow-hero"
               onClick={() => navigate('/request')}
             >
-              Get Started
+              Request Yours
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
