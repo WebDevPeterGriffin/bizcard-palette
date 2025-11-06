@@ -89,25 +89,15 @@ const Styles = () => {
                     <p className="text-sm text-muted-foreground">{style.description}</p>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="flex gap-2">
-                      <Button 
-                        onClick={() => navigate(`/preview/${style.id}`)}
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        Preview
-                      </Button>
-                      <Button 
-                        onClick={() => navigate(`/style/${style.id}`)}
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                      >
-                        Details
-                      </Button>
-                    </div>
+                    <Button 
+                      onClick={() => navigate(`/preview/${style.id}`)}
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Preview
+                    </Button>
                     <Button 
                       onClick={() => handleRequestStyle(style.id)}
                       size="sm"
