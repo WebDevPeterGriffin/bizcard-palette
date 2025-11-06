@@ -1,6 +1,7 @@
 import { Mail, Phone, Globe, Linkedin, Twitter, Instagram, Facebook, Youtube, Github, MessageCircle, Send, Users, Twitch, Camera, Hash, Bookmark, FileText, Code, Heart, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContactActions } from "@/components/ContactActions";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 
 interface SocialLink {
   platform: string;
@@ -20,6 +21,7 @@ interface CreativeCardProps {
   headshotUrl?: string;
   bookingEnabled?: boolean;
   bookingInstructions?: string;
+  slug?: string;
   // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
@@ -38,7 +40,8 @@ const CreativeCard = ({
   bookingEnabled = false,
   bookingInstructions,
   linkedin = "",
-  twitter = ""
+  twitter = "",
+  slug
 }: CreativeCardProps) => {
   
   const getSocialIcon = (platform: string) => {
@@ -213,6 +216,14 @@ const CreativeCard = ({
                 bookingInstructions={bookingInstructions}
                 style="creative"
               />
+            </div>
+          )}
+
+          {slug && (
+            <div className="mt-6 border-t border-white/20 pt-6 flex justify-center">
+              <div className="relative p-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/20">
+                <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
+              </div>
             </div>
           )}
         </CardContent>

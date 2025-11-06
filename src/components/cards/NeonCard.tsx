@@ -2,6 +2,7 @@ import { Mail, Phone, Globe, Zap, Star, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 import { ContactActions } from "@/components/ContactActions";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 
 interface SocialLink {
   platform: string;
@@ -23,6 +24,7 @@ interface NeonCardProps {
   bookingInstructions?: string;
   linkedin?: string;
   twitter?: string;
+  slug?: string;
 }
 
 const NeonCard = ({
@@ -38,7 +40,8 @@ const NeonCard = ({
   bookingEnabled = false,
   bookingInstructions,
   linkedin = "",
-  twitter = ""
+  twitter = "",
+  slug
 }: NeonCardProps) => {
   
   // Social helpers moved to a shared component for consistency
@@ -185,6 +188,15 @@ const NeonCard = ({
               bookingInstructions={bookingInstructions}
               style="neon"
             />
+          </div>
+        )}
+
+        {slug && (
+          <div className="flex justify-center mt-6">
+            <div className="relative p-3 rounded-2xl bg-slate-800/50 backdrop-blur-sm border border-cyan-400/30">
+              <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-400/20 to-pink-400/20 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+            </div>
           </div>
         )}
 

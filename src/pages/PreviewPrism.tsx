@@ -51,6 +51,7 @@ const PreviewPrism = () => {
           <div className="w-full h-full max-w-lg max-h-screen">
             <PrismCard 
               cardId="preview-prism"
+              slug="preview-prism"
             />
           </div>
         </div>

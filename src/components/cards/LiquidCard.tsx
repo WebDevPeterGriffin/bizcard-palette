@@ -2,6 +2,7 @@ import { Mail, Phone, Globe, Waves, Droplets, Circle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 import { ContactActions } from "@/components/ContactActions";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 
 interface SocialLink {
   platform: string;
@@ -23,6 +24,7 @@ interface LiquidCardProps {
   bookingInstructions?: string;
   linkedin?: string;
   twitter?: string;
+  slug?: string;
 }
 
 const LiquidCard = ({
@@ -38,7 +40,8 @@ const LiquidCard = ({
   bookingEnabled = false,
   bookingInstructions,
   linkedin = "",
-  twitter = ""
+  twitter = "",
+  slug
 }: LiquidCardProps) => {
   
   // Social helpers moved to a shared component for consistency

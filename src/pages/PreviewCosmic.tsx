@@ -46,6 +46,7 @@ const PreviewCosmic = () => {
           <div className="w-full h-full max-w-lg max-h-screen">
             <CosmicCard 
               cardId="preview-cosmic"
+              slug="preview-cosmic"
               bookingEnabled={true}
               bookingInstructions="Ready to explore infinite possibilities? Schedule a cosmic consultation and let's launch your project into orbit!"
             />

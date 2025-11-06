@@ -43,6 +43,7 @@ const PreviewMinimal = () => {
             <div className="flex justify-center">
               <MinimalCard 
                 cardId="preview-minimal"
+                slug="preview-minimal"
                 name="Sarah Johnson"
                 title="Senior Product Manager"
                 company="Tech Innovations Inc."

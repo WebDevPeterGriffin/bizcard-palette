@@ -2,6 +2,7 @@ import { Mail, Phone, Globe, Star, Sparkles, Zap, Moon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 import { ContactActions } from "@/components/ContactActions";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 
 interface SocialLink {
   platform: string;
@@ -23,6 +24,7 @@ interface CosmicCardProps {
   bookingInstructions?: string;
   linkedin?: string;
   twitter?: string;
+  slug?: string;
 }
 
 const CosmicCard = ({
@@ -38,7 +40,8 @@ const CosmicCard = ({
   bookingEnabled = false,
   bookingInstructions,
   linkedin = "",
-  twitter = ""
+  twitter = "",
+  slug
 }: CosmicCardProps) => {
   
   // Social helpers moved to a shared component for consistency

@@ -25,7 +25,9 @@ const PreviewMorphing = () => {
                 Back to Styles
               </Button>
               <h1 className="text-xl font-semibold text-white">Morphing Liquid Preview</h1>
-              <div></div>
+              <Button onClick={() => navigate('/request?style=morphing')} className="bg-white/20 hover:bg-white/30 text-white">
+                Choose This Style
+              </Button>
             </div>
           </div>
         </div>
@@ -34,19 +36,18 @@ const PreviewMorphing = () => {
         <div className="flex min-h-[calc(100vh-80px)] items-center justify-center p-4">
           <MorphingCard
             cardId="preview-morphing"
+            slug="preview-morphing"
             name="Jordan Kim"
             title="UX Designer"
             company="Design Studio Labs"
             phone="+1 (555) 456-7890"
             email="jordan@designlabs.com"
             website="www.jordankim.design"
-            
             socialLinks={[
               { platform: "dribbble", url: "jordankim", label: "Dribbble" },
               { platform: "behance", url: "jordankim", label: "Behance" },
               { platform: "linkedin", url: "jordankim", label: "LinkedIn" }
             ]}
-            slug="preview-morphing"
           />
         </div>
       </div>

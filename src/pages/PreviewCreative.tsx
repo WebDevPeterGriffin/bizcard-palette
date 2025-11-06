@@ -43,6 +43,7 @@ const PreviewCreative = () => {
             <div className="flex justify-center">
               <CreativeCard 
                 cardId="preview-creative"
+                slug="preview-creative"
                 bookingEnabled={true}
                 bookingInstructions="Ready to bring your creative vision to life? Book a discovery call and let's make something amazing together!"
               />

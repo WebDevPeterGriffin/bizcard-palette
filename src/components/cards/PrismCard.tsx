@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Phone, Mail, Globe } from "lucide-react";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 import { ContactActions } from "@/components/ContactActions";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 
 interface SocialLink {
   platform: string;
@@ -21,6 +22,7 @@ interface PrismCardProps {
   headshotUrl?: string;
   bookingEnabled?: boolean;
   bookingInstructions?: string;
+  slug?: string;
 }
 
 const PrismCard = ({
@@ -35,6 +37,7 @@ const PrismCard = ({
   headshotUrl,
   bookingEnabled = true,
   bookingInstructions = "Book a session to craft animated brand visuals.",
+  slug
 }: PrismCardProps) => {
   return (
     <Card className="relative w-80 h-auto min-h-[26rem] overflow-hidden border border-white/10 bg-gradient-to-b from-[#0b0b10] via-[#12121a] to-[#0b0b10] backdrop-blur-md mx-auto">
@@ -136,6 +139,14 @@ const PrismCard = ({
               bookingInstructions={bookingInstructions}
               style="minimal"
             />
+          </div>
+        )}
+
+        {slug && (
+          <div className="mt-6 border-t border-white/10 pt-6 flex justify-center">
+            <div className="relative p-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/20">
+              <QRCodeGenerator url={`${window.location.origin}/card/${slug}`} size={120} showControls={false} />
+            </div>
           </div>
         )}
       </div>

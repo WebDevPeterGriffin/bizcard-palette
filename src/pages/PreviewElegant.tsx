@@ -43,6 +43,7 @@ const PreviewElegant = () => {
             <div className="flex justify-center">
               <ElegantCard 
                 cardId="preview-elegant"
+                slug="preview-elegant"
                 bookingEnabled={true}
                 bookingInstructions="I look forward to connecting with you. Please book a convenient time for our meeting."
               />

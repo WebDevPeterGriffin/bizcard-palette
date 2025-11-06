@@ -25,7 +25,9 @@ const PreviewParticle = () => {
                 Back to Styles  
               </Button>
               <h1 className="text-xl font-semibold text-white">Particle Storm Preview</h1>
-              <div></div>
+              <Button onClick={() => navigate('/request?style=particle')} className="bg-white/20 hover:bg-white/30 text-white">
+                Choose This Style
+              </Button>
             </div>
           </div>
         </div>
@@ -34,19 +36,18 @@ const PreviewParticle = () => {
         <div className="flex min-h-[calc(100vh-80px)] items-center justify-center p-4">
           <ParticleCard
             cardId="preview-particle"
+            slug="preview-particle"
             name="Maya Rodriguez"
             title="Data Scientist"
             company="Quantum Analytics"
             phone="+1 (555) 987-6543"
             email="maya@quantum.com"
             website="www.mayarodriguez.com"
-            
             socialLinks={[
               { platform: "linkedin", url: "mayarodriguez", label: "LinkedIn" },
               { platform: "github", url: "mayarodriguez", label: "GitHub" },
               { platform: "twitter", url: "mayarodriguez", label: "Twitter" }
             ]}
-            slug="preview-particle"
           />
         </div>
       </div>

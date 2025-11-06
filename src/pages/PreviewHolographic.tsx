@@ -25,7 +25,9 @@ const PreviewHolographic = () => {
                 Back to Styles
               </Button>
               <h1 className="text-xl font-semibold text-white">Holographic Glow Preview</h1>
-              <div></div>
+              <Button onClick={() => navigate('/request?style=holographic')} className="bg-white/20 hover:bg-white/30 text-white">
+                Choose This Style
+              </Button>
             </div>
           </div>
         </div>
@@ -34,19 +36,18 @@ const PreviewHolographic = () => {
         <div className="flex min-h-[calc(100vh-80px)] items-center justify-center p-4">
           <HolographicCard
             cardId="preview-holographic"
+            slug="preview-holographic"
             name="Alex Chen"
             title="Creative Director"
             company="Future Tech Industries"
             phone="+1 (555) 123-4567"
             email="alex@futuretech.com"
             website="www.alexchen.com"
-            
             socialLinks={[
               { platform: "linkedin", url: "alexchen", label: "LinkedIn" },
               { platform: "twitter", url: "alexchen", label: "Twitter" },
               { platform: "instagram", url: "alexchen", label: "Instagram" }
             ]}
-            slug="preview-holographic"
           />
         </div>
       </div>

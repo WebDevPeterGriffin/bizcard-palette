@@ -1,6 +1,7 @@
 import { Mail, Phone, Globe, MapPin, Linkedin, Twitter, Instagram, Facebook, Youtube, Github, MessageCircle, Send, Users, Twitch, Camera, Hash, Bookmark, FileText, Code } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContactActions } from "@/components/ContactActions";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 
 interface SocialLink {
   platform: string;
@@ -20,6 +21,7 @@ interface MinimalCardProps {
   headshotUrl?: string;
   bookingEnabled?: boolean;
   bookingInstructions?: string;
+  slug?: string;
   // Keep backward compatibility
   linkedin?: string;
   twitter?: string;
@@ -38,7 +40,8 @@ const MinimalCard = ({
   bookingEnabled = false,
   bookingInstructions,
   linkedin = "",
-  twitter = ""
+  twitter = "",
+  slug
 }: MinimalCardProps) => {
   
   const getSocialIcon = (platform: string) => {

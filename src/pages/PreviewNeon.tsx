@@ -46,6 +46,7 @@ const PreviewNeon = () => {
           <div className="w-full h-full max-w-lg max-h-screen">
             <NeonCard 
               cardId="preview-neon"
+              slug="preview-neon"
               bookingEnabled={true}
               bookingInstructions="Ready to level up your digital presence? Book a strategy session and let's build something epic!"
             />

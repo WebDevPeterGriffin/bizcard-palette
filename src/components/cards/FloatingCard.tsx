@@ -2,6 +2,7 @@ import { Mail, Phone, Globe, Cloud, Wind, Feather } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 import { ContactActions } from "@/components/ContactActions";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 
 interface SocialLink {
   platform: string;
@@ -23,6 +24,7 @@ interface FloatingCardProps {
   bookingInstructions?: string;
   linkedin?: string;
   twitter?: string;
+  slug?: string;
 }
 
 const FloatingCard = ({
@@ -38,7 +40,8 @@ const FloatingCard = ({
   bookingEnabled = false,
   bookingInstructions,
   linkedin = "",
-  twitter = ""
+  twitter = "",
+  slug
 }: FloatingCardProps) => {
   
   // Social helpers moved to a shared component for consistency
