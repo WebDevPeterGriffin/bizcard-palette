@@ -140,11 +140,11 @@ const LiquidGlassCard = ({
           {/* QR Code Section */}
           {slug && cardUrl && (
             <div className="flex justify-center mb-6 animate-glass-bubble-up" style={{animationDelay: '1.8s'}}>
-              <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="p-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/20">
                 <QRCodeGenerator 
                   url={cardUrl} 
                   size={120}
-                  className="bg-white p-2 rounded-lg"
+                  showControls={false}
                 />
               </div>
             </div>
