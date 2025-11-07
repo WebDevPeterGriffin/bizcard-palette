@@ -3,9 +3,11 @@ import { Card } from "@/components/ui/card";
 import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
 import { ContactActions } from "@/components/ContactActions";
 import { BaseCardProps } from "./shared";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
 
 const LiquidGlassCard = ({
   cardId,
+  slug,
   name = "Alex Glass",
   title = "Design Architect",
   company = "Crystal Studios",
@@ -17,6 +19,7 @@ const LiquidGlassCard = ({
   bookingEnabled = false,
   bookingInstructions = "Book a design consultation with me",
 }: BaseCardProps) => {
+  const cardUrl = slug ? `${window.location.origin}/card/${slug}` : "";
   return (
     <div className="relative w-80 h-auto min-h-[28rem] mx-auto perspective-1000">
       {/* Subtle floating glass orbs background */}
@@ -131,6 +134,19 @@ const LiquidGlassCard = ({
                   <SocialIcon platform={social.platform} className="h-4 w-4" />
                 </a>
               ))}
+            </div>
+          )}
+
+          {/* QR Code Section */}
+          {slug && cardUrl && (
+            <div className="flex justify-center mb-6 animate-glass-bubble-up" style={{animationDelay: '1.8s'}}>
+              <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <QRCodeGenerator 
+                  url={cardUrl} 
+                  size={120}
+                  className="bg-white p-2 rounded-lg"
+                />
+              </div>
             </div>
           )}
 
