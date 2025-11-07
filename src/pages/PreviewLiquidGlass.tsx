@@ -40,7 +40,7 @@ const PreviewLiquidGlass = () => {
               <p className="text-muted-foreground">Elegant translucent design with modern iOS-inspired aesthetics and fluid animations</p>
             </div>
             
-            <div className="flex justify-center bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900 p-8 rounded-2xl">
+            <div className="flex justify-center">
               <LiquidGlassCard 
                 cardId="preview-liquid-glass"
                 slug="preview-liquid-glass"
