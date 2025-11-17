@@ -22,6 +22,8 @@ interface HolographicCardProps {
   headshotUrl?: string;
   socialLinks?: SocialLink[];
   slug?: string;
+  bookingEnabled?: boolean;
+  bookingInstructions?: string;
 }
 
 export const HolographicCard = ({
@@ -35,7 +37,9 @@ export const HolographicCard = ({
   location = "San Francisco, CA",
   headshotUrl,
   socialLinks = [],
-  slug
+  slug,
+  bookingEnabled = false,
+  bookingInstructions
 }: HolographicCardProps) => {
   return (
     <div className="relative w-full max-w-md mx-auto">
@@ -168,8 +172,8 @@ export const HolographicCard = ({
                 socialLinks={socialLinks}
                 headshotUrl={headshotUrl}
                 style="minimal"
-                bookingEnabled={true}
-                bookingInstructions="Schedule a meeting to discuss your next project or collaboration opportunity."
+                bookingEnabled={bookingEnabled}
+                bookingInstructions={bookingInstructions}
               />
               
               {slug && (

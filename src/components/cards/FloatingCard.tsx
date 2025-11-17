@@ -186,6 +186,17 @@ const FloatingCard = ({
             />
           </div>
         )}
+
+        {/* QR Code */}
+        {slug && (
+          <div className="mt-6 border-t border-blue-300/20 pt-6">
+            <QRCodeGenerator 
+              url={`${window.location.origin}/card/${slug}`}
+              size={180}
+              showControls={false}
+            />
+          </div>
+        )}
       </div>
       </Card>
 
