@@ -48,6 +48,8 @@ const PreviewParticle = () => {
               { platform: "github", url: "mayarodriguez", label: "GitHub" },
               { platform: "twitter", url: "mayarodriguez", label: "Twitter" }
             ]}
+            bookingEnabled={true}
+            bookingInstructions="Book a data consultation to discuss models, analytics, and insights."
           />
         </div>
       </div>

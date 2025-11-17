@@ -48,6 +48,8 @@ const PreviewMorphing = () => {
               { platform: "behance", url: "jordankim", label: "Behance" },
               { platform: "linkedin", url: "jordankim", label: "LinkedIn" }
             ]}
+            bookingEnabled={true}
+            bookingInstructions="Book a design review or discovery call. I'm available weekdays 10am–4pm."
           />
         </div>
       </div>
