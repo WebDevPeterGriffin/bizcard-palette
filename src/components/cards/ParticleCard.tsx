@@ -23,6 +23,8 @@ interface ParticleCardProps {
   headshotUrl?: string;
   socialLinks?: SocialLink[];
   slug?: string;
+  bookingEnabled?: boolean;
+  bookingInstructions?: string;
 }
 
 export const ParticleCard = ({
@@ -36,7 +38,9 @@ export const ParticleCard = ({
   location = "New York, NY",
   headshotUrl,
   socialLinks = [],
-  slug
+  slug,
+  bookingEnabled = false,
+  bookingInstructions
 }: ParticleCardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -268,8 +272,8 @@ export const ParticleCard = ({
                 socialLinks={socialLinks}
                 headshotUrl={headshotUrl}
                 style="minimal"
-                bookingEnabled={true}
-                bookingInstructions="Book a consultation to explore data-driven solutions and analytics opportunities."
+                bookingEnabled={bookingEnabled}
+                bookingInstructions={bookingInstructions}
               />
               
               {slug && (

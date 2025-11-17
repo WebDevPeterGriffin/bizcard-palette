@@ -156,14 +156,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_expired_admin_codes: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      process_scheduled_deletions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_expired_admin_codes: { Args: never; Returns: undefined }
+      process_scheduled_deletions: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

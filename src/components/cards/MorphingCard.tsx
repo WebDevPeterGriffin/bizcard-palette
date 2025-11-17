@@ -22,6 +22,8 @@ interface MorphingCardProps {
   headshotUrl?: string;
   socialLinks?: SocialLink[];
   slug?: string;
+  bookingEnabled?: boolean;
+  bookingInstructions?: string;
 }
 
 export const MorphingCard = ({
@@ -35,7 +37,9 @@ export const MorphingCard = ({
   location = "Los Angeles, CA",
   headshotUrl,
   socialLinks = [],
-  slug
+  slug,
+  bookingEnabled = false,
+  bookingInstructions
 }: MorphingCardProps) => {
   return (
     <div className="relative w-full max-w-md mx-auto">
@@ -172,8 +176,8 @@ export const MorphingCard = ({
                 socialLinks={socialLinks}
                 headshotUrl={headshotUrl}
                 style="minimal"
-                bookingEnabled={true}
-                bookingInstructions="Schedule a creative consultation to discuss your design vision and bring your ideas to life."
+                bookingEnabled={bookingEnabled}
+                bookingInstructions={bookingInstructions}
               />
               
               {slug && (
