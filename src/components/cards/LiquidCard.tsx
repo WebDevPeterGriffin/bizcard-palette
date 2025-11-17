@@ -191,6 +191,17 @@ const LiquidCard = ({
             />
           </div>
         )}
+
+        {/* QR Code */}
+        {slug && (
+          <div className="mt-6 border-t border-white/20 pt-6">
+            <QRCodeGenerator 
+              url={`${window.location.origin}/card/${slug}`}
+              size={180}
+              showControls={false}
+            />
+          </div>
+        )}
       </div>
       </Card>
 

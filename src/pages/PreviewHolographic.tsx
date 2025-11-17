@@ -48,6 +48,8 @@ const PreviewHolographic = () => {
               { platform: "twitter", url: "alexchen", label: "Twitter" },
               { platform: "instagram", url: "alexchen", label: "Instagram" }
             ]}
+            bookingEnabled={true}
+            bookingInstructions="Book a creative consultation to discuss your project. I'm available weekdays 9am-5pm."
           />
         </div>
       </div>

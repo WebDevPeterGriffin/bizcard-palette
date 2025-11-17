@@ -52,6 +52,8 @@ const PreviewPrism = () => {
             <PrismCard 
               cardId="preview-prism"
               slug="preview-prism"
+              bookingEnabled={true}
+              bookingInstructions="Schedule a call to explore innovative design solutions. Available Monday to Friday, 10am-6pm."
             />
           </div>
         </div>
