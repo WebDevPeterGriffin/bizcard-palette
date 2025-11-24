@@ -30,7 +30,11 @@ interface CardData {
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
   const [users, setUsers] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(false);
   const [scheduledDate, setScheduledDate] = useState("");
@@ -39,6 +43,71 @@ const Admin = () => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [bulkAction, setBulkAction] = useState<string>("");
+
+  // Check authentication and admin role on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          setIsAuthenticated(true);
+          
+          // Check if user has admin role
+          const { data: roleData, error } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .eq('role', 'admin')
+            .maybeSingle();
+          
+          if (!error && roleData) {
+            setIsAdmin(true);
+            fetchUsers();
+          } else {
+            toast({
+              variant: "destructive",
+              title: "Access Denied",
+              description: "You don't have admin privileges",
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        setIsAuthenticated(true);
+        
+        // Check admin role
+        setTimeout(async () => {
+          const { data: roleData, error } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .eq('role', 'admin')
+            .maybeSingle();
+          
+          if (!error && roleData) {
+            setIsAdmin(true);
+            fetchUsers();
+          }
+        }, 0);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleDeleteUser = async (userId: string) => {
     setActionLoading(userId);
@@ -234,20 +303,66 @@ const Admin = () => {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "SahGarVar14124#") {
-      setIsAuthenticated(true);
-      fetchUsers();
-      toast({
-        title: "Access granted",
-        description: "Welcome to the admin panel",
-      });
-    } else {
+    setLoading(true);
+    
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/admin`
+          }
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Account created",
+          description: "Please check your email to confirm your account. Contact the admin to be granted access.",
+        });
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Signed in successfully",
+          description: "Checking admin privileges...",
+        });
+      }
+    } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Invalid password",
-        description: "Please enter the correct password",
+        title: isSignUp ? "Sign up failed" : "Login failed",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      setIsAuthenticated(false);
+      setIsAdmin(false);
+      toast({
+        title: "Signed out",
+        description: "You have been logged out successfully",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Logout failed",
+        description: error.message,
       });
     }
   };
@@ -282,7 +397,15 @@ const Admin = () => {
     }
   };
 
-  if (!isAuthenticated) {
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !isAdmin) {
     return (
       <>
         <SEO 
@@ -294,26 +417,51 @@ const Admin = () => {
             <CardHeader className="text-center">
               <CardTitle>Admin Access</CardTitle>
               <CardDescription>
-                Enter your admin password to continue
+                {isSignUp ? "Create an admin account" : "Sign in with your admin credentials"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={handleAuth} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password">Admin Password</Label>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter admin password"
+                    placeholder="Enter your password"
                     required
+                    minLength={6}
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Verifying..." : "Login"}
+                  {loading ? "Processing..." : isSignUp ? "Sign Up" : "Sign In"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="w-full"
+                  onClick={() => setIsSignUp(!isSignUp)}
+                >
+                  {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
                 </Button>
               </form>
+              {!isAuthenticated && isAdmin === false && (
+                <p className="text-sm text-muted-foreground mt-4 text-center">
+                  Note: You must be granted admin role to access this page
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -344,7 +492,7 @@ const Admin = () => {
               </Button>
               <Button 
                 variant="outline" 
-                onClick={() => setIsAuthenticated(false)}
+                onClick={handleLogout}
               >
                 Logout
               </Button>
