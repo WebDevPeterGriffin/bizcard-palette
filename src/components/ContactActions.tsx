@@ -23,7 +23,7 @@ interface ContactActionsProps {
   bookingEnabled?: boolean;
   bookingInstructions?: string;
   className?: string;
-  style?: 'minimal' | 'bold' | 'elegant' | 'creative' | 'neon' | 'floating' | 'liquid' | 'cosmic';
+  style?: 'minimal' | 'bold' | 'elegant' | 'creative' | 'neon' | 'floating' | 'liquid' | 'cosmic' | 'holographic' | 'liquidglass' | 'morphing' | 'particle' | 'prism';
 }
 
 export function ContactActions({
