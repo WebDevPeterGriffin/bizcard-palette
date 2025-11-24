@@ -1,175 +1,103 @@
-import { Mail, Phone, Globe, Cloud, Wind, Feather } from "lucide-react";
+import React from 'react';
+import { Cloud, Wind, Feather } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import SocialIcon, { buildSocialUrl } from "@/components/SocialIcon";
-import { ContactActions } from "@/components/ContactActions";
-import QRCodeGenerator from "@/components/QRCodeGenerator";
+import { BaseCardProps } from './shared';
+import { ProfileSection, ContactInfo, SocialLinks, QRSection } from './shared-ui';
+import { ContactActions } from '@/components/ContactActions';
+import { useSocialLinks } from '@/hooks/useSocialLinks';
 
-interface SocialLink {
-  platform: string;
-  url: string;
-  label?: string;
-}
+const FloatingCard: React.FC<BaseCardProps> = (props) => {
+  const {
+    cardId = '',
+    name = 'Luna Sky',
+    title = 'Cloud Architect',
+    company = 'Elevate Studios',
+    phone = '+1 (555) 234-5678',
+    email = 'luna@elevate.cloud',
+    website = 'www.lunasky.design',
+    headshotUrl,
+    socialLinks = [],
+    slug = '',
+    bookingEnabled = false,
+    bookingInstructions = '',
+    linkedin,
+    twitter,
+  } = props;
 
-interface FloatingCardProps {
-  cardId?: string;
-  name?: string;
-  title?: string;
-  company?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  socialLinks?: SocialLink[];
-  headshotUrl?: string;
-  bookingEnabled?: boolean;
-  bookingInstructions?: string;
-  linkedin?: string;
-  twitter?: string;
-  slug?: string;
-}
+  const displaySocialLinks = useSocialLinks({ socialLinks, linkedin, twitter });
 
-const FloatingCard = ({
-  cardId,
-  name = "Luna Sky",
-  title = "Cloud Architect",
-  company = "Elevate Studios",
-  phone = "+1 (555) 234-5678",
-  email = "luna@elevate.cloud",
-  website = "www.lunasky.design",
-  socialLinks = [],
-  headshotUrl,
-  bookingEnabled = false,
-  bookingInstructions,
-  linkedin = "",
-  twitter = "",
-  slug
-}: FloatingCardProps) => {
-  
-  // Social helpers moved to a shared component for consistency
-
-  const legacySocials = [];
-  if (linkedin) legacySocials.push({ platform: 'linkedin', url: linkedin });
-  if (twitter) legacySocials.push({ platform: 'twitter', url: twitter });
-  
-  const displaySocialLinks = socialLinks.length > 0 ? socialLinks : legacySocials;
+  const qrValue = typeof window !== 'undefined'
+    ? `${window.location.origin}/card/${slug}`
+    : '';
 
   return (
     <div className="relative w-80 h-auto min-h-[26rem] mx-auto">
       {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <Cloud className="absolute top-8 left-4 h-12 w-12 text-blue-200 opacity-60 animate-float" />
-        <Cloud className="absolute top-16 right-8 h-8 w-8 text-blue-300 opacity-40 animate-float-delayed" />
-        <Wind className="absolute bottom-20 left-8 h-6 w-6 text-blue-200 opacity-50 animate-sway" />
-        <Feather className="absolute top-1/2 right-4 h-5 w-5 text-blue-300 opacity-60 animate-float-slow" />
-        <div className="absolute top-12 right-12 w-3 h-3 bg-blue-300 rounded-full opacity-50 animate-bounce"></div>
-        <div className="absolute bottom-24 left-12 w-2 h-2 bg-blue-400 rounded-full opacity-60 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-200 via-blue-100 to-indigo-200"></div>
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white/40"
+            style={{
+              width: `${Math.random() * 60 + 20}px`,
+              height: `${Math.random() * 60 + 20}px`,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animation: `float ${Math.random() * 10 + 5}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 5}s`,
+              opacity: Math.random() * 0.3 + 0.1,
+            }}
+          />
+        ))}
       </div>
 
-      {/* Main card with floating effect */}
-      <Card className="relative z-10 w-full h-auto min-h-[26rem] bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 border-2 border-blue-200 shadow-xl animate-hover-float overflow-hidden">
-        {/* Subtle animated background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-transparent to-indigo-100/30 animate-gradient-shift"></div>
-        
-        <div className="relative z-10 p-6 pb-6 flex flex-col">
-          {/* Floating header */}
-          <div className="text-center mb-6 animate-fade-in-up">
-            <div className="relative mb-4">
-              {headshotUrl ? (
-                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-3 border-blue-300 overflow-hidden shadow-lg animate-float-gentle relative">
-                  <img 
-                    src={headshotUrl} 
-                    alt={name} 
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-200/20 to-indigo-200/20"></div>
-                </div>
-              ) : (
-                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-3 border-blue-300 bg-gradient-to-br from-blue-200 to-indigo-300 flex items-center justify-center shadow-lg animate-float-gentle">
-                  <span className="text-2xl font-bold text-blue-800">{name.charAt(0)}</span>
-                </div>
-              )}
-              {/* Floating accent */}
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full opacity-70 animate-bounce"></div>
-            </div>
-            
-            <h2 className="text-xl font-bold text-blue-900 mb-1 animate-slide-in" style={{animationDelay: '0.2s'}}>
-              {name}
-            </h2>
-            <p className="text-blue-700 text-sm font-medium mb-1 animate-slide-in" style={{animationDelay: '0.4s'}}>
-              {title}
-            </p>
-            <p className="text-blue-600 text-xs animate-slide-in" style={{animationDelay: '0.6s'}}>
-              {company}
-            </p>
-          </div>
+      {/* Floating decorative elements */}
+      <div className="absolute top-4 right-4 z-20">
+        <Cloud className="h-6 w-6 text-blue-400 animate-bounce" style={{ animationDuration: '3s' }} />
+      </div>
+      <div className="absolute bottom-8 left-4 z-20">
+        <Wind className="h-5 w-5 text-sky-500 animate-pulse" />
+      </div>
+      <div className="absolute top-1/3 right-8 z-20">
+        <Feather className="h-4 w-4 text-indigo-400 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+      </div>
 
-          {/* Floating contact info */}
-          <div className="space-y-4 mb-6 flex-1">
-            {phone && (
-              <div className="flex items-center space-x-3 animate-slide-in-right hover:translate-x-2 transition-transform duration-300" style={{animationDelay: '0.8s'}}>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all duration-300 animate-float-gentle">
-                  <Phone className="h-4 w-4 text-white" />
-                </div>
-                <a 
-                  href={`tel:${phone}`} 
-                  className="text-sm text-blue-800 hover:text-blue-600 transition-colors duration-200 truncate"
-                >
-                  {phone}
-                </a>
-              </div>
-            )}
-            
-            {email && (
-              <div className="flex items-center space-x-3 animate-slide-in-right hover:translate-x-2 transition-transform duration-300" style={{animationDelay: '1s'}}>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-500 flex items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all duration-300 animate-float-gentle">
-                  <Mail className="h-4 w-4 text-white" />
-                </div>
-                <a 
-                  href={`mailto:${email}`} 
-                  className="text-sm text-blue-800 hover:text-indigo-600 transition-colors duration-200 truncate"
-                >
-                  {email}
-                </a>
-              </div>
-            )}
-            
-            {website && (
-              <div className="flex items-center space-x-3 animate-slide-in-right hover:translate-x-2 transition-transform duration-300" style={{animationDelay: '1.2s'}}>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-sky-400 to-sky-500 flex items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all duration-300 animate-float-gentle">
-                  <Globe className="h-4 w-4 text-white" />
-                </div>
-                <a 
-                  href={`https://${website}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-sm text-blue-800 hover:text-sky-600 transition-colors duration-200 truncate"
-                >
-                  {website}
-                </a>
-              </div>
-            )}
-          </div>
+      <Card className="relative z-10 bg-white/60 backdrop-blur-md border-2 border-sky-300/50 shadow-2xl min-h-[26rem]">
+        <div className="p-6">
+          <ProfileSection
+            headshotUrl={headshotUrl}
+            name={name}
+            title={title}
+            company={company}
+            className="text-center mb-6"
+            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-sky-400/50 overflow-hidden shadow-lg"
+            nameClassName="text-2xl md:text-3xl font-bold text-indigo-900 mb-2"
+            titleClassName="text-base md:text-lg text-sky-700 font-semibold mb-1"
+            companyClassName="text-sm text-blue-600"
+          />
 
-          {/* Floating social links */}
+          <ContactInfo
+            email={email}
+            phone={phone}
+            website={website}
+            className="space-y-3 mb-5"
+            itemClassName="bg-white/50 backdrop-blur-sm border border-sky-300/40 rounded-lg p-3 hover:border-indigo-400/60 hover:bg-white/70 transition-all duration-300 flex items-center space-x-3"
+            iconClassName="h-4 w-4 text-sky-600"
+            textClassName="text-sm text-indigo-900"
+            showIcons={true}
+          />
+
           {displaySocialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-2 px-4 py-2 animate-fade-in-up" style={{animationDelay: '1.4s'}}>
-              {displaySocialLinks.map((social, index) => (
-                <a
-                  key={social.platform}
-                  href={buildSocialUrl(social.platform, social.url)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-gradient-to-br from-white to-blue-50 border-2 border-blue-300 flex items-center justify-center text-blue-700 hover:border-blue-500 hover:text-blue-900 transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg animate-float-gentle"
-                  style={{animationDelay: `${1.6 + index * 0.2}s`}}
-                >
-                  <SocialIcon platform={social.platform} className="h-3.5 w-3.5" />
-                </a>
-              ))}
-          </div>
-        )}
+            <SocialLinks
+              socialLinks={displaySocialLinks}
+              className="mb-5 flex justify-center gap-3"
+              linkClassName="bg-white/50 backdrop-blur-sm border border-sky-300/50 rounded-full p-3 hover:border-indigo-400 hover:shadow-lg transition-all duration-300"
+              iconClassName="w-5 h-5 text-indigo-700"
+            />
+          )}
 
-        {/* Contact Actions */}
-        {cardId && (
-          <div className="mt-6 border-t border-white/20 pt-6">
+          {cardId && (
             <ContactActions
               cardId={cardId}
               name={name}
@@ -183,88 +111,21 @@ const FloatingCard = ({
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
               style="floating"
+              className="mb-5"
             />
-          </div>
-        )}
+          )}
 
-        {/* QR Code */}
-        {slug && (
-          <div className="mt-6 border-t border-blue-300/20 pt-6">
-            <QRCodeGenerator 
-              url={`${window.location.origin}/card/${slug}`}
-              size={180}
-              showControls={false}
+          {slug && qrValue && (
+            <QRSection
+              value={qrValue}
+              size={120}
+              className="flex flex-col items-center"
+              fgColor="#3b82f6"
+              bgColor="#ffffff"
             />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
       </Card>
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes float-delayed {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
-        }
-        
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-8px) rotate(10deg); }
-        }
-        
-        @keyframes float-gentle {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes hover-float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-3px); }
-        }
-        
-        @keyframes sway {
-          0%, 100% { transform: translateX(0px) rotate(0deg); }
-          25% { transform: translateX(5px) rotate(2deg); }
-          75% { transform: translateX(-5px) rotate(-2deg); }
-        }
-        
-        @keyframes gradient-shift {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
-        }
-        
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slide-in {
-          from { opacity: 0; transform: translateX(-20px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        
-        @keyframes slide-in-right {
-          from { opacity: 0; transform: translateX(20px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-float-delayed { animation: float-delayed 4s ease-in-out infinite 1s; }
-        .animate-float-slow { animation: float-slow 5s ease-in-out infinite; }
-        .animate-float-gentle { animation: float-gentle 2s ease-in-out infinite; }
-        .animate-hover-float { animation: hover-float 4s ease-in-out infinite; }
-        .animate-sway { animation: sway 6s ease-in-out infinite; }
-        .animate-gradient-shift { animation: gradient-shift 3s ease-in-out infinite; }
-        .animate-fade-in-up { animation: fade-in-up 0.6s ease-out; }
-        .animate-slide-in { animation: slide-in 0.6s ease-out; }
-        .animate-slide-in-right { animation: slide-in-right 0.6s ease-out; }
-        `
-      }} />
     </div>
   );
 };

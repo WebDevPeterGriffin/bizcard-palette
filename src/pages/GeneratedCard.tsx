@@ -1,161 +1,19 @@
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
-import { CARD_COMPONENTS } from "@/components/cards/registry";
+import { CARD_COMPONENTS, CardStyleId } from "@/components/cards/registry";
 import QRCodeGenerator from "@/components/QRCodeGenerator";
 import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-
-interface SocialLink {
-  platform: string;
-  url: string;
-  label?: string;
-}
-
-interface CardData {
-  cardId: string;
-  name: string;
-  title: string;
-  company: string;
-  phone: string;
-  email: string;
-  website: string;
-  socialLinks: SocialLink[];
-  style: string;
-  slug: string;
-  createdAt: string;
-  headshotUrl?: string;
-  bookingEnabled: boolean;
-  bookingInstructions?: string;
-}
+import { useCardData } from "@/hooks/useCardData";
+import { getBackgroundClass, isDarkStyle } from "@/lib/cardStyles";
 
 const GeneratedCard = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [cardData, setCardData] = useState<CardData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCard = async () => {
-      if (!slug) {
-        setLoading(false);
-        return;
-      }
-
-      // Fetch card data directly from Supabase
-      const { data, error } = await supabase
-        .from('cards')
-        .select('*')
-        .ilike('slug', slug.trim())
-        .limit(1)
-        .maybeSingle();
-
-      if (!data || error) {
-        // Fallback to localStorage (legacy)
-        const storedData = localStorage.getItem(`card_${slug}`);
-        if (storedData) {
-          setCardData(JSON.parse(storedData));
-        } else {
-          // Not found
-        }
-        setLoading(false);
-        return;
-      }
-
-      const socials = (data as any).socials || {};
-      const socialLinks: SocialLink[] = Object.entries(socials)
-        .map(([platform, url]) => ({
-          platform,
-          url: url as string,
-          label: platform.charAt(0).toUpperCase() + platform.slice(1),
-        }))
-        .filter((link) => link.url && link.url.trim() !== '');
-
-      // Resolve headshot: use stored path or discover by listing the folder
-      let headshotPath = (data as any).headshot_url as string | null;
-      const cardId = (data as any).id as string | undefined;
-
-      if (!headshotPath && cardId) {
-        const { data: files, error: listError } = await supabase
-          .storage
-          .from('headshots')
-          .list(`${cardId}`, { limit: 1 });
-
-        if (!listError && files && files.length > 0) {
-          headshotPath = `${cardId}/${files[0].name}`;
-          // Best-effort: persist discovered path
-          await supabase
-            .from('cards')
-            .update({ headshot_url: headshotPath })
-            .eq('id', cardId);
-        }
-      }
-
-      const headshotUrl = headshotPath
-        ? `${supabase.storage.from('headshots').getPublicUrl(headshotPath).data.publicUrl}`
-        : null;
-      
-      console.log('Card data:', { 
-        headshot_url: (data as any).headshot_url, 
-        discovered_path: headshotPath,
-        constructed_url: headshotUrl 
-      });
-
-      setCardData({
-        cardId: data.id,
-        name: data.full_name,
-        title: data.role || '',
-        company: data.company || '',
-        phone: data.phone || '',
-        email: data.email || '',
-        website: data.website || '',
-        socialLinks,
-        style: data.style_id,
-        slug: data.slug,
-        createdAt: data.created_at,
-        headshotUrl: headshotUrl || '',
-        bookingEnabled: !!data.booking_enabled,
-        bookingInstructions: data.booking_instructions || '',
-      });
-      setLoading(false);
-    };
-
-    fetchCard();
-    
-    // Auto-refresh after 500ms to catch any delayed database updates (e.g., headshot uploads)
-    const refreshTimer = setTimeout(() => {
-      if (!cardData?.headshotUrl) {
-        console.log('Refreshing card data to check for headshot updates...');
-        fetchCard();
-      }
-    }, 500);
-
-    return () => clearTimeout(refreshTimer);
-  }, [slug]);
-
-  const renderCard = () => {
-    if (!cardData) return null;
-
-    const props = {
-      cardId: cardData.cardId,
-      name: cardData.name,
-      title: cardData.title,
-      company: cardData.company,
-      phone: cardData.phone,
-      email: cardData.email,
-      website: cardData.website,
-      socialLinks: cardData.socialLinks,
-      headshotUrl: cardData.headshotUrl,
-      bookingEnabled: cardData.bookingEnabled,
-      bookingInstructions: cardData.bookingInstructions,
-    } as const;
-
-    const Comp = (CARD_COMPONENTS as any)[cardData.style] || CARD_COMPONENTS.minimal;
-    return <Comp {...(props as any)} />;
-  };
+  const { cardData, loading } = useCardData(slug);
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -210,29 +68,6 @@ const GeneratedCard = () => {
       </div>
     );
   }
-
-  const getBackgroundClass = () => {
-    switch (cardData.style) {
-      case 'minimal':
-        return 'bg-gradient-minimal';
-      case 'bold':
-        return 'bg-gradient-bold';
-      case 'elegant':
-        return 'bg-gradient-elegant';
-      case 'creative':
-        return 'bg-gradient-creative';
-      case 'neon':
-        return 'bg-gray-900';
-      case 'floating':
-        return 'bg-gradient-to-br from-blue-50 to-indigo-100';
-      case 'liquid':
-        return 'bg-gradient-liquid-bg';
-      case 'cosmic':
-        return 'bg-gradient-to-b from-black via-indigo-950 to-black';
-      default:
-        return 'bg-background';
-    }
-  };
 
   const renderBackgroundLayers = () => {
     switch (cardData.style) {
@@ -291,21 +126,18 @@ const GeneratedCard = () => {
   const generateSEOData = () => {
     if (!cardData) return null;
 
-    // Generate dynamic title
-    const title = cardData.title && cardData.company 
+    const title = cardData.title && cardData.company
       ? `${cardData.name} - ${cardData.title} at ${cardData.company} | Digital Business Card`
       : cardData.title
-      ? `${cardData.name} - ${cardData.title} | Digital Business Card`
-      : `${cardData.name}'s Digital Business Card`;
+        ? `${cardData.name} - ${cardData.title} | Digital Business Card`
+        : `${cardData.name}'s Digital Business Card`;
 
-    // Generate dynamic description
     const description = cardData.title && cardData.company
       ? `Connect with ${cardData.name}, ${cardData.title} at ${cardData.company}. View contact information, social links${cardData.bookingEnabled ? ', and book appointments' : ''}.`
       : cardData.title
-      ? `Connect with ${cardData.name}, ${cardData.title}. View contact information, social links${cardData.bookingEnabled ? ', and book appointments' : ''}.`
-      : `Connect with ${cardData.name}. View contact information, social links${cardData.bookingEnabled ? ', and book appointments' : ''}.`;
+        ? `Connect with ${cardData.name}, ${cardData.title}. View contact information, social links${cardData.bookingEnabled ? ', and book appointments' : ''}.`
+        : `Connect with ${cardData.name}. View contact information, social links${cardData.bookingEnabled ? ', and book appointments' : ''}.`;
 
-    // Generate dynamic keywords
     const keywords = [
       cardData.name.toLowerCase(),
       cardData.title?.toLowerCase(),
@@ -316,7 +148,6 @@ const GeneratedCard = () => {
       'QR code card'
     ].filter(Boolean).join(', ');
 
-    // JSON-LD Person schema
     const jsonLd = {
       "@context": "https://schema.org",
       "@type": "Person",
@@ -341,23 +172,23 @@ const GeneratedCard = () => {
     };
   };
 
+  const CardComponent = CARD_COMPONENTS[cardData.style as CardStyleId] || CARD_COMPONENTS.minimal;
+  const isDark = isDarkStyle(cardData.style);
+
   return (
     <>
       {cardData && <SEO {...generateSEOData()!} />}
-      <div className={`relative min-h-screen overflow-hidden ${getBackgroundClass()}`}>
+      <div className={`relative min-h-screen overflow-hidden ${getBackgroundClass(cardData.style)}`}>
         {renderBackgroundLayers()}
         <div className="relative z-10 p-4">
           <div className="container mx-auto max-w-4xl">
             {/* Header */}
             <div className="mb-8 flex justify-end">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={handleShare}
-                className={(cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
-                  "bg-white/10 text-white border-white/30 hover:bg-white/20" : 
-                  ""
-                }
+                className={isDark ? "bg-white/10 text-white border-white/30 hover:bg-white/20" : ""}
               >
                 <Share2 className="mr-2 h-4 w-4" />
                 Share
@@ -366,19 +197,28 @@ const GeneratedCard = () => {
 
             {/* Card Display */}
             <div className="flex justify-center mb-8">
-              {renderCard()}
+              <Suspense fallback={<div className="text-center p-8">Loading card style...</div>}>
+                <CardComponent
+                  cardId={cardData.cardId}
+                  name={cardData.name}
+                  title={cardData.title}
+                  company={cardData.company}
+                  phone={cardData.phone}
+                  email={cardData.email}
+                  website={cardData.website}
+                  socialLinks={cardData.socialLinks}
+                  headshotUrl={cardData.headshotUrl}
+                  bookingEnabled={cardData.bookingEnabled}
+                  bookingInstructions={cardData.bookingInstructions}
+                />
+              </Suspense>
             </div>
 
             {/* QR Code Section */}
             <div className="flex justify-center mb-8">
-              <div className={`rounded-lg p-6 ${
-                (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
-                  'bg-white/10 backdrop-blur-sm border border-white/20' : 
-                  'bg-white/80 shadow-card'
-              }`}>
-                <h3 className={`text-lg font-semibold mb-4 text-center ${
-                  (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 'text-white' : ''
+              <div className={`rounded-lg p-6 ${isDark ? 'bg-white/10 backdrop-blur-sm border border-white/20' : 'bg-white/80 shadow-card'
                 }`}>
+                <h3 className={`text-lg font-semibold mb-4 text-center ${isDark ? 'text-white' : ''}`}>
                   Scan to View Card
                 </h3>
                 <QRCodeGenerator url={window.location.href} size={200} showControls={false} />
@@ -387,24 +227,16 @@ const GeneratedCard = () => {
 
             {/* Small Brand CTA */}
             <div className="mt-6 text-center">
-              <div className={`rounded-lg p-3 ${
-                (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
-                  'bg-white/5 backdrop-blur-sm border border-white/10' : 
-                  'bg-white/60 shadow-sm'
-              }`}>
-                <p className={`text-xs mb-2 ${
-                  (cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 'text-white/70' : 'text-muted-foreground'
+              <div className={`rounded-lg p-3 ${isDark ? 'bg-white/5 backdrop-blur-sm border border-white/10' : 'bg-white/60 shadow-sm'
                 }`}>
+                <p className={`text-xs mb-2 ${isDark ? 'text-white/70' : 'text-muted-foreground'}`}>
                   Want your own digital business card?
                 </p>
-                <Button 
+                <Button
                   onClick={() => navigate('/')}
                   size="sm"
                   variant="outline"
-                  className={(cardData.style === 'bold' || cardData.style === 'creative' || cardData.style === 'neon' || cardData.style === 'liquid' || cardData.style === 'cosmic') ? 
-                    "bg-white/10 text-white/80 border-white/20 hover:bg-white/20 text-xs" : 
-                    "text-xs"
-                  }
+                  className={isDark ? "bg-white/10 text-white/80 border-white/20 hover:bg-white/20 text-xs" : "text-xs"}
                 >
                   Create Your Own
                 </Button>

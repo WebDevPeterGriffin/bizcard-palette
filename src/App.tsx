@@ -8,25 +8,13 @@ import Index from "./pages/Index";
 import Styles from "./pages/Styles";
 import RequestForm from "./pages/RequestForm";
 import GeneratedCard from "./pages/GeneratedCard";
-import PreviewMinimal from "./pages/PreviewMinimal";
-import PreviewElegant from "./pages/PreviewElegant";
-import PreviewBold from "./pages/PreviewBold";
-import PreviewCreative from "./pages/PreviewCreative";
-import PreviewNeon from "./pages/PreviewNeon";
-import PreviewFloating from "./pages/PreviewFloating";
-import PreviewLiquid from "./pages/PreviewLiquid";
-import PreviewCosmic from "./pages/PreviewCosmic";
-import PreviewHolographic from "./pages/PreviewHolographic";
-import PreviewParticle from "./pages/PreviewParticle";
-import PreviewMorphing from "./pages/PreviewMorphing";
-import PreviewPrism from "./pages/PreviewPrism";
-import PreviewLiquidGlass from "./pages/PreviewLiquidGlass";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import StyleLanding from "./pages/StyleLanding";
 import Success from "./pages/Success";
 import LandingPageStyles from "./pages/LandingPageStyles";
 import PreviewLandingPage from "./pages/PreviewLandingPage";
+import PreviewCard from "./pages/PreviewCard";
 
 const queryClient = new QueryClient();
 
@@ -44,19 +32,10 @@ const App = () => (
             <Route path="/success/:slug" element={<Success />} />
             <Route path="/landing-pages" element={<LandingPageStyles />} />
             <Route path="/landing-page/preview/:styleId" element={<PreviewLandingPage />} />
-            <Route path="/preview/minimal" element={<PreviewMinimal />} />
-            <Route path="/preview/elegant" element={<PreviewElegant />} />
-            <Route path="/preview/bold" element={<PreviewBold />} />
-            <Route path="/preview/creative" element={<PreviewCreative />} />
-            <Route path="/preview/neon" element={<PreviewNeon />} />
-            <Route path="/preview/floating" element={<PreviewFloating />} />
-            <Route path="/preview/liquid" element={<PreviewLiquid />} />
-            <Route path="/preview/cosmic" element={<PreviewCosmic />} />
-            <Route path="/preview/holographic" element={<PreviewHolographic />} />
-            <Route path="/preview/particle" element={<PreviewParticle />} />
-            <Route path="/preview/morphing" element={<PreviewMorphing />} />
-            <Route path="/preview/prism" element={<PreviewPrism />} />
-            <Route path="/preview/liquid-glass" element={<PreviewLiquidGlass />} />
+
+            {/* Consolidated Preview Route */}
+            <Route path="/preview/:styleId" element={<PreviewCard />} />
+
             <Route path="/request" element={<RequestForm />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/card/:slug" element={<GeneratedCard />} />
