@@ -199,7 +199,7 @@ const GeneratedCard = () => {
             <div className="flex justify-center mb-8">
               <Suspense fallback={<div className="text-center p-8">Loading card style...</div>}>
                 <CardComponent
-                  cardId={cardData.cardId}
+                  cardId={cardData.id}
                   name={cardData.name}
                   title={cardData.title}
                   company={cardData.company}

@@ -18,4 +18,7 @@ export interface BaseCardProps {
   slug?: string;
   bookingEnabled?: boolean;
   bookingInstructions?: string;
+  // Legacy social link properties for backward compatibility
+  linkedin?: string;
+  twitter?: string;
 }
