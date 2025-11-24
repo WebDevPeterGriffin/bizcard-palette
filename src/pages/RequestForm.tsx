@@ -18,7 +18,7 @@ const RequestForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
-  
+
   const [formData, setFormData] = useState({
     full_name: "",
     role: "",
@@ -28,8 +28,8 @@ const RequestForm = () => {
     website: "",
     style_id: searchParams.get('style') || ""
   });
-  
-  const [socialLinks, setSocialLinks] = useState<{platform: string; url: string; label?: string}[]>([]);
+
+  const [socialLinks, setSocialLinks] = useState<{ platform: string; url: string; label?: string }[]>([]);
   const [headshot, setHeadshot] = useState<File | null>(null);
   const [headshotPreview, setHeadshotPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,7 +45,7 @@ const RequestForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.full_name || !formData.email || !formData.style_id) {
       toast({
         title: "Missing Information",
@@ -62,9 +62,10 @@ const RequestForm = () => {
       const baseSlug = generateSlug(formData.full_name);
       let slug = baseSlug;
       let counter = 1;
+      const MAX_ATTEMPTS = 100;
 
       // Check for existing slugs and ensure uniqueness
-      while (true) {
+      while (counter <= MAX_ATTEMPTS) {
         const { data: existingCard } = await supabase
           .from('cards')
           .select('id')
@@ -72,9 +73,13 @@ const RequestForm = () => {
           .maybeSingle();
 
         if (!existingCard) break;
-        
+
         counter++;
         slug = `${baseSlug}-${counter}`;
+      }
+      if (counter > MAX_ATTEMPTS) {
+        const randomSuffix = Math.random().toString(36).substring(2, 8);
+        slug = `${baseSlug}-${randomSuffix}`;
       }
 
       // Insert card record (no user_id needed)
@@ -108,14 +113,14 @@ const RequestForm = () => {
         const fileExt = headshot.name.split('.').pop();
         const fileName = `${cardData.id}.${fileExt}`;
         const filePath = `${cardData.id}/${fileName}`;
-        
+
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('headshots')
           .upload(filePath, headshot, {
             cacheControl: '3600',
             upsert: true
           });
-          
+
         if (uploadError) {
           console.error('Upload error:', uploadError);
           toast({
@@ -126,7 +131,7 @@ const RequestForm = () => {
         } else {
           console.log('Upload successful:', uploadData);
           headshotFilePath = filePath;
-          
+
           const { error: updateError } = await supabase
             .from('cards')
             .update({ headshot_url: headshotFilePath })
@@ -178,7 +183,7 @@ const RequestForm = () => {
         description="Fill out our simple form to create your personalized digital business card. Add your contact info, social links, and headshot to get started."
         canonical="/request"
       />
-      
+
       <div className="min-h-screen bg-background p-4">
         <div className="container mx-auto max-w-3xl">
           {/* Header */}
@@ -192,7 +197,7 @@ const RequestForm = () => {
           </div>
 
           {/* Progress Indicator */}
-          <ProgressIndicator 
+          <ProgressIndicator
             currentStep={formData.style_id ? (headshot || headshotPreview ? 3 : 2) : 1}
             steps={["Choose Style", "Add Info", "Finalize"]}
           />
@@ -308,9 +313,9 @@ const RequestForm = () => {
 
                 {/* Submit Button */}
                 <div className="pt-4">
-                  <Button 
-                    type="submit" 
-                    size="lg" 
+                  <Button
+                    type="submit"
+                    size="lg"
                     className="w-full bg-brand-primary text-brand-primary-foreground hover:bg-brand-primary/90"
                     disabled={isSubmitting}
                   >

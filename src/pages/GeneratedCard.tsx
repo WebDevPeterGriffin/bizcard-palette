@@ -245,12 +245,8 @@ const GeneratedCard = () => {
           </div>
         </div>
 
-        <style dangerouslySetInnerHTML={{
-          __html: `
-          @keyframes grid-move { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 20px); } }
-          @keyframes star-move { 0% { transform: translateX(0px) translateY(0px); } 100% { transform: translateX(-200px) translateY(-100px); } }
-          `
-        }} />
+        {/* CSS animations moved to index.css for security */}
+
       </div>
     </>
   );
