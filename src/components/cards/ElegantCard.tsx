@@ -28,7 +28,7 @@ const ElegantCard: React.FC<BaseCardProps> = (props) => {
 
   // Generate QR code URL
   const qrValue = typeof window !== 'undefined'
-    ? `${window.location.origin}/card/${slug}`
+    ? `${window.location.origin}/${slug}`
     : '';
 
   return (

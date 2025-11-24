@@ -2,12 +2,12 @@ import { Suspense } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
-import { CARD_COMPONENTS, CardStyleId } from "@/components/cards/registry";
+import { CARD_COMPONENTS, CARD_META, CardStyleId } from "@/components/cards/registry";
 import QRCodeGenerator from "@/components/QRCodeGenerator";
 import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
 import { useCardData } from "@/hooks/useCardData";
-import { getBackgroundClass, isDarkStyle } from "@/lib/cardStyles";
+
 
 const GeneratedCard = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -172,14 +172,14 @@ const GeneratedCard = () => {
     };
   };
 
+  const styleConfig = CARD_META[cardData.style as CardStyleId] || CARD_META.minimal;
+  const isDark = styleConfig.isDark;
   const CardComponent = CARD_COMPONENTS[cardData.style as CardStyleId] || CARD_COMPONENTS.minimal;
-  const isDark = isDarkStyle(cardData.style);
 
   return (
     <>
       {cardData && <SEO {...generateSEOData()!} />}
-      <div className={`relative min-h-screen overflow-hidden ${getBackgroundClass(cardData.style)}`}>
-        {renderBackgroundLayers()}
+      <div className={`relative min-h-screen overflow-hidden ${styleConfig.backgroundColor}`}>        {renderBackgroundLayers()}
         <div className="relative z-10 p-4">
           <div className="container mx-auto max-w-4xl">
             {/* Header */}

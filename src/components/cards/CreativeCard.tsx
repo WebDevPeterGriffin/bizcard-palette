@@ -27,7 +27,7 @@ const CreativeCard: React.FC<BaseCardProps> = (props) => {
   const displaySocialLinks = useSocialLinks({ socialLinks, linkedin, twitter });
 
   const qrValue = typeof window !== 'undefined'
-    ? `${window.location.origin}/card/${slug}`
+    ? `${window.location.origin}/${slug}`
     : '';
 
   return (

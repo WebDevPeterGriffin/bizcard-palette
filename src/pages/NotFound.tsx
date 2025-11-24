@@ -15,13 +15,13 @@ const NotFound = () => {
 
     if (isSingleSegment && !reserved.has(trimmed)) {
       // Redirect to legacy route which is guaranteed to work
-      navigate(`/card/${trimmed}`, { replace: true });
+      navigate(`/${trimmed}`, { replace: true });
 
       // Fallback hard redirect in case SPA navigation is blocked by hosting configuration
       setTimeout(() => {
         const current = window.location.pathname.replace(/^\/+|\/+$/g, "");
         if (current === trimmed) {
-          window.location.replace(`/card/${trimmed}`);
+          window.location.replace(`/${trimmed}`);
         }
       }, 50);
     }

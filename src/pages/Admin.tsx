@@ -48,10 +48,10 @@ const Admin = () => {
     const checkAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        
+
         if (session?.user) {
           setIsAuthenticated(true);
-          
+
           // Check if user has admin role
           const { data: roleData, error } = await supabase
             .from('user_roles')
@@ -59,7 +59,7 @@ const Admin = () => {
             .eq('user_id', session.user.id)
             .eq('role', 'admin')
             .maybeSingle();
-          
+
           if (!error && roleData) {
             setIsAdmin(true);
             fetchUsers();
@@ -84,7 +84,7 @@ const Admin = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         setIsAuthenticated(true);
-        
+
         // Check admin role
         setTimeout(async () => {
           const { data: roleData, error } = await supabase
@@ -93,7 +93,7 @@ const Admin = () => {
             .eq('user_id', session.user.id)
             .eq('role', 'admin')
             .maybeSingle();
-          
+
           if (!error && roleData) {
             setIsAdmin(true);
             fetchUsers();
@@ -141,8 +141,8 @@ const Admin = () => {
     setActionLoading(selectedUserId);
     try {
       const { data, error } = await supabase.functions.invoke('delete-user', {
-        body: { 
-          userId: selectedUserId, 
+        body: {
+          userId: selectedUserId,
           action: 'schedule_deletion',
           scheduledDate: new Date(scheduledDate).toISOString()
         }
@@ -232,8 +232,8 @@ const Admin = () => {
         } else if (bulkAction === 'schedule') {
           if (!scheduledDate) throw new Error('Please select a date');
           return supabase.functions.invoke('delete-user', {
-            body: { 
-              userId, 
+            body: {
+              userId,
               action: 'schedule_deletion',
               scheduledDate: new Date(scheduledDate).toISOString()
             }
@@ -281,7 +281,7 @@ const Admin = () => {
 
       if (error) throw error;
 
-      const message = data?.deletedUsers?.length > 0 
+      const message = data?.deletedUsers?.length > 0
         ? `Processed ${data.deletedUsers.length} scheduled deletions`
         : 'No scheduled deletions to process';
 
@@ -305,7 +305,7 @@ const Admin = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -390,7 +390,7 @@ const Admin = () => {
   if (!isAuthenticated || !isAdmin) {
     return (
       <>
-        <SEO 
+        <SEO
           title="Admin Login"
           description="Admin access only"
         />
@@ -439,7 +439,7 @@ const Admin = () => {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="Admin Dashboard"
         description="User management dashboard"
       />
@@ -451,15 +451,15 @@ const Admin = () => {
               <p className="text-muted-foreground">Manage users and view statistics</p>
             </div>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={handleProcessScheduled}
                 disabled={loading}
               >
                 Process Scheduled Deletions
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={handleLogout}
               >
                 Logout
@@ -471,7 +471,7 @@ const Admin = () => {
             <CardHeader>
               <CardTitle>User Statistics</CardTitle>
               <CardDescription>
-                Total users: {users.length} 
+                Total users: {users.length}
                 {selectedUsers.size > 0 && (
                   <span className="ml-4 text-primary">
                     ({selectedUsers.size} selected)
@@ -496,7 +496,7 @@ const Admin = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     {bulkAction === 'schedule' && (
                       <div className="flex items-center gap-2">
                         <Label>Date:</Label>
@@ -509,16 +509,16 @@ const Admin = () => {
                         />
                       </div>
                     )}
-                    
-                    <Button 
+
+                    <Button
                       onClick={handleBulkAction}
                       disabled={!bulkAction || actionLoading === 'bulk' || (bulkAction === 'schedule' && !scheduledDate)}
                       variant={bulkAction === 'delete' ? 'destructive' : 'default'}
                     >
                       {actionLoading === 'bulk' ? 'Processing...' : `${bulkAction === 'delete' ? 'Delete' : 'Schedule'} ${selectedUsers.size} users`}
                     </Button>
-                    
-                    <Button 
+
+                    <Button
                       variant="outline"
                       onClick={() => {
                         setSelectedUsers(new Set());
@@ -538,212 +538,212 @@ const Admin = () => {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                   <Table>
-                     <TableHeader>
-                       <TableRow>
-                         <TableHead className="w-12">
-                           <Checkbox
-                             checked={selectedUsers.size === users.length && users.length > 0}
-                             onCheckedChange={handleSelectAll}
-                           />
-                         </TableHead>
-                         <TableHead>Name</TableHead>
-                         <TableHead>Email</TableHead>
-                         <TableHead>Phone</TableHead>
-                         <TableHead>Company</TableHead>
-                         <TableHead>Role</TableHead>
-                         <TableHead>Style</TableHead>
-                         <TableHead>Joined</TableHead>
-                         <TableHead>Status</TableHead>
-                         <TableHead>Slug</TableHead>
-                         <TableHead>Actions</TableHead>
-                       </TableRow>
-                     </TableHeader>
-                     <TableBody>
-                       {users.map((user) => (
-                         <TableRow key={user.id}>
-                           <TableCell>
-                             <Checkbox
-                               checked={selectedUsers.has(user.id)}
-                               onCheckedChange={() => handleSelectUser(user.id)}
-                             />
-                           </TableCell>
-                           <TableCell className="font-medium">
-                             {user.full_name}
-                           </TableCell>
-                           <TableCell>
-                             {user.email ? (
-                               <a 
-                                 href={`mailto:${user.email}`}
-                                 className="text-primary hover:underline flex items-center gap-1"
-                               >
-                                 <Mail className="h-3 w-3" />
-                                 {user.email}
-                               </a>
-                             ) : (
-                               "N/A"
-                             )}
-                           </TableCell>
-                           <TableCell>
-                             {user.phone ? (
-                               <a 
-                                 href={`tel:${user.phone}`}
-                                 className="text-primary hover:underline flex items-center gap-1"
-                               >
-                                 <Phone className="h-3 w-3" />
-                                 {user.phone}
-                               </a>
-                             ) : (
-                               "N/A"
-                             )}
-                           </TableCell>
-                           <TableCell>{user.company || "N/A"}</TableCell>
-                           <TableCell>{user.role || "N/A"}</TableCell>
-                           <TableCell className="capitalize">{user.style_id}</TableCell>
-                           <TableCell>
-                             {format(new Date(user.created_at), "MMM dd, yyyy")}
-                           </TableCell>
-                           <TableCell>
-                             {user.scheduled_deletion_at ? (
-                               <div className="flex items-center gap-2">
-                                 <span className="text-destructive text-sm">
-                                   Scheduled for deletion
-                                 </span>
-                                 <span className="text-xs text-muted-foreground">
-                                   {format(new Date(user.scheduled_deletion_at), "MMM dd, yyyy")}
-                                 </span>
-                               </div>
-                             ) : (
-                               <span className="text-green-600 text-sm">Active</span>
-                             )}
-                           </TableCell>
-                           <TableCell>
-                             <a
-                               href={`/card/${user.slug}`}
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               className="inline-flex items-center gap-1 text-primary hover:underline"
-                             >
-                               <code className="text-sm bg-muted px-2 py-1 rounded">
-                                 {user.slug}
-                               </code>
-                               <ExternalLink className="h-3 w-3" />
-                             </a>
-                           </TableCell>
-                           <TableCell>
-                             <div className="flex items-center gap-2">
-                               {user.scheduled_deletion_at ? (
-                                 <Button
-                                   variant="outline"
-                                   size="sm"
-                                   onClick={() => handleCancelSchedule(user.id)}
-                                   disabled={actionLoading === user.id}
-                                 >
-                                   <X className="h-4 w-4 mr-1" />
-                                   Cancel
-                                 </Button>
-                               ) : (
-                                 <>
-                                   <Button
-                                     variant="outline"
-                                     size="sm"
-                                     onClick={() => openScheduleDialog(user.id)}
-                                     disabled={actionLoading === user.id}
-                                   >
-                                     <Calendar className="h-4 w-4 mr-1" />
-                                     Schedule
-                                   </Button>
-                                   <AlertDialog>
-                                     <AlertDialogTrigger asChild>
-                                       <Button
-                                         variant="destructive"
-                                         size="sm"
-                                         disabled={actionLoading === user.id}
-                                       >
-                                         <Trash2 className="h-4 w-4 mr-1" />
-                                         Delete
-                                       </Button>
-                                     </AlertDialogTrigger>
-                                     <AlertDialogContent>
-                                       <AlertDialogHeader>
-                                         <AlertDialogTitle>Delete User</AlertDialogTitle>
-                                         <AlertDialogDescription>
-                                           Are you sure you want to delete {user.full_name}? This will permanently delete:
-                                           <ul className="list-disc list-inside mt-2 space-y-1">
-                                             <li>Their profile and all data</li>
-                                             <li>Their headshot image</li>
-                                             <li>Their generated business card</li>
-                                           </ul>
-                                           This action cannot be undone.
-                                         </AlertDialogDescription>
-                                       </AlertDialogHeader>
-                                       <AlertDialogFooter>
-                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                         <AlertDialogAction
-                                           onClick={() => handleDeleteUser(user.id)}
-                                           className="bg-destructive hover:bg-destructive/90"
-                                         >
-                                           Delete User
-                                         </AlertDialogAction>
-                                       </AlertDialogFooter>
-                                     </AlertDialogContent>
-                                   </AlertDialog>
-                                 </>
-                               )}
-                             </div>
-                           </TableCell>
-                         </TableRow>
-                       ))}
-                     </TableBody>
-                   </Table>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">
+                          <Checkbox
+                            checked={selectedUsers.size === users.length && users.length > 0}
+                            onCheckedChange={handleSelectAll}
+                          />
+                        </TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Phone</TableHead>
+                        <TableHead>Company</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Style</TableHead>
+                        <TableHead>Joined</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Slug</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {users.map((user) => (
+                        <TableRow key={user.id}>
+                          <TableCell>
+                            <Checkbox
+                              checked={selectedUsers.has(user.id)}
+                              onCheckedChange={() => handleSelectUser(user.id)}
+                            />
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {user.full_name}
+                          </TableCell>
+                          <TableCell>
+                            {user.email ? (
+                              <a
+                                href={`mailto:${user.email}`}
+                                className="text-primary hover:underline flex items-center gap-1"
+                              >
+                                <Mail className="h-3 w-3" />
+                                {user.email}
+                              </a>
+                            ) : (
+                              "N/A"
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {user.phone ? (
+                              <a
+                                href={`tel:${user.phone}`}
+                                className="text-primary hover:underline flex items-center gap-1"
+                              >
+                                <Phone className="h-3 w-3" />
+                                {user.phone}
+                              </a>
+                            ) : (
+                              "N/A"
+                            )}
+                          </TableCell>
+                          <TableCell>{user.company || "N/A"}</TableCell>
+                          <TableCell>{user.role || "N/A"}</TableCell>
+                          <TableCell className="capitalize">{user.style_id}</TableCell>
+                          <TableCell>
+                            {format(new Date(user.created_at), "MMM dd, yyyy")}
+                          </TableCell>
+                          <TableCell>
+                            {user.scheduled_deletion_at ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-destructive text-sm">
+                                  Scheduled for deletion
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  {format(new Date(user.scheduled_deletion_at), "MMM dd, yyyy")}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-green-600 text-sm">Active</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <a
+                              href={`/${user.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-primary hover:underline"
+                            >
+                              <code className="text-sm bg-muted px-2 py-1 rounded">
+                                {user.slug}
+                              </code>
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {user.scheduled_deletion_at ? (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleCancelSchedule(user.id)}
+                                  disabled={actionLoading === user.id}
+                                >
+                                  <X className="h-4 w-4 mr-1" />
+                                  Cancel
+                                </Button>
+                              ) : (
+                                <>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => openScheduleDialog(user.id)}
+                                    disabled={actionLoading === user.id}
+                                  >
+                                    <Calendar className="h-4 w-4 mr-1" />
+                                    Schedule
+                                  </Button>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        disabled={actionLoading === user.id}
+                                      >
+                                        <Trash2 className="h-4 w-4 mr-1" />
+                                        Delete
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete User</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Are you sure you want to delete {user.full_name}? This will permanently delete:
+                                          <ul className="list-disc list-inside mt-2 space-y-1">
+                                            <li>Their profile and all data</li>
+                                            <li>Their headshot image</li>
+                                            <li>Their generated business card</li>
+                                          </ul>
+                                          This action cannot be undone.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => handleDeleteUser(user.id)}
+                                          className="bg-destructive hover:bg-destructive/90"
+                                        >
+                                          Delete User
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                   {users.length === 0 && (
                     <div className="text-center py-8 text-muted-foreground">
                       No users found
                     </div>
                   )}
                 </div>
-               )}
-             </CardContent>
-           </Card>
+              )}
+            </CardContent>
+          </Card>
 
-           {/* Schedule Deletion Dialog */}
-           <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
-             <DialogContent>
-               <DialogHeader>
-                 <DialogTitle>Schedule User Deletion</DialogTitle>
-                 <DialogDescription>
-                   Choose when to delete this user. The user and all associated data will be permanently deleted at the specified time.
-                 </DialogDescription>
-               </DialogHeader>
-               <div className="grid gap-4 py-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="scheduledDate">Deletion Date & Time</Label>
-                   <Input
-                     id="scheduledDate"
-                     type="datetime-local"
-                     value={scheduledDate}
-                     onChange={(e) => setScheduledDate(e.target.value)}
-                     min={new Date().toISOString().slice(0, 16)}
-                   />
-                 </div>
-               </div>
-               <DialogFooter>
-                 <Button variant="outline" onClick={() => setIsScheduleDialogOpen(false)}>
-                   Cancel
-                 </Button>
-                 <Button 
-                   onClick={handleScheduleDeletion}
-                   disabled={!scheduledDate || actionLoading === selectedUserId}
-                 >
-                   {actionLoading === selectedUserId ? "Scheduling..." : "Schedule Deletion"}
-                 </Button>
-               </DialogFooter>
-             </DialogContent>
-           </Dialog>
-         </div>
-       </div>
-     </>
-   );
+          {/* Schedule Deletion Dialog */}
+          <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Schedule User Deletion</DialogTitle>
+                <DialogDescription>
+                  Choose when to delete this user. The user and all associated data will be permanently deleted at the specified time.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="scheduledDate">Deletion Date & Time</Label>
+                  <Input
+                    id="scheduledDate"
+                    type="datetime-local"
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    min={new Date().toISOString().slice(0, 16)}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsScheduleDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleScheduleDeletion}
+                  disabled={!scheduledDate || actionLoading === selectedUserId}
+                >
+                  {actionLoading === selectedUserId ? "Scheduling..." : "Schedule Deletion"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default Admin;

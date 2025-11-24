@@ -16,7 +16,7 @@ const Success = () => {
   const [cardData, setCardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const cardUrl = `${window.location.origin}/card/${slug}`;
+  const cardUrl = `${window.location.origin}/${slug}`;
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -73,11 +73,11 @@ const Success = () => {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="Success! Your Digital Business Card is Ready"
         description="Your digital business card has been created successfully. Start sharing it now!"
       />
-      
+
       <div className="min-h-screen bg-background">
         {/* Success Header */}
         <section className="px-4 py-16 bg-gradient-hero text-center">
@@ -102,7 +102,7 @@ const Success = () => {
               <div>
                 <h2 className="text-2xl font-bold mb-6">Your Card</h2>
                 {CardComponent && cardData && (
-                  <CardComponent 
+                  <CardComponent
                     {...cardData}
                     socialLinks={cardData.socials || []}
                   />
@@ -119,10 +119,10 @@ const Success = () => {
                     <div>
                       <label className="text-sm font-medium mb-2 block">Your Card URL</label>
                       <div className="flex gap-2">
-                        <input 
-                          type="text" 
-                          value={cardUrl} 
-                          readOnly 
+                        <input
+                          type="text"
+                          value={cardUrl}
+                          readOnly
                           className="flex-1 px-3 py-2 border rounded-md bg-muted text-sm"
                         />
                         <Button onClick={copyToClipboard} variant="outline">
@@ -196,9 +196,9 @@ const Success = () => {
                   </CardContent>
                 </Card>
 
-                <Button 
+                <Button
                   className="w-full"
-                  onClick={() => navigate('/card/' + slug)}
+                  onClick={() => navigate('/' + slug)}
                 >
                   View Full Card
                   <ArrowRight className="ml-2 h-4 w-4" />
