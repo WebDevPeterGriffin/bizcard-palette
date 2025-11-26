@@ -180,7 +180,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     category: "Modern",
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900",
     backgroundColor: "bg-background",
-    isDark: false,
+    isDark: true,
     buttonClasses: {
       save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
       book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
@@ -192,7 +192,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     category: "Creative",
     gradient: "bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600",
     backgroundColor: "bg-background",
-    isDark: false,
+    isDark: true,
     buttonClasses: {
       save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
       book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
@@ -216,7 +216,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     category: "Modern",
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900",
     backgroundColor: "bg-background",
-    isDark: false,
+    isDark: true,
     buttonClasses: {
       save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
       book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
