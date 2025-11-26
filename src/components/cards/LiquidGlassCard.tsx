@@ -34,7 +34,7 @@ const LiquidGlassCard: React.FC<BaseCardProps> = (props) => {
     <div className="relative w-80 h-auto min-h-[26rem] mx-auto">
       {/* Glassmorphic background */}
       <div className="absolute inset-0 overflow-hidden rounded-3xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-300 to-cyan-400"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900"></div>
         {/* Liquid glass blobs */}
         {[...Array(6)].map((_, i) => (
           <div
@@ -108,7 +108,7 @@ const LiquidGlassCard: React.FC<BaseCardProps> = (props) => {
               headshotUrl={headshotUrl}
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
-              style="liquidglass"
+              style="liquid-glass"
               className="mb-5"
             />
           )}
