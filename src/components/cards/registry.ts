@@ -65,7 +65,7 @@ export interface CardStyleMeta {
 
 export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
   minimal: {
-    name: "Minimal Clean",
+    name: "Minimal White",
     description: "Clean, professional design with subtle borders and elegant typography",
     category: "Professional",
     gradient: "bg-gradient-minimal",
@@ -77,7 +77,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     }
   },
   bold: {
-    name: "Bold Modern",
+    name: "Bold Dark",
     description: "Dark background with bright accents and strong visual impact",
     category: "Modern",
     gradient: "bg-gradient-bold",
@@ -89,7 +89,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     }
   },
   elegant: {
-    name: "Elegant Professional",
+    name: "Elegant Cream",
     description: "Sophisticated design with muted tones and luxury aesthetic",
     category: "Professional",
     gradient: "bg-gradient-elegant",
@@ -211,7 +211,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     }
   },
   "liquid-glass": {
-    name: "Liquid Glass",
+    name: "Modern Glass Effect",
     description: "iOS 26-inspired translucent glass effects with blur and smooth animations",
     category: "Modern",
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900",
