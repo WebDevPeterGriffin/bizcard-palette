@@ -11,8 +11,8 @@ const BoldCard: React.FC<BaseCardProps> = (props) => {
     name = 'Sarah Johnson',
     title = 'Creative Director',
     company = 'Design Studio Pro',
-    phone = '+1 (555) 987-6543',
-    email = 'sarah.j@designpro.com',
+    phones = ['+1 (555) 987-6543'],
+    emails = ['sarah.j@designpro.com'],
     website = 'www.sarahdesigns.com',
     headshotUrl,
     socialLinks = [],
@@ -49,8 +49,8 @@ const BoldCard: React.FC<BaseCardProps> = (props) => {
 
         {/* Contact Info */}
         <ContactInfo
-          email={email}
-          phone={phone}
+          emails={emails}
+          phones={phones}
           website={website}
           className="space-y-4 border-t border-white/20 pt-6"
           itemClassName="rounded-lg bg-white/5 p-3 hover:bg-white/10 transition-colors block"
@@ -76,8 +76,8 @@ const BoldCard: React.FC<BaseCardProps> = (props) => {
             name={name}
             title={title}
             company={company}
-            phone={phone}
-            email={email}
+            phones={phones}
+            emails={emails}
             website={website}
             socialLinks={displaySocialLinks}
             headshotUrl={headshotUrl}

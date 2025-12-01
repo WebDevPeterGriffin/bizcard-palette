@@ -12,8 +12,8 @@ const FloatingCard: React.FC<BaseCardProps> = (props) => {
     name = 'Luna Sky',
     title = 'Cloud Architect',
     company = 'Elevate Studios',
-    phone = '+1 (555) 234-5678',
-    email = 'luna@elevate.cloud',
+    phones = ['+1 (555) 234-5678'],
+    emails = ['luna@elevate.cloud'],
     website = 'www.lunasky.design',
     headshotUrl,
     socialLinks = [],
@@ -78,8 +78,8 @@ const FloatingCard: React.FC<BaseCardProps> = (props) => {
           />
 
           <ContactInfo
-            email={email}
-            phone={phone}
+            emails={emails}
+            phones={phones}
             website={website}
             className="space-y-3 mb-5"
             itemClassName="bg-white/50 backdrop-blur-sm border border-sky-300/40 rounded-lg p-3 hover:border-indigo-400/60 hover:bg-white/70 transition-all duration-300 flex items-center space-x-3"
@@ -103,8 +103,8 @@ const FloatingCard: React.FC<BaseCardProps> = (props) => {
               name={name}
               title={title}
               company={company}
-              phone={phone}
-              email={email}
+              phones={phones}
+              emails={emails}
               website={website}
               socialLinks={displaySocialLinks}
               headshotUrl={headshotUrl}

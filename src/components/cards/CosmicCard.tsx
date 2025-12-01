@@ -12,8 +12,8 @@ const CosmicCard: React.FC<BaseCardProps> = (props) => {
     name = 'Nova Stellar',
     title = 'Cosmic Designer',
     company = 'Galaxy Studios',
-    phone = '+1 (555) 456-7890',
-    email = 'nova@galaxystudios.space',
+    phones = ['+1 (555) 456-7890'],
+    emails = ['nova@galaxystudios.space'],
     website = 'www.novastellar.universe',
     headshotUrl,
     socialLinks = [],
@@ -83,8 +83,8 @@ const CosmicCard: React.FC<BaseCardProps> = (props) => {
 
           {/* Contact Info */}
           <ContactInfo
-            email={email}
-            phone={phone}
+            emails={emails}
+            phones={phones}
             website={website}
             className="space-y-3 mb-5"
             itemClassName="bg-purple-900/30 backdrop-blur-sm border border-purple-500/30 rounded-lg p-3 hover:border-pink-500/50 hover:bg-purple-800/40 transition-all duration-300 flex items-center space-x-3"
@@ -110,8 +110,8 @@ const CosmicCard: React.FC<BaseCardProps> = (props) => {
               name={name}
               title={title}
               company={company}
-              phone={phone}
-              email={email}
+              phones={phones}
+              emails={emails}
               website={website}
               socialLinks={displaySocialLinks}
               headshotUrl={headshotUrl}

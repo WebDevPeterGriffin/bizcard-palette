@@ -154,8 +154,8 @@ const GeneratedCard = () => {
       "name": cardData.name,
       ...(cardData.title && { "jobTitle": cardData.title }),
       ...(cardData.company && { "worksFor": { "@type": "Organization", "name": cardData.company } }),
-      ...(cardData.email && { "email": cardData.email }),
-      ...(cardData.phone && { "telephone": cardData.phone }),
+      ...(cardData.emails && { "email": cardData.emails }),
+      ...(cardData.phones && { "telephone": cardData.phones }),
       ...(cardData.website && { "url": cardData.website }),
       ...(cardData.headshotUrl && { "image": cardData.headshotUrl }),
       "sameAs": cardData.socialLinks.map(link => link.url),
@@ -203,8 +203,8 @@ const GeneratedCard = () => {
                   name={cardData.name}
                   title={cardData.title}
                   company={cardData.company}
-                  phone={cardData.phone}
-                  email={cardData.email}
+                  phones={cardData.phones}
+                  emails={cardData.emails}
                   website={cardData.website}
                   socialLinks={cardData.socialLinks}
                   headshotUrl={cardData.headshotUrl}

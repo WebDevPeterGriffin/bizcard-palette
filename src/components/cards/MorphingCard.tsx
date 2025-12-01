@@ -11,8 +11,8 @@ const MorphingCard: React.FC<BaseCardProps> = (props) => {
     name = 'Alex Rivera',
     title = 'Creative Director',
     company = 'Design Studio',
-    phone = '+1 (555) 456-7890',
-    email = 'alex@design.com',
+    phones = ['+1 (555) 456-7890'],
+    emails = ['alex@design.com'],
     website = 'www.alexrivera.com',
     headshotUrl,
     socialLinks = [],
@@ -59,8 +59,8 @@ const MorphingCard: React.FC<BaseCardProps> = (props) => {
           />
 
           <ContactInfo
-            email={email}
-            phone={phone}
+            emails={emails}
+            phones={phones}
             website={website}
             className="space-y-3 mb-5"
             itemClassName="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 hover:bg-white/20 transition-all duration-300 flex items-center space-x-3"
@@ -84,8 +84,8 @@ const MorphingCard: React.FC<BaseCardProps> = (props) => {
               name={name}
               title={title}
               company={company}
-              phone={phone}
-              email={email}
+              phones={phones}
+              emails={emails}
               website={website}
               socialLinks={displaySocialLinks}
               headshotUrl={headshotUrl}

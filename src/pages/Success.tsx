@@ -1,45 +1,22 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Share2, CheckCircle2, Copy, Download } from "lucide-react";
+import { ArrowRight, Share2, CheckCircle2, Copy } from "lucide-react";
 import SEO from "@/components/SEO";
 import QRCodeGenerator from "@/components/QRCodeGenerator";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { CARD_COMPONENTS, type CardStyleId } from "@/components/cards/registry";
+import { useCardData } from "@/hooks/useCardData";
 
 const Success = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [cardData, setCardData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+
+  // Use the proper hook that converts data correctly
+  const { cardData, loading } = useCardData(slug);
 
   const cardUrl = `${window.location.origin}/${slug}`;
-
-  useEffect(() => {
-    const fetchCard = async () => {
-      if (!slug) return;
-
-      const { data, error } = await supabase
-        .from('cards')
-        .select('*')
-        .eq('slug', slug)
-        .single();
-
-      if (error) {
-        console.error('Error fetching card:', error);
-        navigate('/');
-        return;
-      }
-
-      setCardData(data);
-      setLoading(false);
-    };
-
-    fetchCard();
-  }, [slug, navigate]);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(cardUrl);
@@ -64,12 +41,23 @@ const Success = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse">Loading...</div>
+        <div className="animate-pulse">Loading your card...</div>
       </div>
     );
   }
 
-  const CardComponent = cardData ? CARD_COMPONENTS[cardData.style_id as CardStyleId] : null;
+  if (!cardData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Card not found</h2>
+          <Button onClick={() => navigate('/')}>Go Home</Button>
+        </div>
+      </div>
+    );
+  }
+
+  const CardComponent = CARD_COMPONENTS[cardData.style as CardStyleId];
 
   return (
     <>
@@ -101,10 +89,20 @@ const Success = () => {
               {/* Preview */}
               <div>
                 <h2 className="text-2xl font-bold mb-6">Your Card</h2>
-                {CardComponent && cardData && (
+                {CardComponent && (
                   <CardComponent
-                    {...cardData}
-                    socialLinks={cardData.socials || []}
+                    cardId={cardData.id}
+                    name={cardData.name}
+                    title={cardData.title}
+                    company={cardData.company}
+                    emails={cardData.emails}
+                    phones={cardData.phones}
+                    website={cardData.website}
+                    headshotUrl={cardData.headshotUrl}
+                    socialLinks={cardData.socialLinks}
+                    slug={cardData.slug}
+                    bookingEnabled={cardData.bookingEnabled}
+                    bookingInstructions={cardData.bookingInstructions}
                   />
                 )}
               </div>

@@ -9,7 +9,7 @@ import NotFound from "./NotFound";
 const StyleLanding = () => {
   const { styleId } = useParams<{ styleId: string }>();
   const navigate = useNavigate();
-  
+
   if (!styleId || !(styleId in CARD_COMPONENTS)) {
     return <NotFound />;
   }
@@ -32,24 +32,24 @@ const StyleLanding = () => {
 
   return (
     <>
-      <SEO 
+      <SEO
         title={`${meta.name} Digital Business Card`}
         description={`Create your ${meta.name.toLowerCase()} digital business card. ${meta.description}. Perfect for ${idealFor}.`}
       />
-      
+
       <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="border-b px-4 py-4">
           <div className="container mx-auto max-w-6xl flex items-center justify-between">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               onClick={() => navigate('/styles')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
               All Styles
             </Button>
-            <Button 
+            <Button
               onClick={() => navigate(`/request?style=${styleId}`)}
               className="gap-2"
             >
@@ -78,13 +78,13 @@ const StyleLanding = () => {
             {/* Live Preview */}
             <div className="flex justify-center">
               <div className="w-full max-w-md">
-                <CardComponent 
+                <CardComponent
                   cardId={`preview-${styleId}`}
                   name="Alex Johnson"
                   title="Senior Product Designer"
                   company="Innovation Labs"
-                  phone="+1 (555) 123-4567"
-                  email="alex@example.com"
+                  phones={["+1 (555) 123-4567"]}
+                  emails={["alex@example.com"]}
                   website="alexjohnson.com"
                   socialLinks={[
                     { platform: "linkedin", url: "alexjohnson", label: "LinkedIn" },
@@ -97,7 +97,7 @@ const StyleLanding = () => {
             </div>
 
             <div className="text-center mt-8">
-              <Button 
+              <Button
                 size="lg"
                 onClick={() => navigate(`/request?style=${styleId}`)}
                 className="bg-brand-primary-foreground text-brand-primary hover:bg-brand-primary-foreground/90 shadow-hero"
@@ -150,7 +150,7 @@ const StyleLanding = () => {
               Join thousands of professionals using digital business cards
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
+              <Button
                 size="lg"
                 onClick={() => navigate(`/request?style=${styleId}`)}
                 className="bg-brand-primary-foreground text-brand-primary hover:bg-brand-primary-foreground/90 shadow-hero"
@@ -158,7 +158,7 @@ const StyleLanding = () => {
                 Get Started Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button 
+              <Button
                 size="lg"
                 variant="outline"
                 onClick={() => navigate('/styles')}

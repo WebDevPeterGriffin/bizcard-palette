@@ -12,8 +12,8 @@ const LiquidGlassCard: React.FC<BaseCardProps> = (props) => {
     name = 'Alex Glass',
     title = 'Design Architect',
     company = 'Crystal Studios',
-    phone = '+1 (555) 789-0123',
-    email = 'alex@crystalstudios.co',
+    phones = ['+1 (555) 789-0123'],
+    emails = ['alex@crystalstudios.co'],
     website = 'www.alexglass.design',
     headshotUrl,
     socialLinks = [],
@@ -76,8 +76,8 @@ const LiquidGlassCard: React.FC<BaseCardProps> = (props) => {
           />
 
           <ContactInfo
-            email={email}
-            phone={phone}
+            emails={emails}
+            phones={phones}
             website={website}
             className="space-y-3 mb-5"
             itemClassName="bg-white/15 backdrop-blur-md border border-white/30 rounded-xl p-3 hover:bg-white/25 transition-all duration-300 flex items-center space-x-3"
@@ -101,8 +101,8 @@ const LiquidGlassCard: React.FC<BaseCardProps> = (props) => {
               name={name}
               title={title}
               company={company}
-              phone={phone}
-              email={email}
+              phones={phones}
+              emails={emails}
               website={website}
               socialLinks={displaySocialLinks}
               headshotUrl={headshotUrl}

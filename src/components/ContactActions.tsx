@@ -16,8 +16,8 @@ interface ContactActionsProps {
   name: string;
   title?: string;
   company?: string;
-  phone?: string;
-  email?: string;
+  phones?: string[];
+  emails?: string[];
   website?: string;
   socialLinks?: SocialLink[];
   headshotUrl?: string;
@@ -32,8 +32,8 @@ export function ContactActions({
   name,
   title,
   company,
-  phone,
-  email,
+  phones,
+  emails,
   website,
   socialLinks = [],
   headshotUrl,
@@ -53,8 +53,8 @@ export function ContactActions({
         name={name}
         title={title}
         company={company}
-        phone={phone}
-        email={email}
+        phones={phones}
+        emails={emails}
         website={website}
         socialLinks={socialLinks}
         headshotUrl={headshotUrl}

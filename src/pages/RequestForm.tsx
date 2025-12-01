@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, X, Plus } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,8 +23,8 @@ const RequestForm = () => {
     full_name: "",
     role: "",
     company: "",
-    phone: "",
-    email: "",
+    phones: [""] as string[],
+    emails: [""] as string[],
     website: "",
     style_id: searchParams.get('style') || ""
   });
@@ -43,13 +43,66 @@ const RequestForm = () => {
     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   };
 
+  const addEmail = () => {
+    if (formData.emails.length < 5) {
+      setFormData({ ...formData, emails: [...formData.emails, ""] });
+    }
+  };
+
+  const removeEmail = (index: number) => {
+    if (formData.emails.length > 1) {
+      const newEmails = formData.emails.filter((_, i) => i !== index);
+      setFormData({ ...formData, emails: newEmails });
+    }
+  };
+
+  const updateEmail = (index: number, value: string) => {
+    const newEmails = [...formData.emails];
+    newEmails[index] = value;
+    setFormData({ ...formData, emails: newEmails });
+  };
+
+  const addPhone = () => {
+    if (formData.phones.length < 5) {
+      setFormData({ ...formData, phones: [...formData.phones, ""] });
+    }
+  };
+
+  const removePhone = (index: number) => {
+    const newPhones = formData.phones.filter((_, i) => i !== index);
+    setFormData({ ...formData, phones: newPhones.length === 0 ? [""] : newPhones });
+  };
+
+  const updatePhone = (index: number, value: string) => {
+    const newPhones = [...formData.phones];
+    newPhones[index] = value;
+    setFormData({ ...formData, phones: newPhones });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.full_name || !formData.email || !formData.style_id) {
+    // Filter out empty emails and phones
+    const cleanedEmails = formData.emails.filter(e => e.trim());
+    const cleanedPhones = formData.phones.filter(p => p.trim());
+
+    // Validation
+    if (!formData.full_name || cleanedEmails.length === 0 || !formData.style_id) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please fill in all required fields (name, at least one email, and card style).",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const invalidEmail = cleanedEmails.find(e => !emailRegex.test(e));
+    if (invalidEmail) {
+      toast({
+        title: "Invalid Email",
+        description: `"${invalidEmail}" is not a valid email address.`,
         variant: "destructive"
       });
       return;
@@ -82,16 +135,16 @@ const RequestForm = () => {
         slug = `${baseSlug}-${randomSuffix}`;
       }
 
-      // Insert card record (no user_id needed)
+      // Insert card record with arrays
       const { data: cardData, error: insertError } = await supabase
         .from('cards')
         .insert({
           full_name: formData.full_name,
-          role: formData.role,
-          company: formData.company,
-          phone: formData.phone,
-          email: formData.email,
-          website: formData.website,
+          role: formData.role || null,
+          company: formData.company || null,
+          phones: cleanedPhones,
+          emails: cleanedEmails,
+          website: formData.website || null,
           style_id: formData.style_id,
           slug: slug,
           booking_enabled: true,
@@ -107,7 +160,6 @@ const RequestForm = () => {
       }
 
       // Upload headshot if provided
-      let headshotFilePath = null;
       if (headshot && cardData) {
         console.log('Uploading headshot:', headshot.name, 'size:', headshot.size);
         const fileExt = headshot.name.split('.').pop();
@@ -130,18 +182,16 @@ const RequestForm = () => {
           });
         } else {
           console.log('Upload successful:', uploadData);
-          headshotFilePath = filePath;
 
           const { error: updateError } = await supabase
             .from('cards')
-            .update({ headshot_url: headshotFilePath })
+            .update({ headshot_url: filePath })
             .eq('id', cardData.id);
 
           if (updateError) {
             console.error('Error updating headshot URL:', updateError);
           } else {
-            console.log('Headshot path updated successfully:', headshotFilePath);
-            // Small delay to ensure database consistency before navigation
+            console.log('Headshot path updated successfully:', filePath);
             await new Promise(resolve => setTimeout(resolve, 100));
           }
         }
@@ -152,7 +202,6 @@ const RequestForm = () => {
         description: `Your digital business card is ready!`,
       });
 
-      // Redirect to the success page
       navigate(`/success/${slug}`);
 
     } catch (error) {
@@ -165,10 +214,6 @@ const RequestForm = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleImageUpload = (file: File | null, preview: string | null) => {
@@ -215,7 +260,10 @@ const RequestForm = () => {
                 {/* Style Selection */}
                 <div>
                   <Label htmlFor="style">Choose Your Style *</Label>
-                  <Select value={formData.style_id} onValueChange={(value) => handleInputChange('style_id', value)}>
+                  <Select
+                    value={formData.style_id}
+                    onValueChange={(value) => setFormData({ ...formData, style_id: value })}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a card style" />
                     </SelectTrigger>
@@ -245,9 +293,8 @@ const RequestForm = () => {
                     <Input
                       id="full_name"
                       value={formData.full_name}
-                      onChange={(e) => handleInputChange('full_name', e.target.value)}
+                      onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                       placeholder="John Doe"
-                      required
                     />
                   </div>
                   <div>
@@ -255,7 +302,7 @@ const RequestForm = () => {
                     <Input
                       id="role"
                       value={formData.role}
-                      onChange={(e) => handleInputChange('role', e.target.value)}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                       placeholder="Senior Product Manager"
                     />
                   </div>
@@ -266,32 +313,86 @@ const RequestForm = () => {
                   <Input
                     id="company"
                     value={formData.company}
-                    onChange={(e) => handleInputChange('company', e.target.value)}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     placeholder="Tech Innovations Inc."
                   />
                 </div>
 
-                {/* Contact Information */}
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="+1 (555) 123-4567"
-                    />
+                {/* Email Addresses */}
+                <div>
+                  <Label>Email Addresses *</Label>
+                  <div className="space-y-2">
+                    {formData.emails.map((email, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          type="email"
+                          value={email}
+                          onChange={(e) => updateEmail(index, e.target.value)}
+                          placeholder="john@company.com"
+                          className="flex-1"
+                        />
+                        {formData.emails.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => removeEmail(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    {formData.emails.length < 5 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addEmail}
+                        className="w-full"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Another Email
+                      </Button>
+                    )}
                   </div>
-                  <div>
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="john@company.com"
-                      required
-                    />
+                </div>
+
+                {/* Phone Numbers */}
+                <div>
+                  <Label>Phone Numbers</Label>
+                  <div className="space-y-2">
+                    {formData.phones.map((phone, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => updatePhone(index, e.target.value)}
+                          placeholder="+1 (555) 123-4567"
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removePhone(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    {formData.phones.length < 5 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addPhone}
+                        className="w-full"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Another Phone
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -300,7 +401,7 @@ const RequestForm = () => {
                   <Input
                     id="website"
                     value={formData.website}
-                    onChange={(e) => handleInputChange('website', e.target.value)}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                     placeholder="www.johndoe.com"
                   />
                 </div>

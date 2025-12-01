@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import type { BaseCardProps } from "./shared";
+import type { CardStyleId } from '@/types/card';
 
 // Lazy load components for better performance
 const MinimalCard = lazy(() => import("./MinimalCard"));
@@ -16,20 +17,9 @@ const MorphingCard = lazy(() => import("./MorphingCard"));
 const PrismCard = lazy(() => import("./PrismCard"));
 const LiquidGlassCard = lazy(() => import("./LiquidGlassCard"));
 
-export type CardStyleId =
-  | 'minimal'
-  | 'bold'
-  | 'elegant'
-  | 'creative'
-  | 'neon'
-  | 'floating'
-  | 'liquid'
-  | 'cosmic'
-  | 'holographic'
-  | 'particle'
-  | 'morphing'
-  | 'prism'
-  | 'liquid-glass';
+// CardStyleId type is now imported from @/types/card (line 3)
+// Re-export it here for backward compatibility with existing imports
+export type { CardStyleId } from '@/types/card';
 
 export type CardComponent = React.ComponentType<BaseCardProps>;
 

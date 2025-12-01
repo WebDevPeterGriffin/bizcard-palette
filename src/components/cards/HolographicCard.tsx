@@ -11,8 +11,8 @@ const HolographicCard: React.FC<BaseCardProps> = (props) => {
     name = 'John Doe',
     title = 'Software Engineer',
     company = 'Tech Company',
-    phone = '+1 (555) 123-4567',
-    email = 'john@tech.com',
+    phones = ['+1 (555) 123-4567'],
+    emails = ['john@tech.com'],
     website = 'www.johndoe.com',
     headshotUrl,
     socialLinks = [],
@@ -56,8 +56,8 @@ const HolographicCard: React.FC<BaseCardProps> = (props) => {
           />
 
           <ContactInfo
-            email={email}
-            phone={phone}
+            emails={emails}
+            phones={phones}
             website={website}
             className="space-y-3 mb-5"
             itemClassName="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-3 hover:bg-white/10 transition-all duration-300 flex items-center space-x-3"
@@ -81,8 +81,8 @@ const HolographicCard: React.FC<BaseCardProps> = (props) => {
               name={name}
               title={title}
               company={company}
-              phone={phone}
-              email={email}
+              phones={phones}
+              emails={emails}
               website={website}
               socialLinks={displaySocialLinks}
               headshotUrl={headshotUrl}

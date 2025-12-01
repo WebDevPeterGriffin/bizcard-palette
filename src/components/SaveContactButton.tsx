@@ -13,8 +13,8 @@ interface SaveContactButtonProps {
   name: string;
   title?: string;
   company?: string;
-  phone?: string;
-  email?: string;
+  phones?: string[];
+  emails?: string[];
   website?: string;
   socialLinks?: SocialLink[];
   headshotUrl?: string;
@@ -27,8 +27,8 @@ export function SaveContactButton({
   name,
   title,
   company,
-  phone,
-  email,
+  phones = [],
+  emails = [],
   website,
   socialLinks = [],
   headshotUrl,
@@ -36,36 +36,42 @@ export function SaveContactButton({
   size = "default",
   className,
 }: SaveContactButtonProps) {
-  
+
   const generateVCard = () => {
     let vcard = "BEGIN:VCARD\n";
     vcard += "VERSION:3.0\n";
-    
+
     // Name
     vcard += `FN:${name}\n`;
     vcard += `N:${name.split(' ').reverse().join(';')}\n`;
-    
+
     // Title and Organization
     if (title) vcard += `TITLE:${title}\n`;
     if (company) vcard += `ORG:${company}\n`;
-    
-    // Contact information
-    if (phone) vcard += `TEL:${phone}\n`;
-    if (email) vcard += `EMAIL:${email}\n`;
+
+    // Contact information - handle multiple phones and emails
+    phones.forEach(phone => {
+      if (phone) vcard += `TEL:${phone}\n`;
+    });
+
+    emails.forEach(email => {
+      if (email) vcard += `EMAIL:${email}\n`;
+    });
+
     if (website) vcard += `URL:${website}\n`;
-    
+
     // Social media links
     socialLinks.forEach(social => {
       vcard += `URL:${social.url}\n`;
     });
-    
+
     // Photo (if available)
     if (headshotUrl) {
       vcard += `PHOTO:${headshotUrl}\n`;
     }
-    
+
     vcard += "END:VCARD";
-    
+
     return vcard;
   };
 
@@ -74,7 +80,7 @@ export function SaveContactButton({
       const vCardData = generateVCard();
       const blob = new Blob([vCardData], { type: 'text/vcard' });
       const url = window.URL.createObjectURL(blob);
-      
+
       const link = document.createElement('a');
       link.href = url;
       link.download = `${name.replace(/\s+/g, '_')}_contact.vcf`;
@@ -82,7 +88,7 @@ export function SaveContactButton({
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       toast({
         title: "Contact saved!",
         description: `${name}'s contact information has been downloaded to your device.`,

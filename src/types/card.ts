@@ -7,30 +7,23 @@ import { SocialLink } from '@/components/cards/shared';
 import { Json } from '@/integrations/supabase/types';
 
 /**
- * Valid card style identifiers (matching database style_id values)
+ * Valid card style identifiers (matches registry)
+ * Single source of truth for all card styles
  */
 export type CardStyleId =
     | 'minimal'
     | 'bold'
     | 'elegant'
+    | 'creative'
     | 'neon'
     | 'floating'
     | 'liquid'
     | 'cosmic'
-    | 'creative'
     | 'holographic'
-    | 'liquidglass'
-    | 'morphing'
     | 'particle'
+    | 'morphing'
     | 'prism'
-    | 'watercolor'
-    | 'modern'
-    | 'dynamic'
-    | 'premium'
-    | 'vintage'
-    | 'glitch'
-    | 'monochrome'
-    | 'ethereal';
+    | 'liquid-glass'; // Note: kebab-case to match registry
 
 /**
  * Database record structure (raw data from Supabase cards table)
@@ -42,8 +35,8 @@ export interface CardRecord {
     full_name: string;
     role: string | null;
     company: string | null;
-    email: string | null;
-    phone: string | null;
+    emails: string[];
+    phones: string[];
     website: string | null;
     headshot_url: string | null;
     style_id: string;
@@ -64,8 +57,8 @@ export interface CardData {
     name: string;
     title: string;
     company: string;
-    email: string;
-    phone: string;
+    emails: string[];
+    phones: string[];
     website: string;
     headshotUrl?: string;
     style: string;
@@ -97,8 +90,8 @@ export const recordToCardData = (record: CardRecord, headshotUrl?: string): Card
         name: record.full_name,
         title: record.role || '',
         company: record.company || '',
-        email: record.email || '',
-        phone: record.phone || '',
+        emails: record.emails || [],
+        phones: record.phones || [],
         website: record.website || '',
         headshotUrl: headshotUrl,
         style: record.style_id,

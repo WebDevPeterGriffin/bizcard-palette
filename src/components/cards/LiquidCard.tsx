@@ -12,8 +12,8 @@ const LiquidCard: React.FC<BaseCardProps> = (props) => {
     name = 'Flow Rivera',
     title = 'UX Fluid Designer',
     company = 'Liquid Labs',
-    phone = '+1 (555) 345-6789',
-    email = 'flow@liquidlabs.design',
+    phones = ['+1 (555) 345-6789'],
+    emails = ['flow@liquidlabs.design'],
     website = 'www.flowrivera.studio',
     headshotUrl,
     socialLinks = [],
@@ -75,8 +75,8 @@ const LiquidCard: React.FC<BaseCardProps> = (props) => {
           />
 
           <ContactInfo
-            email={email}
-            phone={phone}
+            emails={emails}
+            phones={phones}
             website={website}
             className="space-y-3 mb-5"
             itemClassName="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 hover:bg-white/20 transition-all duration-300 flex items-center space-x-3"
@@ -100,8 +100,8 @@ const LiquidCard: React.FC<BaseCardProps> = (props) => {
               name={name}
               title={title}
               company={company}
-              phone={phone}
-              email={email}
+              phones={phones}
+              emails={emails}
               website={website}
               socialLinks={displaySocialLinks}
               headshotUrl={headshotUrl}

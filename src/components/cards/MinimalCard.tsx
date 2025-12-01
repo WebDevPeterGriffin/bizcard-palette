@@ -11,8 +11,8 @@ const MinimalCard: React.FC<BaseCardProps> = (props) => {
     name = 'John Doe',
     title = 'Senior Product Manager',
     company = 'Tech Innovations Inc.',
-    phone = '+1 (555) 123-4567',
-    email = 'john.doe@techinn.com',
+    phones = ['+1 (555) 123-4567'],
+    emails = ['john.doe@techinn.com'],
     website = 'www.johndoe.com',
     headshotUrl,
     socialLinks = [],
@@ -49,8 +49,8 @@ const MinimalCard: React.FC<BaseCardProps> = (props) => {
 
         {/* Contact Info */}
         <ContactInfo
-          email={email}
-          phone={phone}
+          emails={emails}
+          phones={phones}
           website={website}
           className="space-y-3 border-t border-minimal-accent/10 pt-6"
           itemClassName="flex items-center justify-center space-x-2 hover:text-minimal-accent/80 transition-colors"
@@ -76,8 +76,8 @@ const MinimalCard: React.FC<BaseCardProps> = (props) => {
             name={name}
             title={title}
             company={company}
-            phone={phone}
-            email={email}
+            phones={phones}
+            emails={emails}
             website={website}
             socialLinks={displaySocialLinks}
             headshotUrl={headshotUrl}

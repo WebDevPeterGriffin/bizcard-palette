@@ -12,8 +12,8 @@ const CreativeCard: React.FC<BaseCardProps> = (props) => {
     name = 'Maya Chen',
     title = 'UX/UI Designer',
     company = 'Creative Pixel Studio',
-    phone = '+1 (555) 369-2580',
-    email = 'maya@creativepixel.com',
+    phones = ['+1 (555) 369-2580'],
+    emails = ['maya@creativepixel.com'],
     website = 'www.mayachen.design',
     headshotUrl,
     socialLinks = [],
@@ -57,8 +57,8 @@ const CreativeCard: React.FC<BaseCardProps> = (props) => {
 
           {/* Contact Info */}
           <ContactInfo
-            email={email}
-            phone={phone}
+            emails={emails}
+            phones={phones}
             website={website}
             className="space-y-3 border-t border-white/20 pt-6"
             itemClassName="flex items-center justify-center space-x-2 backdrop-blur-sm bg-white/10 p-2 rounded-lg hover:bg-white/20 transition-colors"
@@ -84,8 +84,8 @@ const CreativeCard: React.FC<BaseCardProps> = (props) => {
               name={name}
               title={title}
               company={company}
-              phone={phone}
-              email={email}
+              phones={phones}
+              emails={emails}
               website={website}
               socialLinks={displaySocialLinks}
               headshotUrl={headshotUrl}

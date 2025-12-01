@@ -9,8 +9,8 @@ export interface BaseCardProps {
   name?: string;
   title?: string;
   company?: string;
-  phone?: string;
-  email?: string;
+  phones?: string[];
+  emails?: string[];
   website?: string;
   location?: string;
   headshotUrl?: string;

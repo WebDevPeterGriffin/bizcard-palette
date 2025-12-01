@@ -11,8 +11,8 @@ const PrismCard: React.FC<BaseCardProps> = (props) => {
     name = 'Riley Prism',
     title = 'Motion Designer',
     company = 'Spectra Labs',
-    phone = '+1 (555) 321-9876',
-    email = 'riley@spectra.io',
+    phones = ['+1 (555) 321-9876'],
+    emails = ['riley@spectra.io'],
     website = 'www.rileyprism.art',
     headshotUrl,
     socialLinks = [],
@@ -61,8 +61,8 @@ const PrismCard: React.FC<BaseCardProps> = (props) => {
         />
 
         <ContactInfo
-          email={email}
-          phone={phone}
+          emails={emails}
+          phones={phones}
           website={website}
           className="space-y-3 mb-5"
           itemClassName="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-3 hover:bg-gradient-to-r hover:from-purple-900/20 hover:to-pink-900/20 transition-all duration-300 flex items-center space-x-3"
@@ -86,8 +86,8 @@ const PrismCard: React.FC<BaseCardProps> = (props) => {
             name={name}
             title={title}
             company={company}
-            phone={phone}
-            email={email}
+            phones={phones}
+            emails={emails}
             website={website}
             socialLinks={displaySocialLinks}
             headshotUrl={headshotUrl}

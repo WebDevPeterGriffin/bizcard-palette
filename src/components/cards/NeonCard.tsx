@@ -11,8 +11,8 @@ const NeonCard: React.FC<BaseCardProps> = (props) => {
     name = 'Alex Cyber',
     title = 'Digital Architect',
     company = 'Neo Corp',
-    phone = '+1 (555) 123-4567',
-    email = 'alex@neocorp.io',
+    phones = ['+1 (555) 123-4567'],
+    emails = ['alex@neocorp.io'],
     website = 'www.alexcyber.dev',
     headshotUrl,
     socialLinks = [],
@@ -65,8 +65,8 @@ const NeonCard: React.FC<BaseCardProps> = (props) => {
 
         {/* Contact Info */}
         <ContactInfo
-          email={email}
-          phone={phone}
+          emails={emails}
+          phones={phones}
           website={website}
           className="space-y-3 mb-5"
           itemClassName="bg-black/40 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-3 hover:border-pink-400/50 hover:bg-black/60 transition-all duration-300 flex items-center space-x-3"
@@ -92,8 +92,8 @@ const NeonCard: React.FC<BaseCardProps> = (props) => {
             name={name}
             title={title}
             company={company}
-            phone={phone}
-            email={email}
+            phones={phones}
+            emails={emails}
             website={website}
             socialLinks={displaySocialLinks}
             headshotUrl={headshotUrl}

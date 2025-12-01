@@ -11,8 +11,8 @@ const ElegantCard: React.FC<BaseCardProps> = (props) => {
     name = 'Alexander Reed',
     title = 'Managing Partner',
     company = 'Reed & Associates Law',
-    phone = '+1 (555) 246-8135',
-    email = 'a.reed@reedlaw.com',
+    phones = ['+1 (555) 246-8135'],
+    emails = ['a.reed@reedlaw.com'],
     website = 'www.reedlawfirm.com',
     headshotUrl,
     socialLinks = [],
@@ -52,8 +52,8 @@ const ElegantCard: React.FC<BaseCardProps> = (props) => {
 
         {/* Contact Information */}
         <ContactInfo
-          email={email}
-          phone={phone}
+          emails={emails}
+          phones={phones}
           website={website}
           className="space-y-3"
           itemClassName="flex items-center space-x-3 p-2 rounded-md hover:bg-elegant-accent/5 transition-colors"
@@ -79,8 +79,8 @@ const ElegantCard: React.FC<BaseCardProps> = (props) => {
             name={name}
             title={title}
             company={company}
-            phone={phone}
-            email={email}
+            phones={phones}
+            emails={emails}
             website={website}
             socialLinks={displaySocialLinks}
             headshotUrl={headshotUrl}
