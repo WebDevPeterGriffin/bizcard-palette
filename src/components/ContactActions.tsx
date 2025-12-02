@@ -3,7 +3,6 @@ import { CalendarPlus, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookingDialog } from "./BookingDialog";
 import { SaveContactButton } from "./SaveContactButton";
-import { CARD_META, type CardStyleId } from "@/components/cards/registry";
 
 interface SocialLink {
   platform: string;
@@ -24,7 +23,7 @@ interface ContactActionsProps {
   bookingEnabled?: boolean;
   bookingInstructions?: string;
   className?: string;
-  style?: CardStyleId;
+  style?: string;
 }
 
 export function ContactActions({
@@ -43,10 +42,6 @@ export function ContactActions({
   style = 'minimal',
 }: ContactActionsProps) {
 
-  // Use registry as single source of truth for button styles
-  const styleConfig = CARD_META[style] || CARD_META.minimal;
-  const buttonClasses = styleConfig.buttonClasses;
-
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
       <SaveContactButton
@@ -59,7 +54,7 @@ export function ContactActions({
         socialLinks={socialLinks}
         headshotUrl={headshotUrl}
         variant="outline"
-        className={`w-full ${buttonClasses.save}`}
+        className="w-full"
       />
 
       {bookingEnabled && (
@@ -68,7 +63,7 @@ export function ContactActions({
           ownerName={name}
           instructions={bookingInstructions}
         >
-          <Button className={`w-full ${buttonClasses.book}`}>
+          <Button className="w-full">
             <CalendarPlus className="h-4 w-4 mr-2" />
             Book Appointment
           </Button>

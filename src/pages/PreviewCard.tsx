@@ -64,6 +64,18 @@ const PreviewCard = () => {
                                 <CardComponent
                                     cardId={`preview-${styleId}`}
                                     slug={`preview-${styleId}`}
+                                    name="John Doe"
+                                    title="Senior Product Manager"
+                                    company="Tech Innovations Inc."
+                                    emails={["john.doe@techinnovations.com", "johndoe@gmail.com"]}
+                                    phones={["+1 (555) 123-4567", "+1 (555) 987-6543"]}
+                                    website="www.johndoe.com"
+                                    socialLinks={[
+                                        { platform: "linkedin", url: "https://linkedin.com/in/johndoe", label: "LinkedIn" },
+                                        { platform: "twitter", url: "https://twitter.com/johndoe", label: "Twitter" },
+                                        { platform: "github", url: "https://github.com/johndoe", label: "GitHub" }
+                                    ]}
+                                    headshotUrl={null}
                                     bookingEnabled={true}
                                     bookingInstructions="Please select your preferred time slot. I'm available Monday-Friday, 9 AM - 5 PM EST."
                                 />
