@@ -46,10 +46,6 @@ export interface CardStyleMeta {
   gradient: string;
   backgroundColor: string;
   isDark: boolean;
-  buttonClasses: {
-    save: string;
-    book: string;
-  };
   hasBackgroundAnimation?: boolean;
 }
 
@@ -61,10 +57,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-minimal",
     backgroundColor: "bg-gradient-minimal",
     isDark: false,
-    buttonClasses: {
-      save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
-      book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
-    }
   },
   bold: {
     name: "Bold Dark",
@@ -73,10 +65,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-bold",
     backgroundColor: "bg-gradient-bold",
     isDark: true,
-    buttonClasses: {
-      save: "bg-white/10 text-white border-white/30 hover:bg-white/20",
-      book: "bg-bold-accent text-bold-accent-foreground hover:bg-bold-accent/90"
-    }
   },
   elegant: {
     name: "Elegant Cream",
@@ -85,10 +73,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-elegant",
     backgroundColor: "bg-gradient-elegant",
     isDark: false,
-    buttonClasses: {
-      save: "border-elegant-accent/30 text-elegant-accent hover:bg-elegant-accent/10",
-      book: "bg-elegant-accent text-white hover:bg-elegant-accent/90"
-    }
   },
   creative: {
     name: "Creative Colorful",
@@ -97,10 +81,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-creative",
     backgroundColor: "bg-gradient-creative",
     isDark: true,
-    buttonClasses: {
-      save: "bg-white/10 text-white border-white/30 hover:bg-white/20",
-      book: "bg-white text-creative-accent hover:bg-white/90"
-    }
   },
   neon: {
     name: "Neon Cyber",
@@ -109,10 +89,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-purple-900 via-blue-900 to-black",
     backgroundColor: "bg-gray-900",
     isDark: true,
-    buttonClasses: {
-      save: "bg-white/10 text-white border-cyan-500/50 hover:bg-white/20",
-      book: "bg-cyan-500 text-black hover:bg-cyan-400"
-    },
     hasBackgroundAnimation: true
   },
   floating: {
@@ -122,10 +98,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-blue-100 via-cyan-50 to-purple-100",
     backgroundColor: "bg-gradient-to-br from-blue-50 to-indigo-100",
     isDark: false,
-    buttonClasses: {
-      save: "border-blue-200 text-blue-700 hover:bg-blue-50",
-      book: "bg-blue-500 text-white hover:bg-blue-600"
-    },
     hasBackgroundAnimation: true
   },
   liquid: {
@@ -135,10 +107,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600",
     backgroundColor: "bg-gradient-liquid-bg",
     isDark: true,
-    buttonClasses: {
-      save: "bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm",
-      book: "bg-white/20 text-white border-white/40 hover:bg-white/30 backdrop-blur-sm"
-    }
   },
   cosmic: {
     name: "Cosmic Space",
@@ -147,10 +115,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900",
     backgroundColor: "bg-gradient-to-b from-black via-indigo-950 to-black",
     isDark: true,
-    buttonClasses: {
-      save: "bg-white/10 text-white border-white/30 hover:bg-white/20",
-      book: "bg-blue-500 text-white hover:bg-blue-400"
-    }
   },
   holographic: {
     name: "Holographic Glow",
@@ -159,10 +123,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500",
     backgroundColor: "bg-background",
     isDark: false,
-    buttonClasses: {
-      save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
-      book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
-    }
   },
   particle: {
     name: "Particle Storm",
@@ -171,10 +131,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900",
     backgroundColor: "bg-background",
     isDark: true,
-    buttonClasses: {
-      save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
-      book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
-    }
   },
   morphing: {
     name: "Morphing Liquid",
@@ -183,10 +139,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600",
     backgroundColor: "bg-background",
     isDark: true,
-    buttonClasses: {
-      save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
-      book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
-    }
   },
   prism: {
     name: "Prismatic Motion",
@@ -195,10 +147,6 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-amber-400 via-pink-400 to-purple-600",
     backgroundColor: "bg-background",
     isDark: false,
-    buttonClasses: {
-      save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
-      book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
-    }
   },
   "liquid-glass": {
     name: "Modern Glass Effect",
@@ -207,9 +155,5 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900",
     backgroundColor: "bg-background",
     isDark: true,
-    buttonClasses: {
-      save: "border-minimal-accent/30 text-minimal-accent hover:bg-minimal-accent/10",
-      book: "bg-minimal-accent text-white hover:bg-minimal-accent/90"
-    }
   },
 };

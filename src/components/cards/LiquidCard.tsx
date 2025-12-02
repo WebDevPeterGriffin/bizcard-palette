@@ -127,4 +127,4 @@ const LiquidCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default LiquidCard;
+export default React.memo(LiquidCard);

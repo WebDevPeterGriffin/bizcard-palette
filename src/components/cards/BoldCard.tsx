@@ -103,4 +103,4 @@ const BoldCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default BoldCard;
+export default React.memo(BoldCard);

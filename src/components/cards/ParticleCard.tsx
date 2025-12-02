@@ -140,4 +140,4 @@ const ParticleCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default ParticleCard;
+export default React.memo(ParticleCard);

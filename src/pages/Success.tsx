@@ -14,7 +14,7 @@ const Success = () => {
   const { toast } = useToast();
 
   // Use the proper hook that converts data correctly
-  const { cardData, loading } = useCardData(slug);
+  const { data: cardData, isLoading: loading } = useCardData(slug);
 
   const cardUrl = `${window.location.origin}/${slug}`;
 

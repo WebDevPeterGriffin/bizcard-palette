@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 
 interface CardData {
     id: string;
@@ -40,7 +41,7 @@ export const useUserManagement = () => {
 
             setUsers(data || []);
         } catch (error) {
-            console.error('Error fetching users:', error);
+            logger.error('Error fetching users:', error);
             toast({
                 variant: 'destructive',
                 title: 'Error',

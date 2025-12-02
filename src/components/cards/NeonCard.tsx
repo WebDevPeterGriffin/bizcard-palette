@@ -119,4 +119,4 @@ const NeonCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default NeonCard;
+export default React.memo(NeonCard);

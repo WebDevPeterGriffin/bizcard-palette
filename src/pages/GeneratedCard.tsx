@@ -13,7 +13,7 @@ const GeneratedCard = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { cardData, loading } = useCardData(slug);
+  const { data: cardData, isLoading: loading } = useCardData(slug);
 
   const handleShare = async () => {
     const url = window.location.href;

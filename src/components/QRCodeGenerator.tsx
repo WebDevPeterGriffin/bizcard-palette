@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { Download, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { logger } from '@/lib/logger';
 
 interface QRCodeGeneratorProps {
   url: string;
@@ -11,11 +12,11 @@ interface QRCodeGeneratorProps {
   showControls?: boolean;
 }
 
-const QRCodeGenerator = ({ 
-  url, 
-  size = 200, 
+const QRCodeGenerator = ({
+  url,
+  size = 200,
   className = "",
-  showControls = true 
+  showControls = true
 }: QRCodeGeneratorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [copied, setCopied] = useState(false);
@@ -34,7 +35,7 @@ const QRCodeGenerator = ({
             }
           });
         } catch (error) {
-          console.error('Error generating QR code:', error);
+          logger.error('Error generating QR code:', error);
         }
       }
     };
@@ -45,12 +46,12 @@ const QRCodeGenerator = ({
   const downloadQR = async (format: 'png' | 'svg' = 'png') => {
     try {
       let dataUrl: string;
-      
+
       if (format === 'svg') {
-        dataUrl = await QRCode.toString(url, { 
+        dataUrl = await QRCode.toString(url, {
           type: 'svg',
           width: size,
-          margin: 2 
+          margin: 2
         });
         const blob = new Blob([dataUrl], { type: 'image/svg+xml' });
         dataUrl = URL.createObjectURL(blob);
@@ -107,11 +108,11 @@ const QRCodeGenerator = ({
 
   return (
     <div className={`text-center ${className}`}>
-      <canvas 
-        ref={canvasRef} 
+      <canvas
+        ref={canvasRef}
         className="mx-auto rounded-lg bg-white p-2 shadow-sm border"
       />
-      
+
       {showControls && (
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           <Button

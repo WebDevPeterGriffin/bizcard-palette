@@ -112,4 +112,4 @@ const CreativeCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default CreativeCard;
+export default React.memo(CreativeCard);

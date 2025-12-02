@@ -2,6 +2,7 @@ import React from "react";
 import { Download, Contact } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { logger } from '@/lib/logger';
 
 interface SocialLink {
   platform: string;
@@ -94,7 +95,7 @@ export function SaveContactButton({
         description: `${name}'s contact information has been downloaded to your device.`,
       });
     } catch (error) {
-      console.error('Error generating vCard:', error);
+      logger.error('Error generating vCard:', error);
       toast({
         title: "Save failed",
         description: "There was an error saving the contact. Please try again.",

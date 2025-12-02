@@ -106,4 +106,4 @@ const ElegantCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default ElegantCard;
+export default React.memo(ElegantCard);

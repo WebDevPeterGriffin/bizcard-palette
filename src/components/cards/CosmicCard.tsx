@@ -138,4 +138,4 @@ const CosmicCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default CosmicCard;
+export default React.memo(CosmicCard);

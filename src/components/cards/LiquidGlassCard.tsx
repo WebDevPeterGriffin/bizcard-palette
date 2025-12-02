@@ -128,4 +128,4 @@ const LiquidGlassCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default LiquidGlassCard;
+export default React.memo(LiquidGlassCard);

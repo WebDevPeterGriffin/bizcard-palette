@@ -108,4 +108,4 @@ const HolographicCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default HolographicCard;
+export default React.memo(HolographicCard);

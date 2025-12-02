@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from '@/lib/logger';
 
 const bookingSchema = z.object({
   visitor_name: z.string().min(2, "Name must be at least 2 characters"),
@@ -68,7 +69,7 @@ export function BookingDialog({ cardId, ownerName, children, instructions }: Boo
 
   const onSubmit = async (data: BookingFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       // Combine date and time
       const [hours, minutes] = data.appointment_time.split(':').map(Number);
@@ -97,7 +98,7 @@ export function BookingDialog({ cardId, ownerName, children, instructions }: Boo
       form.reset();
       setOpen(false);
     } catch (error) {
-      console.error('Booking error:', error);
+      logger.error('Booking error:', error);
       toast({
         title: "Booking failed",
         description: "There was an error booking your appointment. Please try again.",

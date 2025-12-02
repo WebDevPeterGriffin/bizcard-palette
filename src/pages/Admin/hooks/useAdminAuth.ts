@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 import { toast } from '@/hooks/use-toast';
 
 export const useAdminAuth = () => {
@@ -33,7 +34,7 @@ export const useAdminAuth = () => {
                     }
                 }
             } catch (error) {
-                console.error('Auth check error:', error);
+                logger.error('Auth check error:', error);
             } finally {
                 setAuthLoading(false);
             }

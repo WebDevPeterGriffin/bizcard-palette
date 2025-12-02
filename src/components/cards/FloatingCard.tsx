@@ -130,4 +130,4 @@ const FloatingCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default FloatingCard;
+export default React.memo(FloatingCard);

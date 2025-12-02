@@ -111,4 +111,4 @@ const MorphingCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default MorphingCard;
+export default React.memo(MorphingCard);

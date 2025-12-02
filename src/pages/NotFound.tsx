@@ -1,12 +1,13 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { logger } from "@/lib/logger";
 
 const NotFound = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    logger.error("404 Error: User attempted to access non-existent route:", location.pathname);
 
     // Smart redirect: if the path looks like a single slug (e.g., /john-doe), try the card route
     const trimmed = location.pathname.replace(/^\/+|\/+$/g, "");

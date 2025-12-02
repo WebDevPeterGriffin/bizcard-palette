@@ -1,123 +1,114 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, CheckCircle, X, Plus } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import ImageUpload from "@/components/ImageUpload";
-import SocialLinkSelector from "@/components/SocialLinkSelector";
-import SEO from "@/components/SEO";
-import ProgressIndicator from "@/components/ProgressIndicator";
-import { CARD_META } from "@/components/cards/registry";
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, CheckCircle, X, Plus } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import ImageUpload from '@/components/ImageUpload';
+import SocialLinkSelector from '@/components/SocialLinkSelector';
+import SEO from '@/components/SEO';
+import ProgressIndicator from '@/components/ProgressIndicator';
+import { CARD_META } from '@/components/cards/registry';
+import { logger } from '@/lib/logger';
+
+// Zod validation schema
+const cardFormSchema = z.object({
+  full_name: z.string()
+    .min(2, 'Name must be at least 2 characters')
+    .max(100, 'Name must be less than 100 characters'),
+  role: z.string().max(100).optional().or(z.literal('')),
+  company: z.string().max(100).optional().or(z.literal('')),
+  emails: z.array(z.object({
+    value: z.string().email('Please enter a valid email').or(z.literal(''))
+  })).min(1, 'At least one email is required').max(5, 'Maximum 5 emails allowed'),
+  phones: z.array(z.object({
+    value: z.string().regex(/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/, 'Please enter a valid phone number').or(z.literal(''))
+  })).max(5, 'Maximum 5 phones allowed'),
+  website: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+  style_id: z.string().min(1, 'Please select a card style'),
+});
+
+type CardFormData = z.infer<typeof cardFormSchema>;
 
 const RequestForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
 
-  const [formData, setFormData] = useState({
-    full_name: "",
-    role: "",
-    company: "",
-    phones: [""] as string[],
-    emails: [""] as string[],
-    website: "",
-    style_id: searchParams.get('style') || ""
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+  } = useForm<CardFormData>({
+    resolver: zodResolver(cardFormSchema),
+    defaultValues: {
+      full_name: '',
+      role: '',
+      company: '',
+      emails: [{ value: '' }],
+      phones: [{ value: '' }],
+      website: '',
+      style_id: searchParams.get('style') || '',
+    },
+  });
+
+  const { fields: emailFields, append: appendEmail, remove: removeEmail } = useFieldArray({
+    control,
+    name: 'emails',
+  });
+
+  const { fields: phoneFields, append: appendPhone, remove: removePhone } = useFieldArray({
+    control,
+    name: 'phones',
   });
 
   const [socialLinks, setSocialLinks] = useState<{ platform: string; url: string; label?: string }[]>([]);
   const [headshot, setHeadshot] = useState<File | null>(null);
   const [headshotPreview, setHeadshotPreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const formData = watch();
 
   const cardStyles = Object.entries(CARD_META).map(([id, meta]) => ({
     id,
-    name: meta.name
+    name: meta.name,
   }));
 
   const generateSlug = (name: string) => {
     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   };
 
-  const addEmail = () => {
-    if (formData.emails.length < 5) {
-      setFormData({ ...formData, emails: [...formData.emails, ""] });
-    }
-  };
-
-  const removeEmail = (index: number) => {
-    if (formData.emails.length > 1) {
-      const newEmails = formData.emails.filter((_, i) => i !== index);
-      setFormData({ ...formData, emails: newEmails });
-    }
-  };
-
-  const updateEmail = (index: number, value: string) => {
-    const newEmails = [...formData.emails];
-    newEmails[index] = value;
-    setFormData({ ...formData, emails: newEmails });
-  };
-
-  const addPhone = () => {
-    if (formData.phones.length < 5) {
-      setFormData({ ...formData, phones: [...formData.phones, ""] });
-    }
-  };
-
-  const removePhone = (index: number) => {
-    const newPhones = formData.phones.filter((_, i) => i !== index);
-    setFormData({ ...formData, phones: newPhones.length === 0 ? [""] : newPhones });
-  };
-
-  const updatePhone = (index: number, value: string) => {
-    const newPhones = [...formData.phones];
-    newPhones[index] = value;
-    setFormData({ ...formData, phones: newPhones });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: CardFormData) => {
     // Filter out empty emails and phones
-    const cleanedEmails = formData.emails.filter(e => e.trim());
-    const cleanedPhones = formData.phones.filter(p => p.trim());
+    const cleanedEmails = data.emails.map(e => e.value).filter(e => e.trim());
+    const cleanedPhones = data.phones.map(p => p.value).filter(p => p.trim());
 
-    // Validation
-    if (!formData.full_name || cleanedEmails.length === 0 || !formData.style_id) {
+    // Additional validation
+    if (cleanedEmails.length === 0) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields (name, at least one email, and card style).",
-        variant: "destructive"
+        title: 'Missing Information',
+        description: 'At least one email address is required.',
+        variant: 'destructive',
       });
       return;
     }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const invalidEmail = cleanedEmails.find(e => !emailRegex.test(e));
-    if (invalidEmail) {
-      toast({
-        title: "Invalid Email",
-        description: `"${invalidEmail}" is not a valid email address.`,
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
 
     try {
-      // Generate slug from full name
-      const baseSlug = generateSlug(formData.full_name);
+      // Generate unique slug
+      const baseSlug = generateSlug(data.full_name);
       let slug = baseSlug;
       let counter = 1;
       const MAX_ATTEMPTS = 100;
 
-      // Check for existing slugs and ensure uniqueness
       while (counter <= MAX_ATTEMPTS) {
         const { data: existingCard } = await supabase
           .from('cards')
@@ -130,27 +121,28 @@ const RequestForm = () => {
         counter++;
         slug = `${baseSlug}-${counter}`;
       }
+
       if (counter > MAX_ATTEMPTS) {
         const randomSuffix = Math.random().toString(36).substring(2, 8);
         slug = `${baseSlug}-${randomSuffix}`;
       }
 
-      // Insert card record with arrays
+      // Insert card record
       const { data: cardData, error: insertError } = await supabase
         .from('cards')
         .insert({
-          full_name: formData.full_name,
-          role: formData.role || null,
-          company: formData.company || null,
-          phones: cleanedPhones,
+          full_name: data.full_name,
+          role: data.role || null,
+          company: data.company || null,
           emails: cleanedEmails,
-          website: formData.website || null,
-          style_id: formData.style_id,
+          phones: cleanedPhones,
+          website: data.website || null,
+          style_id: data.style_id,
           slug: slug,
           booking_enabled: true,
           socials: Object.fromEntries(
             socialLinks.map(link => [link.platform, link.url])
-          )
+          ),
         })
         .select()
         .single();
@@ -161,7 +153,7 @@ const RequestForm = () => {
 
       // Upload headshot if provided
       if (headshot && cardData) {
-        console.log('Uploading headshot:', headshot.name, 'size:', headshot.size);
+        logger.log('Uploading headshot:', headshot.name, 'size:', headshot.size);
         const fileExt = headshot.name.split('.').pop();
         const fileName = `${cardData.id}.${fileExt}`;
         const filePath = `${cardData.id}/${fileName}`;
@@ -170,18 +162,18 @@ const RequestForm = () => {
           .from('headshots')
           .upload(filePath, headshot, {
             cacheControl: '3600',
-            upsert: true
+            upsert: true,
           });
 
         if (uploadError) {
-          console.error('Upload error:', uploadError);
+          logger.error('Upload error:', uploadError);
           toast({
-            title: "Upload Warning",
-            description: "Your card was created but the headshot failed to upload.",
-            variant: "destructive"
+            title: 'Upload Warning',
+            description: 'Your card was created but the headshot failed to upload.',
+            variant: 'destructive',
           });
         } else {
-          console.log('Upload successful:', uploadData);
+          logger.log('Upload successful:', uploadData);
 
           const { error: updateError } = await supabase
             .from('cards')
@@ -189,30 +181,27 @@ const RequestForm = () => {
             .eq('id', cardData.id);
 
           if (updateError) {
-            console.error('Error updating headshot URL:', updateError);
+            logger.error('Error updating headshot URL:', updateError);
           } else {
-            console.log('Headshot path updated successfully:', filePath);
+            logger.log('Headshot path updated successfully:', filePath);
             await new Promise(resolve => setTimeout(resolve, 100));
           }
         }
       }
 
       toast({
-        title: "Card Created!",
-        description: `Your digital business card is ready!`,
+        title: 'Card Created!',
+        description: 'Your digital business card is ready!',
       });
 
       navigate(`/success/${slug}`);
-
     } catch (error) {
-      console.error('Error creating card:', error);
+      logger.error('Error creating card:', error);
       toast({
-        title: "Error",
-        description: "There was an error creating your card. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'There was an error creating your card. Please try again.',
+        variant: 'destructive',
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -231,7 +220,6 @@ const RequestForm = () => {
 
       <div className="min-h-screen bg-background p-4">
         <div className="container mx-auto max-w-3xl">
-          {/* Header */}
           <div className="mb-8 flex items-center justify-between">
             <Button variant="outline" onClick={() => navigate('/')}>
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -241,13 +229,11 @@ const RequestForm = () => {
             <div></div>
           </div>
 
-          {/* Progress Indicator */}
           <ProgressIndicator
             currentStep={formData.style_id ? (headshot || headshotPreview ? 3 : 2) : 1}
-            steps={["Choose Style", "Add Info", "Finalize"]}
+            steps={['Choose Style', 'Add Info', 'Finalize']}
           />
 
-          {/* Form */}
           <Card className="shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -256,13 +242,13 @@ const RequestForm = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Style Selection */}
                 <div>
                   <Label htmlFor="style">Choose Your Style *</Label>
                   <Select
                     value={formData.style_id}
-                    onValueChange={(value) => setFormData({ ...formData, style_id: value })}
+                    onValueChange={(value) => setValue('style_id', value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a card style" />
@@ -275,9 +261,12 @@ const RequestForm = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                  {errors.style_id && (
+                    <p className="text-sm text-destructive mt-1">{errors.style_id.message}</p>
+                  )}
                 </div>
 
-                {/* Headshot/Logo Upload */}
+                {/* Headshot Upload */}
                 <ImageUpload
                   onImageChange={handleImageUpload}
                   currentImage={headshotPreview}
@@ -292,19 +281,23 @@ const RequestForm = () => {
                     <Label htmlFor="full_name">Full Name *</Label>
                     <Input
                       id="full_name"
-                      value={formData.full_name}
-                      onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                      {...register('full_name')}
                       placeholder="John Doe"
                     />
+                    {errors.full_name && (
+                      <p className="text-sm text-destructive mt-1">{errors.full_name.message}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="role">Job Title</Label>
                     <Input
                       id="role"
-                      value={formData.role}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                      {...register('role')}
                       placeholder="Senior Product Manager"
                     />
+                    {errors.role && (
+                      <p className="text-sm text-destructive mt-1">{errors.role.message}</p>
+                    )}
                   </div>
                 </div>
 
@@ -312,26 +305,26 @@ const RequestForm = () => {
                   <Label htmlFor="company">Company</Label>
                   <Input
                     id="company"
-                    value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    {...register('company')}
                     placeholder="Tech Innovations Inc."
                   />
+                  {errors.company && (
+                    <p className="text-sm text-destructive mt-1">{errors.company.message}</p>
+                  )}
                 </div>
 
                 {/* Email Addresses */}
                 <div>
                   <Label>Email Addresses *</Label>
                   <div className="space-y-2">
-                    {formData.emails.map((email, index) => (
-                      <div key={index} className="flex gap-2">
+                    {emailFields.map((field, index) => (
+                      <div key={field.id} className="flex gap-2">
                         <Input
-                          type="email"
-                          value={email}
-                          onChange={(e) => updateEmail(index, e.target.value)}
+                          {...register(`emails.${index}.value` as const)}
                           placeholder="john@company.com"
-                          className="flex-1"
+                          type="email"
                         />
-                        {formData.emails.length > 1 && (
+                        {emailFields.length > 1 && (
                           <Button
                             type="button"
                             variant="outline"
@@ -343,67 +336,76 @@ const RequestForm = () => {
                         )}
                       </div>
                     ))}
-                    {formData.emails.length < 5 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={addEmail}
-                        className="w-full"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Another Email
-                      </Button>
+                    {errors.emails?.[0]?.value && (
+                      <p className="text-sm text-destructive">{errors.emails[0].value.message}</p>
                     )}
                   </div>
+                  {emailFields.length < 5 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => appendEmail({ value: '' })}
+                      className="mt-2"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Email
+                    </Button>
+                  )}
                 </div>
 
                 {/* Phone Numbers */}
                 <div>
                   <Label>Phone Numbers</Label>
                   <div className="space-y-2">
-                    {formData.phones.map((phone, index) => (
-                      <div key={index} className="flex gap-2">
+                    {phoneFields.map((field, index) => (
+                      <div key={field.id} className="flex gap-2">
                         <Input
-                          type="tel"
-                          value={phone}
-                          onChange={(e) => updatePhone(index, e.target.value)}
+                          {...register(`phones.${index}.value` as const)}
                           placeholder="+1 (555) 123-4567"
-                          className="flex-1"
+                          type="tel"
                         />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => removePhone(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        {phoneFields.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => removePhone(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     ))}
-                    {formData.phones.length < 5 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={addPhone}
-                        className="w-full"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Another Phone
-                      </Button>
+                    {errors.phones?.[0]?.value && (
+                      <p className="text-sm text-destructive">{errors.phones[0].value.message}</p>
                     )}
                   </div>
+                  {phoneFields.length < 5 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => appendPhone({ value: '' })}
+                      className="mt-2"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Phone
+                    </Button>
+                  )}
                 </div>
 
+                {/* Website */}
                 <div>
                   <Label htmlFor="website">Website</Label>
                   <Input
                     id="website"
-                    value={formData.website}
-                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    {...register('website')}
                     placeholder="www.johndoe.com"
                   />
+                  {errors.website && (
+                    <p className="text-sm text-destructive mt-1">{errors.website.message}</p>
+                  )}
                 </div>
 
                 {/* Social Links */}
@@ -420,7 +422,7 @@ const RequestForm = () => {
                     className="w-full bg-brand-primary text-brand-primary-foreground hover:bg-brand-primary/90"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Creating Your Card..." : "Create My Digital Card"}
+                    {isSubmitting ? 'Creating Your Card...' : 'Create My Digital Card'}
                   </Button>
                 </div>
               </form>
@@ -428,7 +430,10 @@ const RequestForm = () => {
           </Card>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Your card will be instantly available at: yourdomain.com/{formData.full_name ? generateSlug(formData.full_name) : 'your-name'}</p>
+            <p>
+              Your card will be instantly available at: yourdomain.com/
+              {formData.full_name ? generateSlug(formData.full_name) : 'your-name'}
+            </p>
           </div>
         </div>
       </div>

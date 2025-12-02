@@ -103,4 +103,4 @@ const MinimalCard: React.FC<BaseCardProps> = (props) => {
   );
 };
 
-export default MinimalCard;
+export default React.memo(MinimalCard);
