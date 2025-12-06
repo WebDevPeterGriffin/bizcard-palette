@@ -1,38 +1,59 @@
 import { Leaf, Share2, Zap } from "lucide-react";
 
 export default function WhyDigitalSection() {
+    const benefits = [
+        {
+            title: "Fast Deployment",
+            description: "Launch your digital business card or website in minutes, not days."
+        },
+        {
+            title: "Professional Designs",
+            description: "Choose from our curated collection of modern, high-converting templates."
+        },
+        {
+            title: "Mobile Optimized",
+            description: "Every design is built mobile-first to look perfect on any device."
+        },
+        {
+            title: "Custom Domains",
+            description: "Connect your own domain name for a truly professional brand presence."
+        },
+        {
+            title: "Easy Sharing",
+            description: "Share your profile instantly via QR code, link, or NFC."
+        },
+        {
+            title: "AI-Powered Tools",
+            description: "Smart features to help you write better copy and optimize your content."
+        }
+    ];
+
     return (
-        <section className="px-4 py-20 bg-slate-50">
-            <div className="container mx-auto max-w-6xl">
-                <h2 className="mb-16 text-center text-3xl md:text-4xl font-bold text-slate-900">Why Go Digital?</h2>
-                <div className="grid gap-10 md:grid-cols-3">
-                    <div className="text-center px-4">
-                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
-                            <Leaf className="h-10 w-10 text-emerald-600" />
+        <section className="py-24 px-4 bg-white relative overflow-hidden">
+            <div className="container mx-auto max-w-6xl relative z-10">
+                <div className="text-center mb-16">
+                    <h2 className="text-3xl md:text-4xl font-bold text-[#1A2D49] mb-4">
+                        Why Choose Mild Tech Studios?
+                    </h2>
+                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                        We build tools that help you stand out in the digital world.
+                    </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {benefits.map((benefit, index) => (
+                        <div
+                            key={index}
+                            className="p-8 rounded-2xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-[#F0B429]/30 hover:shadow-lg transition-all group"
+                        >
+                            <h3 className="text-xl font-bold text-[#1A2D49] mb-3 group-hover:text-[#F0B429] transition-colors">
+                                {benefit.title}
+                            </h3>
+                            <p className="text-slate-600 leading-relaxed">
+                                {benefit.description}
+                            </p>
                         </div>
-                        <h3 className="mb-3 text-xl font-bold text-slate-900">Eco-Friendly</h3>
-                        <p className="text-slate-600 leading-relaxed">
-                            No paper waste. Digital cards are environmentally responsible and sustainable for our planet.
-                        </p>
-                    </div>
-                    <div className="text-center px-4">
-                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
-                            <Share2 className="h-10 w-10 text-blue-600" />
-                        </div>
-                        <h3 className="mb-3 text-xl font-bold text-slate-900">Easy Sharing</h3>
-                        <p className="text-slate-600 leading-relaxed">
-                            Share instantly via QR code, email, or direct link. Your information is always up-to-date.
-                        </p>
-                    </div>
-                    <div className="text-center px-4">
-                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
-                            <Zap className="h-10 w-10 text-[#F0B429]" />
-                        </div>
-                        <h3 className="mb-3 text-xl font-bold text-slate-900">Modern & Interactive</h3>
-                        <p className="text-slate-600 leading-relaxed">
-                            Stand out with professional design, clickable links, and interactive contact information.
-                        </p>
-                    </div>
+                    ))}
                 </div>
             </div>
         </section>

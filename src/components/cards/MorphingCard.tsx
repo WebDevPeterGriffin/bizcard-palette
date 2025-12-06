@@ -92,6 +92,7 @@ const MorphingCard: React.FC<BaseCardProps> = (props) => {
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
               style="morphing"
+              isDark={true}
               className="mb-5"
             />
           )}

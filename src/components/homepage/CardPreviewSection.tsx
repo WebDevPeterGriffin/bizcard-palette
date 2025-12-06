@@ -20,11 +20,11 @@ export default function CardPreviewSection() {
 
                 {/* Section Header */}
                 <div className="text-center mb-8 md:mb-10">
-                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
-                        Digital Business Card Templates for Every Profession
+                    <h2 className="text-2xl md:text-3xl font-bold text-[#1A2D49] mb-3">
+                        Digital Business Card Styles
                     </h2>
                     <p className="text-base md:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                        Browse our premium collection of professionally designed digital business card templates. Each style is crafted to look great on every device and can be shared instantly.
+                        Choose from our collection of professionally designed templates.
                     </p>
                 </div>
 
@@ -37,7 +37,7 @@ export default function CardPreviewSection() {
                             onClick={() => navigate(`/preview/${style.id}`)}
                         >
                             {/* Card Preview Container */}
-                            <div className="w-full mb-4 overflow-hidden rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:shadow-2xl shadow-lg hover:shadow-xl ring-1 ring-black/5">
+                            <div className="w-full mb-4 overflow-hidden rounded-2xl transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-2xl shadow-lg hover:shadow-xl ring-1 ring-black/5">
                                 <div className={`h-56 md:h-60 ${style.gradient} flex items-center justify-center p-4 relative w-full`}>
                                     {/* Standardized Glass Overlay for All Cards */}
                                     <div className="relative z-10 w-full max-w-[220px] aspect-[1.58/1] rounded-xl overflow-hidden shadow-xl">
@@ -75,10 +75,10 @@ export default function CardPreviewSection() {
                 {/* View All Button */}
                 <div className="text-center">
                     <Button
-                        variant="outline"
+                        variant="outline-brand"
                         size="lg"
                         onClick={() => navigate('/styles')}
-                        className="border-2 border-[#1A2D49] text-[#1A2D49] hover:bg-[#1A2D49] hover:text-white transition-all px-10 py-6 text-lg font-semibold rounded-full"
+                        className="px-10 py-6 text-lg rounded-full"
                     >
                         View All 13 Styles
                         <ArrowRight className="ml-2 h-5 w-5" />

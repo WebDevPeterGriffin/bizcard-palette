@@ -29,7 +29,7 @@ export const QRSection: React.FC<QRSectionProps> = ({
     if (!value) return null;
 
     return (
-        <div className={className}>
+        <div className={`flex flex-col items-center ${className}`}>
             <div className={qrClassName}>
                 <QRCodeSVG
                     value={value}
@@ -39,7 +39,7 @@ export const QRSection: React.FC<QRSectionProps> = ({
                     bgColor={bgColor}
                 />
             </div>
-            {label && <p className={labelClassName}>{label}</p>}
+            {label && <p className={`text-center ${labelClassName}`}>{label}</p>}
         </div>
     );
 };

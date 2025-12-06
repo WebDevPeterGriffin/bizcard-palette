@@ -23,8 +23,9 @@ export default function CTASection() {
                         Join 10,000+ professionals who've made the switch to digital business cards.
                     </p>
                     <Button
+                        variant="cta"
                         size="lg"
-                        className="bg-[#F0B429] text-[#1A2D49] hover:bg-[#ffcc52] hover:scale-105 transition-all shadow-xl px-10 py-7 text-lg font-bold rounded-full"
+                        className="hover:scale-105 transition-all shadow-xl px-10 py-7 text-lg rounded-full"
                         onClick={() => navigate('/request')}
                     >
                         Create Your Card Free
@@ -32,23 +33,6 @@ export default function CTASection() {
                     </Button>
                 </div>
             </section>
-
-            {/* Footer */}
-            <footer className="bg-slate-50 border-t border-slate-200 px-4 py-12">
-                <div className="container mx-auto max-w-4xl text-center">
-                    <div className="mb-6">
-                        <span className="text-2xl font-bold text-[#1A2D49]">BizCard</span>
-                    </div>
-                    <p className="text-slate-500 mb-6">
-                        © 2024 Digital Business Cards. Creating modern connections.
-                    </p>
-                    <div className="flex justify-center gap-6 text-sm text-slate-400">
-                        <a href="#" className="hover:text-[#1A2D49] transition-colors">Privacy Policy</a>
-                        <a href="#" className="hover:text-[#1A2D49] transition-colors">Terms of Service</a>
-                        <a href="#" className="hover:text-[#1A2D49] transition-colors">Contact</a>
-                    </div>
-                </div>
-            </footer>
         </>
     );
 }

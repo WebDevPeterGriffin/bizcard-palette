@@ -118,6 +118,7 @@ const CosmicCard: React.FC<BaseCardProps> = (props) => {
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
               style="cosmic"
+              isDark={true}
               className="mb-5"
             />
           )}

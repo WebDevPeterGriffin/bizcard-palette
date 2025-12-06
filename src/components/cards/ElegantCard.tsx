@@ -87,6 +87,7 @@ const ElegantCard: React.FC<BaseCardProps> = (props) => {
             bookingEnabled={bookingEnabled}
             bookingInstructions={bookingInstructions}
             style="elegant"
+            isDark={false}
             className="mt-6 border-t border-elegant-accent/20 pt-6"
           />
         )}

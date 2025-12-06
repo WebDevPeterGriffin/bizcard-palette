@@ -189,6 +189,17 @@ const RequestForm = () => {
         }
       }
 
+      // Notify admin via email
+      supabase.functions.invoke('notify-admin', {
+        body: {
+          type: 'request',
+          data: {
+            ...cardData,
+            emails: cleanedEmails,
+          }
+        }
+      }).catch(err => logger.error('Email notification failed:', err));
+
       toast({
         title: 'Card Created!',
         description: 'Your digital business card is ready!',

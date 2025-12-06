@@ -121,6 +121,7 @@ const ParticleCard: React.FC<BaseCardProps> = (props) => {
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
               style="particle"
+              isDark={true}
               className="mb-5"
             />
           )}

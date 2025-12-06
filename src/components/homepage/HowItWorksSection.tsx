@@ -11,27 +11,27 @@ export default function HowItWorksSection() {
                         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#1A2D49] text-white text-2xl font-bold shadow-lg ring-4 ring-white">
                             1
                         </div>
-                        <h3 className="mb-3 text-lg font-bold text-slate-900">Choose a Style</h3>
+                        <h3 className="mb-3 text-lg font-bold text-slate-900">Choose Your Tool</h3>
                         <p className="text-slate-600 text-sm leading-relaxed">
-                            Browse our 13 beautiful templates and pick the one that matches your personality.
+                            Select a digital business card style or a website template that fits your needs.
                         </p>
                     </div>
                     <div className="text-center relative">
                         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#1A2D49] text-white text-2xl font-bold shadow-lg ring-4 ring-white">
                             2
                         </div>
-                        <h3 className="mb-3 text-lg font-bold text-slate-900">Fill Your Info</h3>
+                        <h3 className="mb-3 text-lg font-bold text-slate-900">Customize It</h3>
                         <p className="text-slate-600 text-sm leading-relaxed">
-                            Complete our simple form with your contact details and social links.
+                            Add your content, choose your colors, and make it truly yours in minutes.
                         </p>
                     </div>
                     <div className="text-center relative">
                         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#F0B429] text-[#1A2D49] text-2xl font-bold shadow-lg ring-4 ring-white">
                             3
                         </div>
-                        <h3 className="mb-3 text-lg font-bold text-slate-900">Get Your Card</h3>
+                        <h3 className="mb-3 text-lg font-bold text-slate-900">Launch & Share</h3>
                         <p className="text-slate-600 text-sm leading-relaxed">
-                            Instantly receive your personalized digital business card with a custom URL.
+                            Publish your site or share your card instantly with a simple link or QR code.
                         </p>
                     </div>
                 </div>

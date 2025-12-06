@@ -84,6 +84,7 @@ const BoldCard: React.FC<BaseCardProps> = (props) => {
             bookingEnabled={bookingEnabled}
             bookingInstructions={bookingInstructions}
             style="bold"
+            isDark={true}
             className="mt-6 border-t border-white/20 pt-6"
           />
         )}

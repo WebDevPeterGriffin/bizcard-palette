@@ -84,6 +84,7 @@ const MinimalCard: React.FC<BaseCardProps> = (props) => {
             bookingEnabled={bookingEnabled}
             bookingInstructions={bookingInstructions}
             style="minimal"
+            isDark={false}
             className="mt-6 border-t border-minimal-accent/10 pt-6"
           />
         )}

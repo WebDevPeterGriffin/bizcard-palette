@@ -109,6 +109,7 @@ const LiquidGlassCard: React.FC<BaseCardProps> = (props) => {
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
               style="liquid-glass"
+              isDark={true}
               className="mb-5"
             />
           )}

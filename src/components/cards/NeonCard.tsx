@@ -100,6 +100,7 @@ const NeonCard: React.FC<BaseCardProps> = (props) => {
             bookingEnabled={bookingEnabled}
             bookingInstructions={bookingInstructions}
             style="neon"
+            isDark={true}
             className="mb-5"
           />
         )}
