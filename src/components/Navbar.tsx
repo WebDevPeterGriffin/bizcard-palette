@@ -40,7 +40,7 @@ export default function Navbar() {
                     <img
                         src="/icon.svg"
                         alt="Mild Tech Studios"
-                        className="h-14 md:h-16 w-auto object-contain"
+                        className="h-14 md:h-24 w-auto object-contain"
                     />
                 </Link>
 
