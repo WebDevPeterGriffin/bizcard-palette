@@ -6,7 +6,7 @@
 
 type LogLevel = 'log' | 'error' | 'warn' | 'info';
 
-const isDev = import.meta.env.DEV;
+const isDev = process.env.NODE_ENV === 'development';
 
 export const logger = {
     log: (...args: unknown[]) => {

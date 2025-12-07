@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 interface JoinWaitlistModalProps {
     isOpen: boolean;
@@ -14,6 +15,7 @@ interface JoinWaitlistModalProps {
 }
 
 export default function JoinWaitlistModal({ isOpen, onClose }: JoinWaitlistModalProps) {
+    const supabase = createClient();
     const [email, setEmail] = useState("");
     const [interest, setInterest] = useState("both");
     const [isLoading, setIsLoading] = useState(false);

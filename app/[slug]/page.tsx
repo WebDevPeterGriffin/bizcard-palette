@@ -8,7 +8,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { data: cardData } = await supabase
         .from('cards')
@@ -22,21 +22,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         };
     }
 
-    const title = cardData.title && cardData.company
-        ? `${cardData.full_name} - ${cardData.title} at ${cardData.company} | Digital Business Card`
-        : cardData.title
-            ? `${cardData.full_name} - ${cardData.title} | Digital Business Card`
+    const title = cardData.role && cardData.company
+        ? `${cardData.full_name} - ${cardData.role} at ${cardData.company} | Digital Business Card`
+        : cardData.role
+            ? `${cardData.full_name} - ${cardData.role} | Digital Business Card`
             : `${cardData.full_name}'s Digital Business Card`;
 
-    const description = cardData.title && cardData.company
-        ? `Connect with ${cardData.full_name}, ${cardData.title} at ${cardData.company}. View contact information, social links${cardData.booking_enabled ? ', and book appointments' : ''}.`
-        : cardData.title
-            ? `Connect with ${cardData.full_name}, ${cardData.title}. View contact information, social links${cardData.booking_enabled ? ', and book appointments' : ''}.`
+    const description = cardData.role && cardData.company
+        ? `Connect with ${cardData.full_name}, ${cardData.role} at ${cardData.company}. View contact information, social links${cardData.booking_enabled ? ', and book appointments' : ''}.`
+        : cardData.role
+            ? `Connect with ${cardData.full_name}, ${cardData.role}. View contact information, social links${cardData.booking_enabled ? ', and book appointments' : ''}.`
             : `Connect with ${cardData.full_name}. View contact information, social links${cardData.booking_enabled ? ', and book appointments' : ''}.`;
 
     const keywords = [
         cardData.full_name.toLowerCase(),
-        cardData.title?.toLowerCase(),
+        cardData.role?.toLowerCase(),
         cardData.company?.toLowerCase(),
         'digital business card',
         'virtual business card',

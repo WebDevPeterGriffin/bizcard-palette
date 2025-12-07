@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -28,9 +29,12 @@ export default function Navbar() {
         { name: "Contact", path: "/contact" },
     ];
 
+    const isTransparentPage = ["/", "/styles", "/websites", "/pricing", "/contact"].includes(pathname);
+    const showSolidNav = isScrolled || !isTransparentPage;
+
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${showSolidNav
                 ? "bg-white/90 backdrop-blur-md shadow-sm py-3"
                 : "bg-transparent py-5"
                 }`}
@@ -51,7 +55,7 @@ export default function Navbar() {
                         <Link
                             key={link.name}
                             href={link.path}
-                            className={`text-sm font-medium transition-colors hover:text-[#F0B429] ${isScrolled ? "text-slate-700" : "text-white/90"
+                            className={`text-sm font-medium transition-colors hover:text-[#F0B429] ${showSolidNav ? "text-slate-700" : "text-white/90"
                                 }`}
                         >
                             {link.name}
@@ -63,7 +67,7 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-4">
                     <Button
                         variant="ghost"
-                        className={`text-sm font-medium ${isScrolled ? "text-[#1A2D49] hover:bg-slate-100" : "text-white hover:bg-white/10"
+                        className={`text-sm font-medium ${showSolidNav ? "text-[#1A2D49] hover:bg-slate-100" : "text-white hover:bg-white/10"
                             }`}
                         onClick={openWaitlist}
                     >
@@ -83,9 +87,9 @@ export default function Navbar() {
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     {isMobileMenuOpen ? (
-                        <X className={isScrolled ? "text-[#1A2D49]" : "text-white"} />
+                        <X className={showSolidNav ? "text-[#1A2D49]" : "text-white"} />
                     ) : (
-                        <Menu className={isScrolled ? "text-[#1A2D49]" : "text-white"} />
+                        <Menu className={showSolidNav ? "text-[#1A2D49]" : "text-white"} />
                     )}
                 </button>
 

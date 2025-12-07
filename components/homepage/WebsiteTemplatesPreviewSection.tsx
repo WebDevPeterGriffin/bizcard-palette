@@ -1,9 +1,10 @@
+"use client";
 import { ArrowRight, Layout, Utensils, Briefcase } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function WebsiteTemplatesPreviewSection() {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const templates = [
         {
@@ -68,7 +69,7 @@ export default function WebsiteTemplatesPreviewSection() {
                 <div className="text-center">
                     <Button
                         variant="brand"
-                        onClick={() => navigate('/websites')}
+                        onClick={() => router.push('/websites')}
                         className="px-8 py-6 text-lg"
                     >
                         Open Website Templates Page

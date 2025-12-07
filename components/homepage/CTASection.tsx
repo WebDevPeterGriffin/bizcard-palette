@@ -1,9 +1,10 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 export default function CTASection() {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     return (
         <>
@@ -26,7 +27,7 @@ export default function CTASection() {
                         variant="cta"
                         size="lg"
                         className="hover:scale-105 transition-all shadow-xl px-10 py-7 text-lg rounded-full"
-                        onClick={() => navigate('/request')}
+                        onClick={() => router.push('/request')}
                     >
                         Create Your Card Free
                         <ArrowRight className="ml-2 h-6 w-6" />

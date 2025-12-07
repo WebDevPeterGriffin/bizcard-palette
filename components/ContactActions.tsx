@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { CalendarPlus, Download } from "lucide-react";
 import { BookingDialog } from "./BookingDialog";

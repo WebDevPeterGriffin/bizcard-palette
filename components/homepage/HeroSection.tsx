@@ -1,11 +1,12 @@
+"use client";
 import { ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import FloatingOrbs from "@/components/FloatingOrbs";
 import { useWaitlist } from "@/hooks/useWaitlist";
 import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
-    const navigate = useNavigate();
+    const router = useRouter();
     const { openWaitlist } = useWaitlist();
 
     return (

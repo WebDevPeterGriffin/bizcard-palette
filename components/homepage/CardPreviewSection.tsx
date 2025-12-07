@@ -1,10 +1,11 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { CARD_META, type CardStyleId } from "@/components/cards/registry";
 
 export default function CardPreviewSection() {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     // Show featured styles (first 4)
     const featuredStyles: CardStyleId[] = ["minimal", "bold", "elegant", "liquid-glass"];
@@ -34,7 +35,7 @@ export default function CardPreviewSection() {
                         <div
                             key={style.id}
                             className="group cursor-pointer flex flex-col items-center"
-                            onClick={() => navigate(`/preview/${style.id}`)}
+                            onClick={() => router.push(`/preview/${style.id}`)}
                         >
                             {/* Card Preview Container */}
                             <div className="w-full mb-4 overflow-hidden rounded-2xl transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-2xl shadow-lg hover:shadow-xl ring-1 ring-black/5">
@@ -77,7 +78,7 @@ export default function CardPreviewSection() {
                     <Button
                         variant="outline-brand"
                         size="lg"
-                        onClick={() => navigate('/styles')}
+                        onClick={() => router.push('/styles')}
                         className="px-10 py-6 text-lg rounded-full"
                     >
                         View All 13 Styles

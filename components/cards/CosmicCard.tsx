@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { Star, Sparkles, Zap, Moon } from "lucide-react";
 import { Card } from "@/components/ui/card";

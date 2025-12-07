@@ -224,7 +224,7 @@ function RequestFormContent() {
     };
 
     return (
-        <div className="min-h-screen bg-background p-4">
+        <div className="min-h-screen bg-background p-4 pt-24">
             <div className="container mx-auto max-w-3xl">
                 <div className="mb-8 flex items-center justify-between">
                     <Button variant="outline" onClick={() => router.push('/')}>

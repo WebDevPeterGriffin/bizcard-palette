@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Clock, User, Mail, Phone, Building2, MessageSquare } from "lucide-react";
@@ -33,7 +34,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { logger } from '@/lib/logger';
 
 const bookingSchema = z.object({
@@ -60,6 +61,7 @@ interface BookingDialogProps {
 }
 
 export function BookingDialog({ cardId, ownerName, children, instructions }: BookingDialogProps) {
+  const supabase = createClient();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

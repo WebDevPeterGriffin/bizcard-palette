@@ -31,7 +31,7 @@ const PreviewCardClient = ({ styleId }: PreviewCardClientProps) => {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background pt-20">
             {/* Header */}
             <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container mx-auto px-4 py-4">
@@ -72,7 +72,7 @@ const PreviewCardClient = ({ styleId }: PreviewCardClientProps) => {
                                     { platform: "twitter", url: "https://twitter.com/johndoe", label: "Twitter" },
                                     { platform: "github", url: "https://github.com/johndoe", label: "GitHub" }
                                 ]}
-                                headshotUrl={null}
+                                headshotUrl={undefined}
                                 bookingEnabled={true}
                                 bookingInstructions="Please select your preferred time slot. I'm available Monday-Friday, 9 AM - 5 PM EST."
                             />

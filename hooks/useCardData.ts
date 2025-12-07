@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { createClient } from "@/lib/supabase/client";
 import { CardData, CardRecord, recordToCardData } from '@/types/card';
 import { Json } from '@/integrations/supabase/types';
 
@@ -27,6 +27,7 @@ type SupabaseCardRow = {
 
 const fetchCard = async (slug: string | undefined): Promise<CardData | null> => {
     if (!slug) return null;
+    const supabase = createClient();
 
     // Fetch card data from Supabase
     const { data, error } = await supabase

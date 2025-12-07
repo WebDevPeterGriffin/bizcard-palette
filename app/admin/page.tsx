@@ -65,7 +65,7 @@ const Admin = () => {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background pt-24">
             <div className="container mx-auto py-8 px-4">
                 <AdminHeader
                     onProcessScheduled={handleProcessScheduled}

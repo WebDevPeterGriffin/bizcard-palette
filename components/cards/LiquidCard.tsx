@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { Waves, Droplets } from "lucide-react";
 import { Card } from "@/components/ui/card";

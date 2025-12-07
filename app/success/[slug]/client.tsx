@@ -64,7 +64,7 @@ const SuccessClient = ({ slug }: SuccessClientProps) => {
     const CardComponent = CARD_COMPONENTS[cardData.style as CardStyleId];
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background pt-20">
             {/* Success Header */}
             <section className="px-4 py-16 bg-gradient-hero text-center">
                 <div className="container mx-auto max-w-4xl">

@@ -1,9 +1,10 @@
+"use client";
 import { ArrowRight, Smartphone, Layout } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function ProductOverviewSection() {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     return (
         <section id="products" className="py-20 px-4 bg-slate-50">
@@ -36,7 +37,7 @@ export default function ProductOverviewSection() {
 
                             <Button
                                 variant="outline-brand"
-                                onClick={() => navigate('/styles')}
+                                onClick={() => router.push('/styles')}
                             >
                                 View Card Styles
                                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -68,7 +69,7 @@ export default function ProductOverviewSection() {
 
                             <Button
                                 variant="brand"
-                                onClick={() => navigate('/websites')}
+                                onClick={() => router.push('/websites')}
                             >
                                 Browse Website Templates
                                 <ArrowRight className="ml-2 w-4 h-4" />
