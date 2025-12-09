@@ -8,6 +8,7 @@ import QRCodeGenerator from "@/components/QRCodeGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { CARD_COMPONENTS, type CardStyleId } from "@/components/cards/registry";
 import { useCardData } from "@/hooks/useCardData";
+import { logger } from "@/lib/logger";
 
 interface SuccessClientProps {
     slug: string;
@@ -30,7 +31,7 @@ const SuccessClient = ({ slug }: SuccessClientProps) => {
                 description: "Your card URL has been copied to clipboard",
             });
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             toast({
                 title: "Failed to copy",
                 description: "Please copy the URL manually",

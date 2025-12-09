@@ -18,6 +18,7 @@ import SocialLinkSelector from '@/components/SocialLinkSelector';
 import ProgressIndicator from '@/components/ProgressIndicator';
 import { CARD_META } from '@/components/cards/registry';
 import { logger } from '@/lib/logger';
+import MainLayout from '@/components/MainLayout';
 
 // Zod validation schema
 const cardFormSchema = z.object({
@@ -224,225 +225,227 @@ function RequestFormContent() {
     };
 
     return (
-        <div className="min-h-screen bg-background p-4 pt-24">
-            <div className="container mx-auto max-w-3xl">
-                <div className="mb-8 flex items-center justify-between">
-                    <Button variant="outline" onClick={() => router.push('/')}>
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Home
-                    </Button>
-                    <h1 className="text-2xl font-bold">Create Your Digital Card</h1>
-                    <div></div>
-                </div>
+        <MainLayout>
+            <div className="min-h-screen bg-background p-4 pt-24">
+                <div className="container mx-auto max-w-3xl">
+                    <div className="mb-8 flex items-center justify-between">
+                        <Button variant="outline" onClick={() => router.push('/')}>
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back to Home
+                        </Button>
+                        <h1 className="text-2xl font-bold">Create Your Digital Card</h1>
+                        <div></div>
+                    </div>
 
-                <ProgressIndicator
-                    currentStep={formData.style_id ? (headshot || headshotPreview ? 3 : 2) : 1}
-                    steps={['Choose Style', 'Add Info', 'Finalize']}
-                />
+                    <ProgressIndicator
+                        currentStep={formData.style_id ? (headshot || headshotPreview ? 3 : 2) : 1}
+                        steps={['Choose Style', 'Add Info', 'Finalize']}
+                    />
 
-                <Card className="shadow-card">
-                    <CardHeader>
-                        <CardTitle className="flex items-center">
-                            <CheckCircle className="mr-2 h-5 w-5 text-brand-primary" />
-                            Tell us about yourself
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                            {/* Style Selection */}
-                            <div>
-                                <Label htmlFor="style">Choose Your Style *</Label>
-                                <Select
-                                    value={formData.style_id}
-                                    onValueChange={(value) => setValue('style_id', value)}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a card style" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {cardStyles.map((style) => (
-                                            <SelectItem key={style.id} value={style.id}>
-                                                {style.name}
-                                            </SelectItem>
+                    <Card className="shadow-card">
+                        <CardHeader>
+                            <CardTitle className="flex items-center">
+                                <CheckCircle className="mr-2 h-5 w-5 text-brand-primary" />
+                                Tell us about yourself
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                                {/* Style Selection */}
+                                <div>
+                                    <Label htmlFor="style">Choose Your Style *</Label>
+                                    <Select
+                                        value={formData.style_id}
+                                        onValueChange={(value) => setValue('style_id', value)}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a card style" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {cardStyles.map((style) => (
+                                                <SelectItem key={style.id} value={style.id}>
+                                                    {style.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.style_id && (
+                                        <p className="text-sm text-destructive mt-1">{errors.style_id.message}</p>
+                                    )}
+                                </div>
+
+                                {/* Headshot Upload */}
+                                <ImageUpload
+                                    onImageChange={handleImageUpload}
+                                    currentImage={headshotPreview}
+                                    label="Profile Photo or Logo"
+                                    accept="image/*"
+                                    maxSize={5}
+                                />
+
+                                {/* Personal Information */}
+                                <div className="grid gap-4 md:grid-cols-2">
+                                    <div>
+                                        <Label htmlFor="full_name">Full Name *</Label>
+                                        <Input
+                                            id="full_name"
+                                            {...register('full_name')}
+                                            placeholder="John Doe"
+                                        />
+                                        {errors.full_name && (
+                                            <p className="text-sm text-destructive mt-1">{errors.full_name.message}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="role">Job Title</Label>
+                                        <Input
+                                            id="role"
+                                            {...register('role')}
+                                            placeholder="Senior Product Manager"
+                                        />
+                                        {errors.role && (
+                                            <p className="text-sm text-destructive mt-1">{errors.role.message}</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="company">Company</Label>
+                                    <Input
+                                        id="company"
+                                        {...register('company')}
+                                        placeholder="Tech Innovations Inc."
+                                    />
+                                    {errors.company && (
+                                        <p className="text-sm text-destructive mt-1">{errors.company.message}</p>
+                                    )}
+                                </div>
+
+                                {/* Email Addresses */}
+                                <div>
+                                    <Label>Email Addresses *</Label>
+                                    <div className="space-y-2">
+                                        {emailFields.map((field, index) => (
+                                            <div key={field.id} className="flex gap-2">
+                                                <Input
+                                                    {...register(`emails.${index}.value` as const)}
+                                                    placeholder="john@company.com"
+                                                    type="email"
+                                                />
+                                                {emailFields.length > 1 && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="icon"
+                                                        onClick={() => removeEmail(index)}
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         ))}
-                                    </SelectContent>
-                                </Select>
-                                {errors.style_id && (
-                                    <p className="text-sm text-destructive mt-1">{errors.style_id.message}</p>
-                                )}
-                            </div>
+                                        {errors.emails?.[0]?.value && (
+                                            <p className="text-sm text-destructive">{errors.emails[0].value.message}</p>
+                                        )}
+                                    </div>
+                                    {emailFields.length < 5 && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => appendEmail({ value: '' })}
+                                            className="mt-2"
+                                        >
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            Add Email
+                                        </Button>
+                                    )}
+                                </div>
 
-                            {/* Headshot Upload */}
-                            <ImageUpload
-                                onImageChange={handleImageUpload}
-                                currentImage={headshotPreview}
-                                label="Profile Photo or Logo"
-                                accept="image/*"
-                                maxSize={5}
-                            />
-
-                            {/* Personal Information */}
-                            <div className="grid gap-4 md:grid-cols-2">
+                                {/* Phone Numbers */}
                                 <div>
-                                    <Label htmlFor="full_name">Full Name *</Label>
-                                    <Input
-                                        id="full_name"
-                                        {...register('full_name')}
-                                        placeholder="John Doe"
-                                    />
-                                    {errors.full_name && (
-                                        <p className="text-sm text-destructive mt-1">{errors.full_name.message}</p>
+                                    <Label>Phone Numbers</Label>
+                                    <div className="space-y-2">
+                                        {phoneFields.map((field, index) => (
+                                            <div key={field.id} className="flex gap-2">
+                                                <Input
+                                                    {...register(`phones.${index}.value` as const)}
+                                                    placeholder="+1 (555) 123-4567"
+                                                    type="tel"
+                                                />
+                                                {phoneFields.length > 1 && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="icon"
+                                                        onClick={() => removePhone(index)}
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        ))}
+                                        {errors.phones?.[0]?.value && (
+                                            <p className="text-sm text-destructive">{errors.phones[0].value.message}</p>
+                                        )}
+                                    </div>
+                                    {phoneFields.length < 5 && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => appendPhone({ value: '' })}
+                                            className="mt-2"
+                                        >
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            Add Phone
+                                        </Button>
                                     )}
                                 </div>
+
+                                {/* Website */}
                                 <div>
-                                    <Label htmlFor="role">Job Title</Label>
+                                    <Label htmlFor="website">Website</Label>
                                     <Input
-                                        id="role"
-                                        {...register('role')}
-                                        placeholder="Senior Product Manager"
+                                        id="website"
+                                        {...register('website')}
+                                        placeholder="www.johndoe.com"
                                     />
-                                    {errors.role && (
-                                        <p className="text-sm text-destructive mt-1">{errors.role.message}</p>
+                                    {errors.website && (
+                                        <p className="text-sm text-destructive mt-1">{errors.website.message}</p>
                                     )}
                                 </div>
-                            </div>
 
-                            <div>
-                                <Label htmlFor="company">Company</Label>
-                                <Input
-                                    id="company"
-                                    {...register('company')}
-                                    placeholder="Tech Innovations Inc."
+                                {/* Social Links */}
+                                <SocialLinkSelector
+                                    socialLinks={socialLinks}
+                                    onChange={setSocialLinks}
                                 />
-                                {errors.company && (
-                                    <p className="text-sm text-destructive mt-1">{errors.company.message}</p>
-                                )}
-                            </div>
 
-                            {/* Email Addresses */}
-                            <div>
-                                <Label>Email Addresses *</Label>
-                                <div className="space-y-2">
-                                    {emailFields.map((field, index) => (
-                                        <div key={field.id} className="flex gap-2">
-                                            <Input
-                                                {...register(`emails.${index}.value` as const)}
-                                                placeholder="john@company.com"
-                                                type="email"
-                                            />
-                                            {emailFields.length > 1 && (
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="icon"
-                                                    onClick={() => removeEmail(index)}
-                                                >
-                                                    <X className="h-4 w-4" />
-                                                </Button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    {errors.emails?.[0]?.value && (
-                                        <p className="text-sm text-destructive">{errors.emails[0].value.message}</p>
-                                    )}
-                                </div>
-                                {emailFields.length < 5 && (
+                                {/* Submit Button */}
+                                <div className="pt-4">
                                     <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => appendEmail({ value: '' })}
-                                        className="mt-2"
+                                        type="submit"
+                                        size="lg"
+                                        className="w-full bg-brand-primary text-brand-primary-foreground hover:bg-brand-primary/90"
+                                        disabled={isSubmitting}
                                     >
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        Add Email
+                                        {isSubmitting ? 'Creating Your Card...' : 'Create My Digital Card'}
                                     </Button>
-                                )}
-                            </div>
-
-                            {/* Phone Numbers */}
-                            <div>
-                                <Label>Phone Numbers</Label>
-                                <div className="space-y-2">
-                                    {phoneFields.map((field, index) => (
-                                        <div key={field.id} className="flex gap-2">
-                                            <Input
-                                                {...register(`phones.${index}.value` as const)}
-                                                placeholder="+1 (555) 123-4567"
-                                                type="tel"
-                                            />
-                                            {phoneFields.length > 1 && (
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="icon"
-                                                    onClick={() => removePhone(index)}
-                                                >
-                                                    <X className="h-4 w-4" />
-                                                </Button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    {errors.phones?.[0]?.value && (
-                                        <p className="text-sm text-destructive">{errors.phones[0].value.message}</p>
-                                    )}
                                 </div>
-                                {phoneFields.length < 5 && (
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => appendPhone({ value: '' })}
-                                        className="mt-2"
-                                    >
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        Add Phone
-                                    </Button>
-                                )}
-                            </div>
+                            </form>
+                        </CardContent>
+                    </Card>
 
-                            {/* Website */}
-                            <div>
-                                <Label htmlFor="website">Website</Label>
-                                <Input
-                                    id="website"
-                                    {...register('website')}
-                                    placeholder="www.johndoe.com"
-                                />
-                                {errors.website && (
-                                    <p className="text-sm text-destructive mt-1">{errors.website.message}</p>
-                                )}
-                            </div>
-
-                            {/* Social Links */}
-                            <SocialLinkSelector
-                                socialLinks={socialLinks}
-                                onChange={setSocialLinks}
-                            />
-
-                            {/* Submit Button */}
-                            <div className="pt-4">
-                                <Button
-                                    type="submit"
-                                    size="lg"
-                                    className="w-full bg-brand-primary text-brand-primary-foreground hover:bg-brand-primary/90"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? 'Creating Your Card...' : 'Create My Digital Card'}
-                                </Button>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
-
-                <div className="mt-6 text-center text-sm text-muted-foreground">
-                    <p>
-                        Your card will be instantly available at: yourdomain.com/
-                        {formData.full_name ? generateSlug(formData.full_name) : 'your-name'}
-                    </p>
+                    <div className="mt-6 text-center text-sm text-muted-foreground">
+                        <p>
+                            Your card will be instantly available at: yourdomain.com/
+                            {formData.full_name ? generateSlug(formData.full_name) : 'your-name'}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </MainLayout>
     );
 }
 

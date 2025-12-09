@@ -47,6 +47,9 @@ export interface CardStyleMeta {
   backgroundColor: string;
   isDark: boolean;
   hasBackgroundAnimation?: boolean;
+  // Accent colors for buttons (hex values for direct styling)
+  accentColor: string;
+  accentForeground: string;
 }
 
 export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
@@ -57,6 +60,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-minimal",
     backgroundColor: "bg-gradient-minimal",
     isDark: false,
+    accentColor: "#374151", // Gray-700
+    accentForeground: "#ffffff",
   },
   bold: {
     name: "Bold Dark",
@@ -65,6 +70,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-bold",
     backgroundColor: "bg-gradient-bold",
     isDark: true,
+    accentColor: "#f97316", // Orange-500
+    accentForeground: "#ffffff",
   },
   elegant: {
     name: "Elegant Cream",
@@ -73,6 +80,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-elegant",
     backgroundColor: "bg-gradient-elegant",
     isDark: false,
+    accentColor: "#b8860b", // DarkGoldenRod
+    accentForeground: "#ffffff",
   },
   creative: {
     name: "Creative Colorful",
@@ -81,6 +90,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-creative",
     backgroundColor: "bg-gradient-creative",
     isDark: true,
+    accentColor: "#d946ef", // Fuchsia-500
+    accentForeground: "#ffffff",
   },
   neon: {
     name: "Neon Cyber",
@@ -89,7 +100,9 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-purple-900 via-blue-900 to-black",
     backgroundColor: "bg-gray-900",
     isDark: true,
-    hasBackgroundAnimation: true
+    hasBackgroundAnimation: true,
+    accentColor: "#22d3ee", // Cyan-400
+    accentForeground: "#000000",
   },
   floating: {
     name: "Floating Cloud",
@@ -98,7 +111,9 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-blue-100 via-cyan-50 to-purple-100",
     backgroundColor: "bg-gradient-to-br from-blue-50 to-indigo-100",
     isDark: false,
-    hasBackgroundAnimation: true
+    hasBackgroundAnimation: true,
+    accentColor: "#6366f1", // Indigo-500
+    accentForeground: "#ffffff",
   },
   liquid: {
     name: "Liquid Morph",
@@ -107,6 +122,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600",
     backgroundColor: "bg-gradient-liquid-bg",
     isDark: true,
+    accentColor: "#ec4899", // Pink-500
+    accentForeground: "#ffffff",
   },
   cosmic: {
     name: "Cosmic Space",
@@ -115,6 +132,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900",
     backgroundColor: "bg-gradient-to-b from-black via-indigo-950 to-black",
     isDark: true,
+    accentColor: "#a855f7", // Purple-500
+    accentForeground: "#ffffff",
   },
   holographic: {
     name: "Holographic Glow",
@@ -123,6 +142,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500",
     backgroundColor: "bg-background",
     isDark: false,
+    accentColor: "#8b5cf6", // Violet-500
+    accentForeground: "#ffffff",
   },
   particle: {
     name: "Particle Storm",
@@ -131,6 +152,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900",
     backgroundColor: "bg-background",
     isDark: true,
+    accentColor: "#7c3aed", // Violet-600
+    accentForeground: "#ffffff",
   },
   morphing: {
     name: "Morphing Liquid",
@@ -139,6 +162,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600",
     backgroundColor: "bg-background",
     isDark: true,
+    accentColor: "#3b82f6", // Blue-500
+    accentForeground: "#ffffff",
   },
   prism: {
     name: "Prismatic Motion",
@@ -147,6 +172,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-amber-400 via-pink-400 to-purple-600",
     backgroundColor: "bg-background",
     isDark: false,
+    accentColor: "#f59e0b", // Amber-500
+    accentForeground: "#000000",
   },
   "liquid-glass": {
     name: "Modern Glass Effect",
@@ -155,5 +182,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900",
     backgroundColor: "bg-background",
     isDark: true,
+    accentColor: "#06b6d4", // Cyan-500
+    accentForeground: "#000000",
   },
 };

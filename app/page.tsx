@@ -9,20 +9,24 @@ import CTASection from "@/components/homepage/CTASection";
 import TrustedBySection from "@/components/homepage/TrustedBySection";
 import AudienceSection from "@/components/homepage/AudienceSection";
 import TestimonialsSection from "@/components/homepage/TestimonialsSection";
+import MainLayout from "@/components/MainLayout";
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-background font-sans text-slate-900">
-            <HeroSection />
-            <TrustedBySection />
-            <ProductOverviewSection />
-            <CardPreviewSection />
-            <WebsiteTemplatesPreviewSection />
-            <AudienceSection />
-            <WhyDigitalSection />
-            <TestimonialsSection />
-            <FAQSection />
-            <CTASection />
-        </div>
+        <MainLayout>
+            <div className="min-h-screen bg-background font-sans text-slate-900">
+                <HeroSection />
+                <TrustedBySection />
+                <ProductOverviewSection />
+                <CardPreviewSection />
+                <WebsiteTemplatesPreviewSection />
+                <AudienceSection />
+                <WhyDigitalSection />
+                <TestimonialsSection />
+                <FAQSection />
+                <CTASection />
+            </div>
+        </MainLayout>
     );
 }
+
