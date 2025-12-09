@@ -22,12 +22,21 @@ const SuccessClient = ({ slug }: SuccessClientProps) => {
 
     const cardUrl = typeof window !== 'undefined' ? `${window.location.origin}/${slug}` : '';
 
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(cardUrl);
-        toast({
-            title: "Link copied!",
-            description: "Your card URL has been copied to clipboard",
-        });
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(cardUrl);
+            toast({
+                title: "Copied!",
+                description: "Your card URL has been copied to clipboard",
+            });
+        } catch (err) {
+            console.error(err);
+            toast({
+                title: "Failed to copy",
+                description: "Please copy the URL manually",
+                variant: "destructive",
+            });
+        }
     };
 
     const shareCard = (platform: string) => {
@@ -119,9 +128,10 @@ const SuccessClient = ({ slug }: SuccessClientProps) => {
                                                 type="text"
                                                 value={cardUrl}
                                                 readOnly
-                                                className="flex-1 px-3 py-2 border rounded-md bg-muted text-sm"
+                                                onClick={(e) => e.currentTarget.select()}
+                                                className="flex-1 px-3 py-2 border rounded-md bg-muted text-sm cursor-text"
                                             />
-                                            <Button onClick={copyToClipboard} variant="outline">
+                                            <Button onClick={handleCopy} variant="outline">
                                                 <Copy className="h-4 w-4" />
                                             </Button>
                                         </div>
