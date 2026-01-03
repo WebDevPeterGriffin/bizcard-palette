@@ -3,15 +3,27 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 import { useWaitlist } from "@/hooks/useWaitlist";
+import { createClient } from "@/lib/supabase/client";
+import { User as SupabaseUser } from "@supabase/supabase-js";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [user, setUser] = useState<SupabaseUser | null>(null);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
     const { openWaitlist } = useWaitlist();
+    const supabase = createClient();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -20,6 +32,29 @@ export default function Navbar() {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    useEffect(() => {
+        // Check current auth state
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUser(user);
+            setLoading(false);
+        });
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            (_event, session) => {
+                setUser(session?.user ?? null);
+            }
+        );
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        router.push("/");
+        router.refresh();
+    };
 
     const navLinks = [
         { name: "Home", path: "/" },
@@ -65,20 +100,51 @@ export default function Navbar() {
 
                 {/* Desktop Buttons */}
                 <div className="hidden md:flex items-center gap-4">
-                    <Button
-                        variant="ghost"
-                        className={`text-sm font-medium ${showSolidNav ? "text-[#1A2D49] hover:bg-slate-100" : "text-white hover:bg-white/10"
-                            }`}
-                        onClick={openWaitlist}
-                    >
-                        Join Waitlist
-                    </Button>
-                    <Button
-                        variant="cta"
-                        onClick={() => router.push("/request")}
-                    >
-                        Get Started
-                    </Button>
+                    {!loading && (
+                        <>
+                            {user ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            className={`text-sm font-medium ${showSolidNav ? "text-[#1A2D49] hover:bg-slate-100" : "text-white hover:bg-white/10"
+                                                }`}
+                                        >
+                                            <User className="mr-2 h-4 w-4" />
+                                            Account
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/dashboard">Dashboard</Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={handleLogout}>
+                                            <LogOut className="mr-2 h-4 w-4" />
+                                            Sign out
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) : (
+                                <>
+                                    <Button
+                                        variant="ghost"
+                                        className={`text-sm font-medium ${showSolidNav ? "text-[#1A2D49] hover:bg-slate-100" : "text-white hover:bg-white/10"
+                                            }`}
+                                        onClick={() => router.push("/auth/login")}
+                                    >
+                                        Sign in
+                                    </Button>
+                                </>
+                            )}
+                            <Button
+                                variant="cta"
+                                onClick={() => router.push("/request")}
+                            >
+                                Get Started
+                            </Button>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -107,16 +173,41 @@ export default function Navbar() {
                             </Link>
                         ))}
                         <div className="flex flex-col gap-4 mt-8 w-full max-w-xs px-4">
-                            <Button
-                                variant="ghost"
-                                className="w-full border border-white/20 text-white hover:bg-white/10"
-                                onClick={() => {
-                                    openWaitlist();
-                                    setIsMobileMenuOpen(false);
-                                }}
-                            >
-                                Join Waitlist
-                            </Button>
+                            {user ? (
+                                <>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full border border-white/20 text-white hover:bg-white/10"
+                                        onClick={() => {
+                                            router.push("/dashboard");
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                    >
+                                        Dashboard
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full border border-white/20 text-white hover:bg-white/10"
+                                        onClick={() => {
+                                            handleLogout();
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                    >
+                                        Sign out
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button
+                                    variant="ghost"
+                                    className="w-full border border-white/20 text-white hover:bg-white/10"
+                                    onClick={() => {
+                                        router.push("/auth/login");
+                                        setIsMobileMenuOpen(false);
+                                    }}
+                                >
+                                    Sign in
+                                </Button>
+                            )}
                             <Button
                                 variant="cta"
                                 className="w-full"

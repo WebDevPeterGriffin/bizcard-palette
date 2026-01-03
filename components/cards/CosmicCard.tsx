@@ -76,7 +76,7 @@ const CosmicCard: React.FC<BaseCardProps> = (props) => {
             title={title}
             company={company}
             className="text-center mb-6"
-            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-purple-500/50 overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.6)]"
+            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-purple-500/50 overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.6)] object-cover"
             nameClassName="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 mb-2"
             titleClassName="text-base md:text-lg text-purple-300 font-semibold mb-1"
             companyClassName="text-sm text-indigo-300"

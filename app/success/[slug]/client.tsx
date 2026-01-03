@@ -25,7 +25,28 @@ const SuccessClient = ({ slug }: SuccessClientProps) => {
 
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(cardUrl);
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(cardUrl);
+            } else {
+                // Fallback for non-secure contexts (like some dev environments)
+                const textArea = document.createElement("textarea");
+                textArea.value = cardUrl;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                textArea.style.top = "0";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+                } catch (err) {
+                    throw new Error('Fallback copy failed');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+
             toast({
                 title: "Copied!",
                 description: "Your card URL has been copied to clipboard",

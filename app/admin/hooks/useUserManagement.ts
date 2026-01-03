@@ -3,22 +3,26 @@ import { createClient } from '@/lib/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { logger } from '@/lib/logger';
 
-interface CardData {
+export interface Card {
     id: string;
-    full_name: string;
-    email: string | null;
-    role: string | null;
-    company: string | null;
-    phone: string | null;
-    website: string | null;
     slug: string;
-    style_id: string;
+    full_name: string;
     created_at: string;
     scheduled_deletion_at: string | null;
 }
 
+export interface UserData {
+    id: string;
+    email: string | null;
+    created_at: string;
+    last_sign_in_at: string | null;
+    card_count: number;
+    cards: Card[];
+    scheduled_deletion_at: string | null;
+}
+
 export const useUserManagement = () => {
-    const [users, setUsers] = useState<CardData[]>([]);
+    const [users, setUsers] = useState<UserData[]>([]);
     const [loading, setLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const supabase = createClient();
@@ -26,21 +30,15 @@ export const useUserManagement = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const { data, error } = await supabase
-                .from('cards')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Error',
-                    description: 'Failed to fetch users',
-                });
-                return;
+            const response = await fetch('/api/admin/users');
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to fetch users: ${response.status} ${response.statusText} - ${errorText}`);
             }
 
-            setUsers(data || []);
+            const data = await response.json();
+            setUsers(data);
         } catch (error) {
             logger.error('Error fetching users:', error);
             toast({
@@ -138,6 +136,69 @@ export const useUserManagement = () => {
         }
     };
 
+    const handleScheduleCardDeletion = async (cardId: string, scheduledDate: string) => {
+        setActionLoading(cardId);
+        try {
+            const response = await fetch('/api/admin/cards', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cardId,
+                    action: 'schedule_deletion',
+                    scheduledDate: new Date(scheduledDate).toISOString(),
+                }),
+            });
+
+            if (!response.ok) throw new Error('Failed to schedule card deletion');
+
+            toast({
+                title: 'Card deletion scheduled',
+                description: `Card will be deleted on ${new Date(scheduledDate).toLocaleDateString()}`,
+            });
+
+            fetchUsers();
+        } catch (error) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to schedule card deletion',
+            });
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleCancelCardSchedule = async (cardId: string) => {
+        setActionLoading(cardId);
+        try {
+            const response = await fetch('/api/admin/cards', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cardId,
+                    action: 'cancel_schedule',
+                }),
+            });
+
+            if (!response.ok) throw new Error('Failed to cancel card schedule');
+
+            toast({
+                title: 'Schedule cancelled',
+                description: 'Card deletion schedule has been cancelled',
+            });
+
+            fetchUsers();
+        } catch (error) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to cancel card schedule',
+            });
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     const handleProcessScheduled = async () => {
         setLoading(true);
         try {
@@ -178,6 +239,8 @@ export const useUserManagement = () => {
         handleDeleteUser,
         handleScheduleDeletion,
         handleCancelSchedule,
+        handleScheduleCardDeletion,
+        handleCancelCardSchedule,
         handleProcessScheduled,
     };
 };

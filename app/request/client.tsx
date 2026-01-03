@@ -106,6 +106,9 @@ function RequestFormContent() {
         }
 
         try {
+            // Get current user (optional - cards can be created without auth)
+            const { data: { user } } = await supabase.auth.getUser();
+
             // Generate unique slug
             const baseSlug = generateSlug(data.full_name);
             let slug = baseSlug;
@@ -143,6 +146,7 @@ function RequestFormContent() {
                     style_id: data.style_id,
                     slug: slug,
                     booking_enabled: true,
+                    user_id: user?.id || null, // Link to user if logged in
                     socials: Object.fromEntries(
                         socialLinks.map(link => [link.platform, link.url])
                     ),
