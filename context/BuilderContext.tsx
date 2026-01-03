@@ -385,7 +385,7 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
             isSaving,
             isLoading,
             hasUnsavedChanges,
-            hasUnsavedChanges,
+
             isReadOnly: readOnly,
             userId,
         }}>
