@@ -72,7 +72,7 @@ const FloatingCard: React.FC<BaseCardProps> = (props) => {
             title={title}
             company={company}
             className="text-center mb-6"
-            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-sky-400/50 overflow-hidden shadow-lg"
+            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-sky-400/50 overflow-hidden shadow-lg object-cover"
             nameClassName="text-2xl md:text-3xl font-bold text-indigo-900 mb-2"
             titleClassName="text-base md:text-lg text-sky-700 font-semibold mb-1"
             companyClassName="text-sm text-blue-600"

@@ -82,7 +82,7 @@ const ParticleCard: React.FC<BaseCardProps> = (props) => {
             title={title}
             company={company}
             className="text-center mb-6"
-            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-purple-500/50 overflow-hidden shadow-2xl"
+            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-purple-500/50 overflow-hidden shadow-2xl object-cover"
             nameClassName="text-3xl font-bold mb-2"
             titleClassName="text-lg text-purple-300 mb-1"
             companyClassName="text-sm text-purple-200"

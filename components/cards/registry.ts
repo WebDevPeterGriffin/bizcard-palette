@@ -140,8 +140,8 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     description: "Futuristic holographic effects with animated glowing borders and floating particles",
     category: "Modern",
     gradient: "bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500",
-    backgroundColor: "bg-background",
-    isDark: false,
+    backgroundColor: "bg-slate-950",
+    isDark: true,
     accentColor: "#8b5cf6", // Violet-500
     accentForeground: "#ffffff",
   },
@@ -150,7 +150,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     description: "Dynamic particle system with morphing shapes and orbital animations",
     category: "Modern",
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900",
-    backgroundColor: "bg-background",
+    backgroundColor: "bg-slate-950",
     isDark: true,
     accentColor: "#7c3aed", // Violet-600
     accentForeground: "#ffffff",
@@ -160,7 +160,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     description: "Liquid morphing backgrounds with shape-shifting borders and fluid transitions",
     category: "Creative",
     gradient: "bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600",
-    backgroundColor: "bg-background",
+    backgroundColor: "bg-slate-900",
     isDark: true,
     accentColor: "#3b82f6", // Blue-500
     accentForeground: "#ffffff",
@@ -170,7 +170,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     description: "Conic gradients, light beams, and floating prism shapes",
     category: "Creative",
     gradient: "bg-gradient-to-br from-amber-400 via-pink-400 to-purple-600",
-    backgroundColor: "bg-background",
+    backgroundColor: "bg-slate-50",
     isDark: false,
     accentColor: "#f59e0b", // Amber-500
     accentForeground: "#000000",
@@ -180,7 +180,7 @@ export const CARD_META: Record<CardStyleId, CardStyleMeta> = {
     description: "iOS 26-inspired translucent glass effects with blur and smooth animations",
     category: "Modern",
     gradient: "bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900",
-    backgroundColor: "bg-background",
+    backgroundColor: "bg-slate-900",
     isDark: true,
     accentColor: "#06b6d4", // Cyan-500
     accentForeground: "#000000",

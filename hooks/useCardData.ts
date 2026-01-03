@@ -23,6 +23,7 @@ type SupabaseCardRow = {
     booking_instructions: string | null;
     booking_calendar_url: string | null;
     scheduled_deletion_at: string | null;
+    user_id: string | null;
 };
 
 const fetchCard = async (slug: string | undefined): Promise<CardData | null> => {
@@ -68,7 +69,7 @@ const fetchCard = async (slug: string | undefined): Promise<CardData | null> => 
         ? `${supabase.storage.from('headshots').getPublicUrl(headshotPath).data.publicUrl}`
         : undefined;
 
-    return recordToCardData(cardRow, headshotUrl);
+    return recordToCardData(cardRow, headshotUrl, cardRow.user_id);
 };
 
 export const useCardData = (slug: string | undefined) => {

@@ -44,7 +44,7 @@ const ElegantCard: React.FC<BaseCardProps> = (props) => {
             title={title}
             company={company}
             className="text-center"
-            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full bg-elegant-accent/20 flex items-center justify-center border-2 border-elegant-accent/30 overflow-hidden"
+            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full bg-elegant-accent/20 flex items-center justify-center border-2 border-elegant-accent/30 overflow-hidden object-cover"
             nameClassName="mb-2 text-2xl font-serif font-bold text-gray-800"
             titleClassName="text-lg font-medium text-elegant-accent"
             companyClassName="text-sm font-serif text-gray-600 italic"

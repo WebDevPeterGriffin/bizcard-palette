@@ -70,7 +70,7 @@ const LiquidGlassCard: React.FC<BaseCardProps> = (props) => {
             title={title}
             company={company}
             className="text-center mb-6"
-            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-white/50 overflow-hidden shadow-xl backdrop-blur-sm"
+            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-white/50 overflow-hidden shadow-xl backdrop-blur-sm object-cover"
             nameClassName="text-2xl md:text-3xl font-bold drop-shadow-lg mb-2"
             titleClassName="text-base md:text-lg text-emerald-100 font-semibold mb-1"
             companyClassName="text-sm text-white/90"

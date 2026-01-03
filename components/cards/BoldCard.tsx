@@ -42,7 +42,7 @@ const BoldCard: React.FC<BaseCardProps> = (props) => {
           title={title}
           company={company}
           className="mb-6"
-          headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full bg-bold-accent flex items-center justify-center overflow-hidden"
+          headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full bg-bold-accent flex items-center justify-center overflow-hidden object-cover"
           nameClassName="mb-1 text-2xl font-bold text-white"
           titleClassName="text-lg text-bold-accent"
           companyClassName="text-sm font-medium text-white/80"

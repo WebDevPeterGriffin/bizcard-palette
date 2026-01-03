@@ -50,7 +50,7 @@ const HolographicCard: React.FC<BaseCardProps> = (props) => {
             title={title}
             company={company}
             className="text-center mb-6"
-            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-white/30 overflow-hidden shadow-2xl hover:shadow-purple-500/50 transition-all"
+            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-white/30 overflow-hidden shadow-2xl hover:shadow-purple-500/50 transition-all object-cover"
             nameClassName="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 mb-2"
             titleClassName="text-lg text-purple-300 mb-1"
             companyClassName="text-sm text-cyan-300"

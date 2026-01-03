@@ -58,7 +58,7 @@ const NeonCard: React.FC<BaseCardProps> = (props) => {
           title={title}
           company={company}
           className="text-center mb-6"
-          headshotClassName="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-2 border-cyan-400 overflow-hidden relative group-hover:border-pink-400 transition-all duration-300 mb-4"
+          headshotClassName="w-32 h-32 md:w-36 md:h-36 mx-auto rounded-full border-2 border-cyan-400 overflow-hidden relative group-hover:border-pink-400 transition-all duration-300 mb-4 object-cover"
           nameClassName="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-2 tracking-wider"
           titleClassName="text-base md:text-lg font-semibold text-cyan-300 mb-1"
           companyClassName="text-sm text-purple-300"

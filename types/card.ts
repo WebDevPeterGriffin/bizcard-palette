@@ -68,13 +68,14 @@ export interface CardData {
     bookingEnabled: boolean;
     bookingInstructions?: string;
     bookingCalendarUrl?: string;
+    userId: string | null;
 }
 
 /**
  * Converts a database record to normalized card data
  * Handles legacy socials object migration and field normalization
  */
-export const recordToCardData = (record: CardRecord, headshotUrl?: string): CardData => {
+export const recordToCardData = (record: CardRecord, headshotUrl?: string, userId?: string | null): CardData => {
     // Parse socials JSON to SocialLink array
     const socialsObj = (record.socials as Record<string, string>) || {};
     const socialLinks: SocialLink[] = Object.entries(socialsObj)
@@ -101,5 +102,6 @@ export const recordToCardData = (record: CardRecord, headshotUrl?: string): Card
         bookingEnabled: !!record.booking_enabled,
         bookingInstructions: record.booking_instructions || '',
         bookingCalendarUrl: record.booking_calendar_url || undefined,
+        userId: userId || null, // Map passed userId or null
     };
 };

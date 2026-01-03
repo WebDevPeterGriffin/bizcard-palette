@@ -50,7 +50,7 @@ const CreativeCard: React.FC<BaseCardProps> = (props) => {
             title={title}
             company={company}
             className="mb-6"
-            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-4 ring-white/30 overflow-hidden"
+            headshotClassName="mx-auto mb-4 h-32 w-32 md:h-36 md:w-36 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-4 ring-white/30 overflow-hidden object-cover"
             nameClassName="mb-1 text-2xl font-bold drop-shadow-lg"
             titleClassName="rounded-full bg-white/20 backdrop-blur-sm px-4 py-1 mb-2 text-base font-semibold inline-block"
             companyClassName="text-sm font-medium text-white/90"

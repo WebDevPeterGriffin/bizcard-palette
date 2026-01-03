@@ -1,9 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { Download, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { logger } from '@/lib/logger';
+
+export interface QRCodeRef {
+  download: (format?: 'png' | 'svg') => Promise<void>;
+}
 
 interface QRCodeGeneratorProps {
   url: string;
@@ -12,12 +16,12 @@ interface QRCodeGeneratorProps {
   showControls?: boolean;
 }
 
-const QRCodeGenerator = ({
+const QRCodeGenerator = forwardRef<QRCodeRef, QRCodeGeneratorProps>(({
   url,
   size = 200,
   className = "",
   showControls = true
-}: QRCodeGeneratorProps) => {
+}, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
@@ -88,6 +92,10 @@ const QRCodeGenerator = ({
     }
   };
 
+  useImperativeHandle(ref, () => ({
+    download: downloadQR
+  }));
+
   const copyUrl = async () => {
     try {
       await navigator.clipboard.writeText(url);
@@ -146,6 +154,8 @@ const QRCodeGenerator = ({
       )}
     </div>
   );
-};
+});
+
+QRCodeGenerator.displayName = "QRCodeGenerator";
 
 export default QRCodeGenerator;
