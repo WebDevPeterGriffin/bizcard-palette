@@ -2,8 +2,9 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { compressImage, formatFileSize } from "@/lib/imageCompression";
 
 interface ImageUploadProps {
   onImageChange: (file: File | null, preview: string | null) => void;
@@ -13,8 +14,8 @@ interface ImageUploadProps {
   maxSize?: number; // in MB
 }
 
-const ImageUpload = ({ 
-  onImageChange, 
+const ImageUpload = ({
+  onImageChange,
   currentImage,
   label = "Upload Image",
   accept = "image/*",
@@ -22,6 +23,8 @@ const ImageUpload = ({
 }: ImageUploadProps) => {
   const [preview, setPreview] = useState<string | null>(currentImage || null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [compressionInfo, setCompressionInfo] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -39,7 +42,7 @@ const ImageUpload = ({
     // Check file type
     if (!file.type.startsWith('image/')) {
       toast({
-        title: "Invalid file type", 
+        title: "Invalid file type",
         description: "Please select an image file",
         variant: "destructive"
       });
@@ -49,22 +52,65 @@ const ImageUpload = ({
     return true;
   };
 
-  const handleFileChange = (file: File | null) => {
+  const handleFileChange = async (file: File | null) => {
     if (!file) {
       setPreview(null);
+      setCompressionInfo(null);
       onImageChange(null, null);
       return;
     }
 
     if (!validateFile(file)) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      setPreview(result);
-      onImageChange(file, result);
-    };
-    reader.readAsDataURL(file);
+    setIsCompressing(true);
+    setCompressionInfo(null);
+
+    try {
+      // Compress the image
+      const originalSize = file.size;
+      const compressedFile = await compressImage(file, {
+        maxSizeKB: 100,
+        maxWidth: 800,
+        maxHeight: 800,
+        quality: 0.85,
+      });
+
+      const compressedSize = compressedFile.size;
+      const savedPercent = Math.round((1 - compressedSize / originalSize) * 100);
+
+      if (savedPercent > 0) {
+        setCompressionInfo(
+          `Compressed: ${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)} (${savedPercent}% smaller)`
+        );
+      }
+
+      // Read compressed file for preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setPreview(result);
+        onImageChange(compressedFile, result);
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.error('Compression failed:', error);
+      toast({
+        title: "Compression failed",
+        description: "Using original image instead",
+        variant: "destructive"
+      });
+
+      // Fall back to original file
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setPreview(result);
+        onImageChange(file, result);
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setIsCompressing(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +121,7 @@ const ImageUpload = ({
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     const file = e.dataTransfer.files[0];
     if (file) handleFileChange(file);
   };
@@ -91,6 +137,7 @@ const ImageUpload = ({
 
   const removeImage = () => {
     setPreview(null);
+    setCompressionInfo(null);
     onImageChange(null, null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -104,11 +151,11 @@ const ImageUpload = ({
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      
+
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer
-          ${isDragging 
-            ? 'border-primary bg-primary/5' 
+          ${isDragging
+            ? 'border-primary bg-primary/5'
             : 'border-muted-foreground/25 hover:border-primary/50'
           }
         `}
@@ -117,7 +164,12 @@ const ImageUpload = ({
         onDragLeave={handleDragLeave}
         onClick={openFileDialog}
       >
-        {preview ? (
+        {isCompressing ? (
+          <div className="space-y-2">
+            <Loader2 className="mx-auto h-8 w-8 text-primary animate-spin" />
+            <p className="text-sm text-muted-foreground">Compressing image...</p>
+          </div>
+        ) : preview ? (
           <div className="relative">
             <img
               src={preview}
@@ -145,7 +197,7 @@ const ImageUpload = ({
                 Click to upload or drag and drop
               </p>
               <p className="text-xs text-muted-foreground">
-                PNG, JPG, GIF up to {maxSize}MB
+                PNG, JPG, GIF up to {maxSize}MB (auto-compressed)
               </p>
             </div>
             <Button type="button" variant="outline" size="sm">
@@ -155,6 +207,10 @@ const ImageUpload = ({
           </div>
         )}
       </div>
+
+      {compressionInfo && (
+        <p className="text-xs text-green-600">{compressionInfo}</p>
+      )}
 
       <Input
         ref={fileInputRef}
