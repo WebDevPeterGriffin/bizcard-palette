@@ -19,6 +19,7 @@ interface CardData {
     company: string | null;
     style_id: string;
     created_at: string;
+    headshot_url: string | null;
 }
 
 interface DashboardClientProps {
@@ -44,23 +45,27 @@ export default function DashboardClient({ user, cards }: DashboardClientProps) {
     const handleDeleteCard = async (cardId: string, cardName: string) => {
         if (!confirm(`Are you sure you want to delete "${cardName}"?`)) return;
 
-        const { error } = await supabase
-            .from("cards")
-            .delete()
-            .eq("id", cardId);
-
-        if (error) {
-            toast({
-                title: "Delete failed",
-                description: error.message,
-                variant: "destructive",
+        try {
+            const response = await fetch(`/api/cards/${cardId}`, {
+                method: 'DELETE',
             });
-        } else {
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Failed to delete card');
+            }
+
             toast({
                 title: "Card deleted",
                 description: `"${cardName}" has been deleted`,
             });
             router.refresh();
+        } catch (error) {
+            toast({
+                title: "Delete failed",
+                description: error instanceof Error ? error.message : "An unknown error occurred",
+                variant: "destructive",
+            });
         }
     };
 
