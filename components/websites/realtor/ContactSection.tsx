@@ -8,8 +8,50 @@ import { EditableText } from "@/components/builder/EditableText";
 
 export const ContactSection = () => {
     const revealRef = useSectionReveal();
-    const { config } = useBuilder();
+    const { config, userId } = useBuilder();
     const brokerLogo = config.content.logos.broker;
+    const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+    const [formData, setFormData] = React.useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: ''
+    });
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!userId) {
+            console.error("No userId found for submission");
+            return;
+        }
+
+        setStatus('submitting');
+        try {
+            const response = await fetch('/api/websites/inquiry', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId,
+                    name: `${formData.firstName} ${formData.lastName}`,
+                    email: formData.email,
+                    message: formData.message
+                })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Failed to submit');
+            }
+
+            setStatus('success');
+            setFormData({ firstName: '', lastName: '', email: '', message: '' });
+            setTimeout(() => setStatus('idle'), 3000);
+        } catch (error) {
+            console.error('Submission error:', error);
+            // alert(error instanceof Error ? error.message : 'An unknown error occurred');
+            setStatus('error');
+        }
+    };
 
     return (
         <footer id="contact" className="text-white pt-24 pb-12" style={{ backgroundColor: 'var(--primary)' }}>
@@ -102,13 +144,16 @@ export const ContactSection = () => {
 
                     {/* Simple Form */}
                     <div className="bg-white/5 p-8 rounded-2xl border border-white/10">
-                        <form className="space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label htmlFor="firstName" className="text-sm font-medium text-slate-300">First Name</label>
                                     <input
                                         type="text"
                                         id="firstName"
+                                        required
+                                        value={formData.firstName}
+                                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
                                         style={{ borderColor: 'var(--secondary)' }}
                                         placeholder="John"
@@ -119,6 +164,9 @@ export const ContactSection = () => {
                                     <input
                                         type="text"
                                         id="lastName"
+                                        required
+                                        value={formData.lastName}
+                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
                                         style={{ borderColor: 'var(--secondary)' }}
                                         placeholder="Doe"
@@ -130,6 +178,9 @@ export const ContactSection = () => {
                                 <input
                                     type="email"
                                     id="email"
+                                    required
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
                                     style={{ borderColor: 'var(--secondary)' }}
                                     placeholder="john@example.com"
@@ -140,18 +191,28 @@ export const ContactSection = () => {
                                 <textarea
                                     id="message"
                                     rows={4}
+                                    required
+                                    value={formData.message}
+                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
                                     style={{ borderColor: 'var(--secondary)' }}
                                     placeholder="I'm interested in buying a home..."
                                 ></textarea>
                             </div>
                             <button
-                                type="button"
-                                className="w-full text-slate-900 font-bold py-4 rounded-lg hover:opacity-90 transition-colors"
+                                type="submit"
+                                disabled={status === 'submitting'}
+                                className="w-full text-slate-900 font-bold py-4 rounded-lg hover:opacity-90 transition-colors disabled:opacity-50"
                                 style={{ backgroundColor: 'var(--secondary)' }}
                             >
-                                Send Message
+                                {status === 'submitting' ? 'Sending...' : 'Send Message'}
                             </button>
+                            {status === 'success' && (
+                                <p className="text-sm text-green-400 text-center">Message sent successfully!</p>
+                            )}
+                            {status === 'error' && (
+                                <p className="text-sm text-red-400 text-center">Failed to send message. Please try again.</p>
+                            )}
                             <p className="text-xs text-center text-slate-400 mt-4">
                                 Messages will be sent to: <span className="text-white">{config.content.text['contact.email']}</span>
                             </p>

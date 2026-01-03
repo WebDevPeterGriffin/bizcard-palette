@@ -25,5 +25,34 @@ export default async function DashboardPage() {
         .eq("user_id", user.id)
         .single();
 
-    return <DashboardClient user={user} cards={cards || []} websiteConfig={websiteConfig} />;
+    // Fetch recent inquiries
+    const { data: inquiries } = await supabase
+        .from("website_inquiries")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+    // Fetch recent appointments
+    const { data: appointments } = await supabase
+        .from("appointments")
+        .select(`
+            *,
+            cards (
+                full_name
+            )
+        `)
+        .in("card_id", cards?.map(c => c.id) || [])
+        .order("appointment_date", { ascending: true })
+        .limit(10);
+
+    return (
+        <DashboardClient
+            user={user}
+            cards={cards || []}
+            websiteConfig={websiteConfig}
+            inquiries={inquiries || []}
+            appointments={appointments || []}
+        />
+    );
 }

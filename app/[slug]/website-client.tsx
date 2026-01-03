@@ -14,7 +14,7 @@ export default function WebsiteClient({ config }: WebsiteClientProps) {
     const websiteConfig = config.config as any;
 
     return (
-        <BuilderProvider initialConfig={websiteConfig} readOnly={true}>
+        <BuilderProvider initialConfig={websiteConfig} readOnly={true} userId={config.user_id}>
             <RealtorTemplate />
         </BuilderProvider>
     );

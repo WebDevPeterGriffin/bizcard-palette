@@ -51,6 +51,7 @@ interface BuilderContextType {
     hasUnsavedChanges: boolean;
     isReadOnly: boolean;
     setConfig: (config: WebsiteConfig) => void;
+    userId?: string;
 }
 
 const defaultConfig: WebsiteConfig = {
@@ -137,9 +138,10 @@ interface BuilderProviderProps {
     children: ReactNode;
     initialConfig?: WebsiteConfig;
     readOnly?: boolean;
+    userId?: string;
 }
 
-export const BuilderProvider = ({ children, initialConfig, readOnly = false }: BuilderProviderProps) => {
+export const BuilderProvider = ({ children, initialConfig, readOnly = false, userId }: BuilderProviderProps) => {
     const [config, setConfig] = useState<WebsiteConfig>(defaultConfig);
     const [slug, setSlug] = useState<string | null>(null);
     const [savedConfig, setSavedConfig] = useState<WebsiteConfig | null>(null);
@@ -383,7 +385,9 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false }: B
             isSaving,
             isLoading,
             hasUnsavedChanges,
+            hasUnsavedChanges,
             isReadOnly: readOnly,
+            userId,
         }}>
             {children}
         </BuilderContext.Provider>

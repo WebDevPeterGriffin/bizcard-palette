@@ -17,7 +17,7 @@ function isValidFrom(from?: string | null): boolean {
 const RESEND_FROM_EMAIL = isValidFrom(envFrom) ? (envFrom as string) : DEFAULT_FROM;
 
 interface NotificationRequest {
-    type: 'contact' | 'waitlist' | 'request';
+    type: 'contact' | 'waitlist' | 'request' | 'website_inquiry';
     data: any;
 }
 
@@ -31,12 +31,14 @@ const handler = async (req: Request): Promise<Response> => {
         const { type, data }: NotificationRequest = await req.json();
         console.log(`Received ${type} notification request:`, data);
 
-        if (!ADMIN_EMAIL) {
+        // Validate ADMIN_EMAIL only if we need it (i.e. not for website_inquiry which provides its own recipient)
+        if (!ADMIN_EMAIL && type !== 'website_inquiry') {
             throw new Error("ADMIN_EMAIL secret is not set");
         }
 
         let subject = "";
         let html = "";
+        let recipient = ADMIN_EMAIL;
 
         switch (type) {
             case 'contact':
@@ -69,24 +71,39 @@ const handler = async (req: Request): Promise<Response> => {
           <p><strong>Role:</strong> ${data.role || 'N/A'}</p>
         `;
                 break;
+            case 'website_inquiry':
+                if (!data.recipient_email) throw new Error("Recipient email is required for website_inquiry");
+                recipient = data.recipient_email;
+                subject = `New Website Inquiry from ${data.name}`;
+                html = `
+          <h2>New Website Inquiry</h2>
+          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Message:</strong></p>
+          <p>${data.message.replace(/\n/g, '<br>')}</p>
+          <br/>
+          <p>You can view this inquiry in your Dashboard.</p>
+        `;
+                break;
             default:
                 throw new Error("Invalid notification type");
         }
 
-        // Send email to Admin
+        // Send email
         const { data: emailData, error: emailError } = await resend.emails.send({
             from: RESEND_FROM_EMAIL,
-            to: ADMIN_EMAIL,
+            to: recipient!, // recipient is guaranteed to be set by logic above
             subject: subject,
             html: html,
+            reply_to: data.email // Set reply-to for convenience
         });
 
         if (emailError) {
-            console.error("Error sending admin email:", emailError);
+            console.error("Error sending email:", emailError);
             throw new Error(emailError.message);
         }
 
-        console.log("Admin email sent successfully:", emailData);
+        console.log("Email sent successfully:", emailData);
 
         return new Response(
             JSON.stringify({ success: true }),
