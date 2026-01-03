@@ -2,13 +2,11 @@
 
 import PageHero from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Layout, Smartphone, Zap, Globe, Palette, Shield } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ArrowRight, Layout, Smartphone, Zap, Globe, Palette, Shield, CheckCircle2 } from "lucide-react";
 import { useWaitlist } from "@/hooks/useWaitlist";
 import MainLayout from "@/components/MainLayout";
 
 export default function Websites() {
-    const router = useRouter();
     const { openWaitlist } = useWaitlist();
 
     const features = [
@@ -70,16 +68,58 @@ export default function Websites() {
                     <div className="container mx-auto max-w-6xl">
                         <div className="text-center mb-16">
                             <h2 className="text-3xl md:text-4xl font-bold text-[#1A2D49] mb-4">
-                                Coming Soon
+                                Premium Templates
                             </h2>
                             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                                We're putting the finishing touches on our first batch of premium templates.
+                                Choose a template to get started. More coming soon.
                             </p>
                         </div>
 
                         <div className="grid md:grid-cols-3 gap-8">
-                            {[1, 2, 3].map((item) => (
-                                <div key={item} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
+                            {/* Realtor Template */}
+                            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all group flex flex-col">
+                                <div className="h-64 bg-slate-900 relative flex items-center justify-center overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-950 opacity-90"></div>
+                                    <div className="relative z-10 text-center p-6">
+                                        <span className="inline-block py-1 px-3 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold tracking-wider mb-3 border border-amber-500/30">
+                                            REAL ESTATE
+                                        </span>
+                                        <h3 className="text-2xl font-serif font-bold text-white mb-2">Luxe Estates</h3>
+                                        <p className="text-slate-400 text-sm">For luxury realtors and agencies</p>
+                                    </div>
+                                </div>
+                                <div className="p-6 flex-1 flex flex-col">
+                                    <div className="space-y-3 mb-6 flex-1">
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                            <span>Premium Animations</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                            <span>Lead Capture Form</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                            <span>Mobile Optimized</span>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <Button variant="outline" className="w-full" onClick={() => window.open('/websites/realtor', '_blank')}>
+                                            View Demo
+                                        </Button>
+                                        <Button
+                                            className="w-full bg-[#1A2D49] hover:bg-[#1A2D49]/90"
+                                            onClick={() => window.location.href = '/websites/realtor'}
+                                        >
+                                            Get Started
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Coming Soon Placeholders */}
+                            {[2, 3].map((item) => (
+                                <div key={item} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all group opacity-60">
                                     <div className="h-64 bg-slate-200 relative flex items-center justify-center overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-slate-200 to-slate-100"></div>
                                         <Layout className="w-16 h-16 text-slate-300 group-hover:scale-110 transition-transform duration-500" />

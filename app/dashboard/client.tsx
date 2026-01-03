@@ -7,27 +7,22 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, ExternalLink, Trash2, LogOut, CreditCard } from "lucide-react";
+import { Plus, ExternalLink, Trash2, LogOut, CreditCard, Globe, Edit, Copy, Share2 } from "lucide-react";
 import MainLayout from "@/components/MainLayout";
 import { format } from "date-fns";
 
-interface CardData {
-    id: string;
-    slug: string;
-    full_name: string;
-    role: string | null;
-    company: string | null;
-    style_id: string;
-    created_at: string;
-    headshot_url: string | null;
-}
+import { Tables } from "@/integrations/supabase/types";
+
+type CardData = Tables<"cards">;
+type WebsiteConfigData = Tables<"website_configs">;
 
 interface DashboardClientProps {
     user: User;
     cards: CardData[];
+    websiteConfig: WebsiteConfigData | null;
 }
 
-export default function DashboardClient({ user, cards }: DashboardClientProps) {
+export default function DashboardClient({ user, cards, websiteConfig }: DashboardClientProps) {
     const router = useRouter();
     const { toast } = useToast();
     const supabase = createClient();
@@ -69,6 +64,58 @@ export default function DashboardClient({ user, cards }: DashboardClientProps) {
         }
     };
 
+    const handleDeleteWebsite = async () => {
+        if (!confirm("Are you sure you want to delete your website? This cannot be undone.")) return;
+
+        try {
+            const response = await fetch('/api/websites/config', {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Failed to delete website');
+            }
+
+            toast({
+                title: "Website deleted",
+                description: "Your website has been deleted",
+            });
+            router.refresh();
+        } catch (error) {
+            toast({
+                title: "Delete failed",
+                description: error instanceof Error ? error.message : "An unknown error occurred",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleCopyLink = (slug: string) => {
+        const url = `${window.location.origin}/${slug}`;
+        navigator.clipboard.writeText(url);
+        toast({
+            title: "Link copied",
+            description: "Website link copied to clipboard",
+        });
+    };
+
+    const handleShare = async (slug: string) => {
+        const url = `${window.location.origin}/${slug}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'My Website',
+                    url: url,
+                });
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        } else {
+            handleCopyLink(slug);
+        }
+    };
+
     return (
         <MainLayout>
             <div className="min-h-screen bg-background pt-24 pb-12">
@@ -93,6 +140,92 @@ export default function DashboardClient({ user, cards }: DashboardClientProps) {
                                 Sign out
                             </Button>
                         </div>
+                    </div>
+
+                    {/* My Websites Section */}
+                    <div className="space-y-6 mb-8">
+                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                            <Globe className="h-5 w-5" />
+                            My Websites
+                        </h2>
+
+                        {websiteConfig ? (
+                            <Card className="hover:shadow-lg transition-shadow">
+                                <CardHeader className="pb-3">
+                                    <CardTitle className="text-lg flex items-center gap-2">
+                                        <span className="capitalize">{websiteConfig.template}</span> Website
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Last updated: {format(new Date(websiteConfig.updated_at), "MMM d, yyyy h:mm a")}
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <Button asChild variant="default" size="sm" className="flex-1">
+                                                <Link href="/websites/realtor">
+                                                    <Edit className="mr-2 h-3 w-3" />
+                                                    Edit
+                                                </Link>
+                                            </Button>
+                                            {websiteConfig.slug && (
+                                                <>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleCopyLink(websiteConfig.slug!)}
+                                                        title="Copy Link"
+                                                    >
+                                                        <Copy className="h-3 w-3" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleShare(websiteConfig.slug!)}
+                                                        title="Share"
+                                                    >
+                                                        <Share2 className="h-3 w-3" />
+                                                    </Button>
+                                                    <Button asChild variant="outline" size="sm">
+                                                        <Link href={`/${websiteConfig.slug}`} target="_blank">
+                                                            <ExternalLink className="h-3 w-3" />
+                                                        </Link>
+                                                    </Button>
+                                                </>
+                                            )}
+                                            <Button
+                                                variant="destructive"
+                                                size="sm"
+                                                onClick={handleDeleteWebsite}
+                                            >
+                                                <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                        </div>
+                                        {!websiteConfig.slug && (
+                                            <p className="text-xs text-amber-600">
+                                                * Save your website to generate a shareable link
+                                            </p>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ) : (
+                            <Card className="border-dashed">
+                                <CardContent className="flex flex-col items-center justify-center py-12">
+                                    <Globe className="h-12 w-12 text-muted-foreground mb-4" />
+                                    <h3 className="text-lg font-medium mb-2">No website yet</h3>
+                                    <p className="text-muted-foreground text-center mb-4">
+                                        Create your professional website to showcase your business
+                                    </p>
+                                    <Button asChild>
+                                        <Link href="/websites/realtor">
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            Create Website
+                                        </Link>
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        )}
                     </div>
 
                     {/* Cards Grid */}

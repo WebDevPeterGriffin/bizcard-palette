@@ -1,5 +1,5 @@
 import React from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+
 
 interface QRSectionProps {
     value: string;
@@ -26,19 +26,33 @@ export const QRSection: React.FC<QRSectionProps> = ({
     fgColor = "#000000",
     bgColor = "#ffffff"
 }) => {
+    const [svg, setSvg] = React.useState<string>('');
+
+    React.useEffect(() => {
+        if (!value) return;
+
+        // Dynamic import to avoid SSR issues if needed, or just standard import
+        import('qrcode').then(QRCode => {
+            QRCode.toString(value, {
+                type: 'svg',
+                width: size,
+                margin: 1,
+                color: {
+                    dark: fgColor,
+                    light: bgColor
+                }
+            }).then(setSvg);
+        });
+    }, [value, size, fgColor, bgColor]);
+
     if (!value) return null;
 
     return (
         <div className={`flex flex-col items-center ${className}`}>
-            <div className={qrClassName}>
-                <QRCodeSVG
-                    value={value}
-                    size={size}
-                    level="M"
-                    fgColor={fgColor}
-                    bgColor={bgColor}
-                />
-            </div>
+            <div
+                className={qrClassName}
+                dangerouslySetInnerHTML={{ __html: svg }}
+            />
             {label && <p className={`text-center ${labelClassName}`}>{label}</p>}
         </div>
     );

@@ -56,13 +56,20 @@ export default function Navbar() {
         router.refresh();
     };
 
-    const navLinks = [
-        { name: "Home", path: "/" },
-        { name: "Digital Business Cards", path: "/styles" },
-        { name: "Website Templates", path: "/websites" },
-        { name: "Pricing", path: "/pricing" },
-        { name: "Contact", path: "/contact" },
-    ];
+    // Different nav links for authenticated vs unauthenticated users
+    const navLinks = user
+        ? [
+            { name: "Dashboard", path: "/dashboard" },
+            { name: "Digital Business Cards", path: "/styles" },
+            { name: "Website Templates", path: "/websites" },
+        ]
+        : [
+            { name: "Home", path: "/" },
+            { name: "Digital Business Cards", path: "/styles" },
+            { name: "Website Templates", path: "/websites" },
+            { name: "Pricing", path: "/pricing" },
+            { name: "Contact", path: "/contact" },
+        ];
 
     const isTransparentPage = ["/", "/styles", "/websites", "/pricing", "/contact"].includes(pathname);
     const showSolidNav = isScrolled || !isTransparentPage;

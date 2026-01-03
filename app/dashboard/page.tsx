@@ -12,11 +12,18 @@ export default async function DashboardPage() {
     }
 
     // Fetch user's cards
-    const { data: cards, error } = await supabase
+    const { data: cards } = await supabase
         .from("cards")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-    return <DashboardClient user={user} cards={cards || []} />;
+    // Fetch user's website config
+    const { data: websiteConfig } = await supabase
+        .from("website_configs")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+    return <DashboardClient user={user} cards={cards || []} websiteConfig={websiteConfig} />;
 }
