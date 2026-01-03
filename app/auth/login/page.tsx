@@ -11,7 +11,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock, ArrowLeft } from "lucide-react";
 import FloatingOrbs from "@/components/FloatingOrbs";
 
-export default function LoginPage() {
+import { Suspense } from "react";
+
+function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -184,5 +186,13 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+            <LoginForm />
+        </Suspense>
     );
 }
