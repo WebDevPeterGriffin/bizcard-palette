@@ -56,222 +56,210 @@ function RequestFormContent() {
         return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     };
 
+    import { RESERVED_SLUGS } from '@/lib/constants';
+
+    // ...
+
     const onSubmit = async (data: CardFormData) => {
-        // Filter out empty emails and phones
-        const cleanedEmails = data.emails.map(e => e.value).filter(e => e.trim());
-        const cleanedPhones = data.phones.map(p => p.value).filter(p => p.trim());
-
-        // Additional validation
-        if (cleanedEmails.length === 0) {
-            toast({
-                title: 'Missing Information',
-                description: 'At least one email address is required.',
-                variant: 'destructive',
-            });
-            return;
-        }
-
-        try {
-            // Get current user (optional - cards can be created without auth)
-            const { data: { user } } = await supabase.auth.getUser();
-
-            // Generate unique slug
-            const baseSlug = generateSlug(data.full_name);
-            let slug = baseSlug;
-            let counter = 1;
-            const MAX_ATTEMPTS = 100;
-
-            while (counter <= MAX_ATTEMPTS) {
-                // Check cards table
-                const { data: existingCard } = await supabase
-                    .from('cards')
-                    .select('id')
-                    .eq('slug', slug)
-                    .maybeSingle();
-
-                // Check website_configs table
-                const { data: existingWebsite } = await supabase
-                    .from('website_configs')
-                    .select('id')
-                    .eq('slug', slug)
-                    .maybeSingle();
-
-                if (!existingCard && !existingWebsite) break;
-
+        // ...
+        while (counter <= MAX_ATTEMPTS) {
+            // Check reserved slugs
+            if (RESERVED_SLUGS.includes(slug)) {
                 counter++;
                 slug = `${baseSlug}-${counter}`;
+                continue;
             }
 
-            if (counter > MAX_ATTEMPTS) {
-                const randomSuffix = Math.random().toString(36).substring(2, 8);
-                slug = `${baseSlug}-${randomSuffix}`;
-            }
-
-            // Insert card record
-            const { data: cardData, error: insertError } = await supabase
+            // Check cards table
+            const { data: existingCard } = await supabase
                 .from('cards')
-                .insert({
-                    full_name: data.full_name,
-                    role: data.role || null,
-                    company: data.company || null,
-                    emails: cleanedEmails,
-                    phones: cleanedPhones,
-                    website: data.website || null,
-                    style_id: data.style_id,
-                    slug: slug,
-                    booking_enabled: true,
-                    user_id: user?.id || null, // Link to user if logged in
-                    socials: Object.fromEntries(
-                        socialLinks.map(link => [link.platform, link.url])
-                    ),
-                })
-                .select()
-                .single();
+                .select('id')
+                .eq('slug', slug)
+                .maybeSingle();
 
-            if (insertError) {
-                throw insertError;
-            }
+            // Check website_configs table
+            const { data: existingWebsite } = await supabase
+                .from('website_configs')
+                .select('id')
+                .eq('slug', slug)
+                .maybeSingle();
 
-            // Upload headshot if provided
-            if (headshot && cardData) {
-                logger.log('Uploading headshot:', headshot.name, 'size:', headshot.size);
-                const fileExt = headshot.name.split('.').pop();
-                const fileName = `${cardData.id}.${fileExt}`;
-                const filePath = `${cardData.id}/${fileName}`;
+            if (!existingCard && !existingWebsite) break;
 
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('headshots')
-                    .upload(filePath, headshot, {
-                        cacheControl: '3600',
-                        upsert: true,
-                    });
-
-                if (uploadError) {
-                    logger.error('Upload error:', uploadError);
-                    toast({
-                        title: 'Upload Warning',
-                        description: 'Your card was created but the headshot failed to upload.',
-                        variant: 'destructive',
-                    });
-                } else {
-                    logger.log('Upload successful:', uploadData);
-
-                    const { error: updateError } = await supabase
-                        .from('cards')
-                        .update({ headshot_url: filePath })
-                        .eq('id', cardData.id);
-
-                    if (updateError) {
-                        logger.error('Error updating headshot URL:', updateError);
-                    } else {
-                        logger.log('Headshot path updated successfully:', filePath);
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                    }
-                }
-            }
-
-            // Notify admin via email
-            supabase.functions.invoke('notify-admin', {
-                body: {
-                    type: 'request',
-                    data: {
-                        ...cardData,
-                        emails: cleanedEmails,
-                    }
-                }
-            }).catch(err => logger.error('Email notification failed:', err));
-
-            toast({
-                title: 'Card Created!',
-                description: 'Your digital business card is ready!',
-            });
-
-            router.push(`/success/${slug}`);
-        } catch (error) {
-            logger.error('Error creating card:', error);
-            toast({
-                title: 'Error',
-                description: 'There was an error creating your card. Please try again.',
-                variant: 'destructive',
-            });
+            counter++;
+            slug = `${baseSlug}-${counter}`;
         }
-    };
 
-    const handleImageUpload = (file: File | null, preview: string | null) => {
-        setHeadshot(file);
-        setHeadshotPreview(preview);
-    };
+        if (counter > MAX_ATTEMPTS) {
+            const randomSuffix = Math.random().toString(36).substring(2, 8);
+            slug = `${baseSlug}-${randomSuffix}`;
+        }
 
-    return (
-        <MainLayout>
-            <div className="min-h-screen bg-background p-4 pt-24">
-                <div className="container mx-auto max-w-3xl">
-                    <div className="mb-8 flex items-center justify-between">
-                        <Button variant="outline" onClick={() => router.push('/')}>
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back to Home
-                        </Button>
-                        <h1 className="text-2xl font-bold">Create Your Digital Card</h1>
-                        <div></div>
-                    </div>
+        // Insert card record
+        const { data: cardData, error: insertError } = await supabase
+            .from('cards')
+            .insert({
+                full_name: data.full_name,
+                role: data.role || null,
+                company: data.company || null,
+                emails: cleanedEmails,
+                phones: cleanedPhones,
+                website: data.website || null,
+                style_id: data.style_id,
+                slug: slug,
+                booking_enabled: true,
+                user_id: user?.id || null, // Link to user if logged in
+                socials: Object.fromEntries(
+                    socialLinks.map(link => [link.platform, link.url])
+                ),
+            })
+            .select()
+            .single();
 
-                    <ProgressIndicator
-                        currentStep={formData.style_id ? (headshot || headshotPreview ? 3 : 2) : 1}
-                        steps={['Choose Style', 'Add Info', 'Finalize']}
-                    />
+        if (insertError) {
+            throw insertError;
+        }
 
-                    <Card className="shadow-card">
-                        <CardHeader>
-                            <CardTitle className="flex items-center">
-                                <CheckCircle className="mr-2 h-5 w-5 text-brand-primary" />
-                                Tell us about yourself
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                                <StyleSelection control={control} errors={errors} />
+        // Upload headshot if provided
+        if (headshot && cardData) {
+            logger.log('Uploading headshot:', headshot.name, 'size:', headshot.size);
+            const fileExt = headshot.name.split('.').pop();
+            const fileName = `${cardData.id}.${fileExt}`;
+            const filePath = `${cardData.id}/${fileName}`;
 
-                                <ImageUpload
-                                    onImageChange={handleImageUpload}
-                                    currentImage={headshotPreview}
-                                    label="Profile Photo or Logo"
-                                    accept="image/*"
-                                    maxSize={5}
-                                />
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('headshots')
+                .upload(filePath, headshot, {
+                    cacheControl: '3600',
+                    upsert: true,
+                });
 
-                                <PersonalInfoSection register={register} errors={errors} />
+            if (uploadError) {
+                logger.error('Upload error:', uploadError);
+                toast({
+                    title: 'Upload Warning',
+                    description: 'Your card was created but the headshot failed to upload.',
+                    variant: 'destructive',
+                });
+            } else {
+                logger.log('Upload successful:', uploadData);
 
-                                <ContactInfoSection control={control} register={register} errors={errors} />
+                const { error: updateError } = await supabase
+                    .from('cards')
+                    .update({ headshot_url: filePath })
+                    .eq('id', cardData.id);
 
-                                <SocialLinkSelector
-                                    socialLinks={socialLinks}
-                                    onChange={setSocialLinks}
-                                />
+                if (updateError) {
+                    logger.error('Error updating headshot URL:', updateError);
+                } else {
+                    logger.log('Headshot path updated successfully:', filePath);
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            }
+        }
 
-                                <div className="pt-4">
-                                    <Button
-                                        type="submit"
-                                        size="lg"
-                                        className="w-full bg-brand-primary text-brand-primary-foreground hover:bg-brand-primary/90"
-                                        disabled={isSubmitting}
-                                    >
-                                        {isSubmitting ? 'Creating Your Card...' : 'Create My Digital Card'}
-                                    </Button>
-                                </div>
-                            </form>
-                        </CardContent>
-                    </Card>
+        // Notify admin via email
+        supabase.functions.invoke('notify-admin', {
+            body: {
+                type: 'request',
+                data: {
+                    ...cardData,
+                    emails: cleanedEmails,
+                }
+            }
+        }).catch(err => logger.error('Email notification failed:', err));
 
-                    <div className="mt-6 text-center text-sm text-muted-foreground">
-                        <p>
-                            Your card will be instantly available at: yourdomain.com/
-                            {formData.full_name ? generateSlug(formData.full_name) : 'your-name'}
-                        </p>
-                    </div>
+        toast({
+            title: 'Card Created!',
+            description: 'Your digital business card is ready!',
+        });
+
+        router.push(`/success/${slug}`);
+    } catch (error) {
+        logger.error('Error creating card:', error);
+        toast({
+            title: 'Error',
+            description: 'There was an error creating your card. Please try again.',
+            variant: 'destructive',
+        });
+    }
+};
+
+const handleImageUpload = (file: File | null, preview: string | null) => {
+    setHeadshot(file);
+    setHeadshotPreview(preview);
+};
+
+return (
+    <MainLayout>
+        <div className="min-h-screen bg-background p-4 pt-24">
+            <div className="container mx-auto max-w-3xl">
+                <div className="mb-8 flex items-center justify-between">
+                    <Button variant="outline" onClick={() => router.push('/')}>
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Home
+                    </Button>
+                    <h1 className="text-2xl font-bold">Create Your Digital Card</h1>
+                    <div></div>
+                </div>
+
+                <ProgressIndicator
+                    currentStep={formData.style_id ? (headshot || headshotPreview ? 3 : 2) : 1}
+                    steps={['Choose Style', 'Add Info', 'Finalize']}
+                />
+
+                <Card className="shadow-card">
+                    <CardHeader>
+                        <CardTitle className="flex items-center">
+                            <CheckCircle className="mr-2 h-5 w-5 text-brand-primary" />
+                            Tell us about yourself
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                            <StyleSelection control={control} errors={errors} />
+
+                            <ImageUpload
+                                onImageChange={handleImageUpload}
+                                currentImage={headshotPreview}
+                                label="Profile Photo or Logo"
+                                accept="image/*"
+                                maxSize={5}
+                            />
+
+                            <PersonalInfoSection register={register} errors={errors} />
+
+                            <ContactInfoSection control={control} register={register} errors={errors} />
+
+                            <SocialLinkSelector
+                                socialLinks={socialLinks}
+                                onChange={setSocialLinks}
+                            />
+
+                            <div className="pt-4">
+                                <Button
+                                    type="submit"
+                                    size="lg"
+                                    className="w-full bg-brand-primary text-brand-primary-foreground hover:bg-brand-primary/90"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? 'Creating Your Card...' : 'Create My Digital Card'}
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+
+                <div className="mt-6 text-center text-sm text-muted-foreground">
+                    <p>
+                        Your card will be instantly available at: yourdomain.com/
+                        {formData.full_name ? generateSlug(formData.full_name) : 'your-name'}
+                    </p>
                 </div>
             </div>
-        </MainLayout>
-    );
+        </div>
+    </MainLayout>
+);
 }
 
 export default function RequestFormClient() {

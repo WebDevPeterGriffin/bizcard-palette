@@ -85,23 +85,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description: `Check out ${brandName}'s professional website.`,
         };
     }
-
-    return {
-        title: "Not Found",
-    };
-}
-
-export default async function Page({ params }: PageProps) {
-    const { slug } = await params;
-
-    if (isReservedSlug(slug)) {
-        notFound();
-    }
-
-    const supabase = await createClient();
-
-    const [cardResult, websiteResult] = await Promise.all([
-        supabase.from('cards').select('*').eq('slug', slug).single(),
+    supabase.from('cards').select('*').eq('slug', slug).single(),
         supabase.from('website_configs').select('*').eq('slug', slug).single()
     ]);
 

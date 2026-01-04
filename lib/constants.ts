@@ -1,0 +1,14 @@
+export const RESERVED_SLUGS = [
+    'admin',
+    'api',
+    'auth',
+    'dashboard',
+    'login',
+    'logout',
+    'request',
+    'signup',
+    'websites',
+    'favicon.ico',
+    'robots.txt',
+    'sitemap.xml',
+];
