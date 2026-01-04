@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Instagram, MessageSquare, Send } from "lucide-react";
+import { Mail, Instagram, Facebook, Send } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import MainLayout from "@/components/MainLayout";
@@ -143,25 +143,25 @@ export default function Contact() {
                                         </div>
                                     </a>
 
-                                    <a href="https://instagram.com/web.dev.peter" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-6 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+                                    <a href="https://instagram.com/mildtechstudios" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-6 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
                                         <div className="w-12 h-12 bg-pink-50 rounded-full flex items-center justify-center text-pink-600 group-hover:bg-pink-100 transition-colors">
                                             <Instagram className="w-6 h-6" />
                                         </div>
                                         <div>
                                             <h3 className="font-bold text-[#1A2D49]">Instagram</h3>
-                                            <p className="text-slate-500">@web.dev.peter</p>
+                                            <p className="text-slate-500">@mildtechstudios</p>
                                         </div>
                                     </a>
 
-                                    <div className="flex items-center gap-4 p-6 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all group cursor-pointer" onClick={() => toast.info("Discord community coming soon!")}>
-                                        <div className="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 group-hover:bg-indigo-100 transition-colors">
-                                            <MessageSquare className="w-6 h-6" />
+                                    <a href="https://www.facebook.com/MildTechStudio/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-6 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+                                        <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 group-hover:bg-blue-100 transition-colors">
+                                            <Facebook className="w-6 h-6" />
                                         </div>
                                         <div>
-                                            <h3 className="font-bold text-[#1A2D49]">Discord</h3>
-                                            <p className="text-slate-500">Join our community (Coming Soon)</p>
+                                            <h3 className="font-bold text-[#1A2D49]">Facebook</h3>
+                                            <p className="text-slate-500">Mild Tech Studios</p>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
