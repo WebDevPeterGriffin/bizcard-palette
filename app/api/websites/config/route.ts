@@ -1,4 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { RESERVED_SLUGS } from '@/lib/constants';
+
+export async function GET() {
+    const supabase = await createClient();
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { data, error } = await supabase
+        .from('website_configs')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('template', 'realtor')
+        .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ 
+        config: data?.config || null,
+        slug: data?.slug || null 
+    });
+}
+
+export async function POST(request: NextRequest) {
+    const supabase = await createClient();
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { config, slug } = body;
+
+    if (!config) {
+        return NextResponse.json({ error: 'Config is required' }, { status: 400 });
+    }
+
+    // Check reserved slugs
+    if (slug && RESERVED_SLUGS.includes(slug.toLowerCase())) {
+        return NextResponse.json(
+            { error: 'This website name is reserved. Please choose another one.' },
+            { status: 400 }
+        );
+    }
+
+    // Check for slug uniqueness if slug is provided
+    if (slug) {
         // 1. Check if slug exists in cards
         const { data: existingCard } = await supabase
             .from('cards')
