@@ -8,11 +8,19 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, ExternalLink, Trash2, LogOut, CreditCard, Globe, Edit, Copy, Share2, MessageSquare, Calendar, TrendingUp, Users, ArrowRight, Sparkles } from "lucide-react";
+import { Plus, ExternalLink, Trash2, LogOut, CreditCard, Globe, Edit, Copy, Share2, MessageSquare, Calendar, TrendingUp, Users, ArrowRight, Sparkles, Mail, Phone, X } from "lucide-react";
 import MainLayout from "@/components/MainLayout";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
 
 import { Tables } from "@/integrations/supabase/types";
 
@@ -33,6 +41,15 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
     const router = useRouter();
     const { toast } = useToast();
     const supabase = createClient();
+
+    // State for real-time updates
+    const [inquiriesList, setInquiriesList] = useState<InquiryData[]>(inquiries);
+    const [appointmentsList, setAppointmentsList] = useState<AppointmentData[]>(appointments);
+
+    // State for UI interaction
+    const [activeTab, setActiveTab] = useState("overview");
+    const [selectedInquiry, setSelectedInquiry] = useState<InquiryData | null>(null);
+    const [selectedAppointment, setSelectedAppointment] = useState<AppointmentData | null>(null);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -122,10 +139,6 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
             handleCopyLink(slug);
         }
     };
-
-    // State for real-time updates
-    const [inquiriesList, setInquiriesList] = useState<InquiryData[]>(inquiries);
-    const [appointmentsList, setAppointmentsList] = useState<AppointmentData[]>(appointments);
 
     useEffect(() => {
         // Subscribe to new inquiries
@@ -223,7 +236,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                     animate="visible"
                 >
                     {/* Header */}
-                    <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
+                    <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12 relative z-20">
                         <div>
                             <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-secondary">
                                 Dashboard
@@ -233,13 +246,13 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
-                            <Button asChild className="bg-brand-secondary hover:bg-brand-secondary/90 text-brand-primary font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                            <Button asChild className="bg-brand-secondary hover:bg-brand-secondary/90 text-brand-primary font-semibold shadow-lg hover:shadow-xl transition-all duration-300 relative z-30">
                                 <Link href="/request">
                                     <Plus className="mr-2 h-4 w-4" />
                                     Create Card
                                 </Link>
                             </Button>
-                            <Button variant="outline" onClick={handleLogout} className="border-brand-primary/20 hover:bg-brand-primary/5">
+                            <Button variant="outline" onClick={handleLogout} className="border-brand-primary/20 hover:bg-brand-primary/5 relative z-30">
                                 <LogOut className="mr-2 h-4 w-4" />
                                 Sign out
                             </Button>
@@ -247,14 +260,18 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                     </motion.div>
 
                     {/* Stats Grid */}
-                    <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
+                    <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12 relative z-10">
                         {[
-                            { title: "Total Cards", value: totalCards, icon: CreditCard, desc: "Active business cards" },
-                            { title: "Inquiries", value: totalInquiries, icon: MessageSquare, desc: "Messages received" },
-                            { title: "Appointments", value: totalAppointments, icon: Calendar, desc: "Upcoming meetings" },
-                            { title: "Website Status", value: websiteConfig ? "Active" : "Inactive", icon: Globe, desc: websiteConfig ? "Online and visible" : "Not yet published" }
+                            { title: "Total Cards", value: totalCards, icon: CreditCard, desc: "Active business cards", tab: "overview" },
+                            { title: "Inquiries", value: totalInquiries, icon: MessageSquare, desc: "Messages received", tab: "inquiries" },
+                            { title: "Appointments", value: totalAppointments, icon: Calendar, desc: "Upcoming meetings", tab: "appointments" },
+                            { title: "Website Status", value: websiteConfig ? "Active" : "Inactive", icon: Globe, desc: websiteConfig ? "Online and visible" : "Not yet published", tab: "overview" }
                         ].map((stat, index) => (
-                            <Card key={index} className="glass-card border-none shadow-lg hover:shadow-xl transition-all duration-300 group overflow-hidden relative">
+                            <Card
+                                key={index}
+                                className={`glass-card border-none shadow-lg hover:shadow-xl transition-all duration-300 group overflow-hidden relative ${stat.tab ? 'cursor-pointer hover:scale-[1.02]' : ''}`}
+                                onClick={() => stat.tab && setActiveTab(stat.tab)}
+                            >
                                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                                     <stat.icon className="w-24 h-24 text-brand-secondary transform rotate-12 translate-x-8 -translate-y-8" />
                                 </div>
@@ -270,7 +287,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                         ))}
                     </motion.div>
 
-                    <Tabs defaultValue="overview" className="space-y-8">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
                         <motion.div variants={itemVariants}>
                             <TabsList className="bg-brand-primary/5 p-1 rounded-xl">
                                 <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">Overview</TabsTrigger>
@@ -421,8 +438,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                                                         </p>
                                                         <p className="flex items-center gap-2">
                                                             <Calendar className="w-3 h-3" />
-                                                            Created: {format(new Date(card.created_at), "MMM d, yyyy")}
-                                                        </p>
+                                                            Created: {format(new Date(card.created_at), "MMM d, yyyy")}</p>
                                                     </div>
                                                     <div className="flex items-center gap-2 pt-2">
                                                         <Button asChild variant="outline" size="sm" className="flex-1 border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-primary transition-colors">
@@ -466,17 +482,22 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                                         ) : (
                                             <div className="space-y-4">
                                                 {inquiriesList.map((inquiry) => (
-                                                    <div key={inquiry.id} className="group flex flex-col gap-3 p-6 bg-white/50 hover:bg-white/80 border border-brand-primary/10 rounded-xl transition-all duration-300 hover:shadow-md">
-                                                        <div className="flex justify-between items-start">
+                                                    <div
+                                                        key={inquiry.id}
+                                                        className="group flex flex-col gap-3 p-6 bg-white/50 hover:bg-white/80 border border-brand-primary/10 rounded-xl transition-all duration-300 hover:shadow-md cursor-pointer relative overflow-hidden"
+                                                        onClick={() => setSelectedInquiry(inquiry)}
+                                                    >
+                                                        <div className="absolute inset-0 bg-brand-primary/0 group-hover:bg-brand-primary/5 transition-colors duration-300" />
+                                                        <div className="flex justify-between items-start relative z-10">
                                                             <div>
                                                                 <h4 className="font-bold text-lg text-brand-primary group-hover:text-brand-secondary transition-colors">{inquiry.name}</h4>
-                                                                <a href={`mailto:${inquiry.email}`} className="text-sm text-muted-foreground hover:underline">{inquiry.email}</a>
+                                                                <p className="text-sm text-muted-foreground">{inquiry.email}</p>
                                                             </div>
                                                             <span className="text-xs font-medium px-2 py-1 bg-brand-primary/5 rounded-full text-brand-primary/70">
                                                                 {format(new Date(inquiry.created_at), "MMM d, h:mm a")}
                                                             </span>
                                                         </div>
-                                                        <div className="bg-white p-4 rounded-lg border border-brand-primary/5 text-sm text-foreground/80 leading-relaxed">
+                                                        <div className="bg-white p-4 rounded-lg border border-brand-primary/5 text-sm text-foreground/80 leading-relaxed relative z-10 line-clamp-2">
                                                             {inquiry.message}
                                                         </div>
                                                     </div>
@@ -506,14 +527,19 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                                         ) : (
                                             <div className="space-y-4">
                                                 {appointmentsList.map((apt) => (
-                                                    <div key={apt.id} className="flex flex-col md:flex-row gap-6 p-6 bg-white/50 hover:bg-white/80 border border-brand-primary/10 rounded-xl transition-all duration-300 hover:shadow-md items-start md:items-center">
-                                                        <div className="flex-shrink-0 flex flex-col items-center justify-center w-16 h-16 bg-brand-primary/10 rounded-lg text-brand-primary">
+                                                    <div
+                                                        key={apt.id}
+                                                        className="flex flex-col md:flex-row gap-6 p-6 bg-white/50 hover:bg-white/80 border border-brand-primary/10 rounded-xl transition-all duration-300 hover:shadow-md items-start md:items-center cursor-pointer relative overflow-hidden group"
+                                                        onClick={() => setSelectedAppointment(apt)}
+                                                    >
+                                                        <div className="absolute inset-0 bg-brand-primary/0 group-hover:bg-brand-primary/5 transition-colors duration-300" />
+                                                        <div className="flex-shrink-0 flex flex-col items-center justify-center w-16 h-16 bg-brand-primary/10 rounded-lg text-brand-primary relative z-10">
                                                             <span className="text-xs font-bold uppercase">{format(new Date(apt.appointment_date), "MMM")}</span>
                                                             <span className="text-2xl font-bold">{format(new Date(apt.appointment_date), "d")}</span>
                                                         </div>
 
-                                                        <div className="flex-grow space-y-1">
-                                                            <h4 className="font-bold text-lg text-brand-primary">{apt.visitor_name}</h4>
+                                                        <div className="flex-grow space-y-1 relative z-10">
+                                                            <h4 className="font-bold text-lg text-brand-primary group-hover:text-brand-secondary transition-colors">{apt.visitor_name}</h4>
                                                             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                                                                 <span className="flex items-center gap-1">
                                                                     <MessageSquare className="w-3 h-3" />
@@ -532,7 +558,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex-shrink-0 text-right">
+                                                        <div className="flex-shrink-0 text-right relative z-10">
                                                             <div className="inline-flex items-center px-3 py-1 rounded-full bg-brand-secondary/20 text-brand-primary text-sm font-bold">
                                                                 {format(new Date(apt.appointment_date), "h:mm a")}
                                                             </div>
@@ -548,6 +574,147 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                     </Tabs>
                 </motion.div>
             </div>
+
+            {/* Inquiry Details Dialog */}
+            <Dialog open={!!selectedInquiry} onOpenChange={(open) => !open && setSelectedInquiry(null)}>
+                <DialogContent className="glass-card border-brand-primary/10 sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold text-brand-primary flex items-center gap-2">
+                            <MessageSquare className="w-6 h-6 text-brand-secondary" />
+                            Inquiry Details
+                        </DialogTitle>
+                        <DialogDescription>
+                            Received on {selectedInquiry && format(new Date(selectedInquiry.created_at), "MMMM d, yyyy 'at' h:mm a")}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {selectedInquiry && (
+                        <div className="space-y-6 py-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</label>
+                                    <p className="font-semibold text-lg">{selectedInquiry.name}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Email</label>
+                                    <p className="font-medium text-brand-primary">{selectedInquiry.email}</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Message</label>
+                                <div className="bg-white/50 p-4 rounded-lg border border-brand-primary/10 text-sm leading-relaxed">
+                                    {selectedInquiry.message}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <DialogFooter className="sm:justify-between gap-2">
+                        <Button variant="ghost" onClick={() => setSelectedInquiry(null)}>
+                            Close
+                        </Button>
+                        {selectedInquiry && (
+                            <Button asChild className="bg-brand-primary text-white hover:bg-brand-primary/90">
+                                <a href={`mailto:${selectedInquiry.email}?subject=Re: Inquiry from ${selectedInquiry.name}`}>
+                                    <Mail className="mr-2 h-4 w-4" />
+                                    Reply via Email
+                                </a>
+                            </Button>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Appointment Details Dialog */}
+            <Dialog open={!!selectedAppointment} onOpenChange={(open) => !open && setSelectedAppointment(null)}>
+                <DialogContent className="glass-card border-brand-primary/10 sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold text-brand-primary flex items-center gap-2">
+                            <Calendar className="w-6 h-6 text-brand-secondary" />
+                            Appointment Details
+                        </DialogTitle>
+                        <DialogDescription>
+                            Scheduled for {selectedAppointment && format(new Date(selectedAppointment.appointment_date), "MMMM d, yyyy 'at' h:mm a")}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {selectedAppointment && (
+                        <div className="space-y-6 py-4">
+                            <div className="flex items-center gap-4 p-4 bg-brand-secondary/10 rounded-lg border border-brand-secondary/20">
+                                <div className="flex-shrink-0 w-12 h-12 bg-brand-secondary/20 rounded-full flex items-center justify-center text-brand-primary font-bold text-xl">
+                                    {format(new Date(selectedAppointment.appointment_date), "d")}
+                                </div>
+                                <div>
+                                    <p className="font-bold text-brand-primary text-lg">
+                                        {format(new Date(selectedAppointment.appointment_date), "MMMM yyyy")}
+                                    </p>
+                                    <p className="text-brand-primary/80">
+                                        {format(new Date(selectedAppointment.appointment_date), "EEEE, h:mm a")}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Visitor Name</label>
+                                    <p className="font-semibold text-lg">{selectedAppointment.visitor_name}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Source Card</label>
+                                    <p className="font-medium text-brand-primary">{selectedAppointment.cards?.full_name || 'Unknown'}</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <Mail className="w-4 h-4 text-muted-foreground" />
+                                    <span className="text-sm">{selectedAppointment.visitor_email}</span>
+                                </div>
+                                {selectedAppointment.visitor_phone && (
+                                    <div className="flex items-center gap-3">
+                                        <Phone className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-sm">{selectedAppointment.visitor_phone}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {selectedAppointment.message && (
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Message</label>
+                                    <div className="bg-white/50 p-4 rounded-lg border border-brand-primary/10 text-sm leading-relaxed italic">
+                                        "{selectedAppointment.message}"
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
+                        <Button variant="ghost" onClick={() => setSelectedAppointment(null)}>
+                            Close
+                        </Button>
+                        <div className="flex gap-2">
+                            {selectedAppointment && selectedAppointment.visitor_phone && (
+                                <Button asChild variant="outline" className="border-brand-primary/20">
+                                    <a href={`tel:${selectedAppointment.visitor_phone}`}>
+                                        <Phone className="mr-2 h-4 w-4" />
+                                        Call
+                                    </a>
+                                </Button>
+                            )}
+                            {selectedAppointment && (
+                                <Button asChild className="bg-brand-primary text-white hover:bg-brand-primary/90">
+                                    <a href={`mailto:${selectedAppointment.visitor_email}?subject=Regarding our appointment on ${format(new Date(selectedAppointment.appointment_date), "MMM d")}`}>
+                                        <Mail className="mr-2 h-4 w-4" />
+                                        Email
+                                    </a>
+                                </Button>
+                            )}
+                        </div>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </MainLayout>
     );
 }
