@@ -116,13 +116,21 @@ function RequestFormContent() {
             const MAX_ATTEMPTS = 100;
 
             while (counter <= MAX_ATTEMPTS) {
+                // Check cards table
                 const { data: existingCard } = await supabase
                     .from('cards')
                     .select('id')
                     .eq('slug', slug)
                     .maybeSingle();
 
-                if (!existingCard) break;
+                // Check website_configs table
+                const { data: existingWebsite } = await supabase
+                    .from('website_configs')
+                    .select('id')
+                    .eq('slug', slug)
+                    .maybeSingle();
+
+                if (!existingCard && !existingWebsite) break;
 
                 counter++;
                 slug = `${baseSlug}-${counter}`;

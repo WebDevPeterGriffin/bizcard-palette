@@ -41,6 +41,32 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Config is required' }, { status: 400 });
     }
 
+    // Check for slug uniqueness if slug is provided
+    if (slug) {
+        // 1. Check if slug exists in cards
+        const { data: existingCard } = await supabase
+            .from('cards')
+            .select('id')
+            .eq('slug', slug)
+            .maybeSingle();
+
+        if (existingCard) {
+            return NextResponse.json({ error: 'This URL is already taken by a business card. Please choose another.' }, { status: 409 });
+        }
+
+        // 2. Check if slug exists in website_configs (excluding current user's config)
+        const { data: existingWebsite } = await supabase
+            .from('website_configs')
+            .select('id')
+            .eq('slug', slug)
+            .neq('user_id', user.id) // Allow updating own slug
+            .maybeSingle();
+
+        if (existingWebsite) {
+            return NextResponse.json({ error: 'This URL is already taken by another website. Please choose another.' }, { status: 409 });
+        }
+    }
+
     // Upsert: insert or update
     const { data, error } = await supabase
         .from('website_configs')
