@@ -6,18 +6,26 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, Instagram, MessageSquare, Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
 import MainLayout from "@/components/MainLayout";
-import { logger } from "@/lib/logger";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
 export default function Contact() {
     const [isLoading, setIsLoading] = useState(false);
-    const supabase = createClient();
+    const [token, setToken] = useState<string | null>(null);
+    const ref = useRef<TurnstileInstance>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!token) {
+            toast.error("Please complete the captcha challenge");
+            return;
+        }
+
         setIsLoading(true);
 
         const formData = new FormData(e.target as HTMLFormElement);
@@ -26,28 +34,35 @@ export default function Contact() {
         const message = formData.get("message") as string;
 
         try {
-            const { error } = await supabase
-                .from('contact_messages')
-                .insert({ name, email, message });
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    message,
+                    token
+                }),
+            });
 
-            if (error) throw error;
+            const data = await response.json();
 
-            // Notify admin (non-blocking)
-            supabase.functions.invoke('notify-admin', {
-                body: {
-                    type: 'contact',
-                    data: { name, email, message }
-                }
-            }).catch(err => logger.error('Email notification failed:', err));
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to send message');
+            }
 
             toast.success("Message sent successfully!", {
                 description: "We'll get back to you as soon as possible.",
             });
             (e.target as HTMLFormElement).reset();
+            ref.current?.reset();
+            setToken(null);
         } catch (error) {
-            logger.error("Error sending message:", error);
+            console.error("Error sending message:", error);
             toast.error("Failed to send message", {
-                description: "Please try again later or email us directly.",
+                description: error instanceof Error ? error.message : "Please try again later or email us directly.",
             });
         } finally {
             setIsLoading(false);
@@ -83,6 +98,17 @@ export default function Contact() {
                                         <Label htmlFor="message">Message</Label>
                                         <Textarea id="message" name="message" placeholder="How can we help you?" className="min-h-[150px]" required />
                                     </div>
+
+                                    <div className="flex justify-center">
+                                        <Turnstile
+                                            ref={ref}
+                                            siteKey={TURNSTILE_SITE_KEY}
+                                            onSuccess={setToken}
+                                            onError={() => toast.error("Captcha error")}
+                                            onExpire={() => setToken(null)}
+                                        />
+                                    </div>
+
                                     <Button
                                         type="submit"
                                         variant="brand"
