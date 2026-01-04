@@ -21,6 +21,8 @@ import {
     DialogTitle,
     DialogFooter,
 } from "@/components/ui/dialog";
+import { OnboardingTour } from "@/components/OnboardingTour";
+import { HelpWidget } from "@/components/HelpWidget";
 
 import { Tables } from "@/integrations/supabase/types";
 
@@ -226,8 +228,65 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
         }
     };
 
+    // Tour State
+    const [showTour, setShowTour] = useState(false);
+
+    useEffect(() => {
+        const hasSeenTour = localStorage.getItem('hasSeenDashboardTour');
+        if (!hasSeenTour) {
+            // Small delay to ensure everything is rendered
+            setTimeout(() => setShowTour(true), 1000);
+        }
+    }, []);
+
+    const handleTourComplete = () => {
+        setShowTour(false);
+        localStorage.setItem('hasSeenDashboardTour', 'true');
+        toast({
+            title: "You're all set!",
+            description: "Enjoy using your new dashboard.",
+        });
+    };
+
+    const handleTourSkip = () => {
+        setShowTour(false);
+        localStorage.setItem('hasSeenDashboardTour', 'true');
+    };
+
+    const handleRestartTour = () => {
+        setShowTour(true);
+    };
+
+    const tourSteps: import("@/components/OnboardingTour").TourStep[] = [
+        {
+            targetId: "tour-create-card",
+            title: "Create Your First Card",
+            description: "Start here to build your professional digital business card. Choose a template, add your details, and share it instantly.",
+            position: "bottom"
+        },
+        {
+            targetId: "tour-stats",
+            title: "Quick Overview",
+            description: "Keep track of your total cards, incoming messages, and upcoming appointments at a glance.",
+            position: "bottom"
+        },
+        {
+            targetId: "tour-tabs",
+            title: "Manage Everything",
+            description: "Switch between your Website, Inquiries, and Appointments tabs to manage different aspects of your digital presence.",
+            position: "bottom"
+        }
+    ];
+
     return (
         <MainLayout>
+            <OnboardingTour
+                steps={tourSteps}
+                isOpen={showTour}
+                onComplete={handleTourComplete}
+                onSkip={handleTourSkip}
+            />
+            <HelpWidget onRestartTour={handleRestartTour} />
             <div className="min-h-screen bg-gradient-to-br from-background via-background to-brand-primary/5 pt-24 pb-12">
                 <motion.div
                     className="container mx-auto px-4 max-w-7xl"
@@ -246,7 +305,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
-                            <Button asChild className="bg-brand-secondary hover:bg-brand-secondary/90 text-brand-primary font-semibold shadow-lg hover:shadow-xl transition-all duration-300 relative z-30">
+                            <Button id="tour-create-card" asChild className="bg-brand-secondary hover:bg-brand-secondary/90 text-brand-primary font-semibold shadow-lg hover:shadow-xl transition-all duration-300 relative z-30">
                                 <Link href="/request">
                                     <Plus className="mr-2 h-4 w-4" />
                                     Create Card
@@ -260,7 +319,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                     </motion.div>
 
                     {/* Stats Grid */}
-                    <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12 relative z-10">
+                    <motion.div id="tour-stats" variants={itemVariants} className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12 relative z-10">
                         {[
                             { title: "Total Cards", value: totalCards, icon: CreditCard, desc: "Active business cards", tab: "overview" },
                             { title: "Inquiries", value: totalInquiries, icon: MessageSquare, desc: "Messages received", tab: "inquiries" },
@@ -288,7 +347,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                     </motion.div>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-                        <motion.div variants={itemVariants}>
+                        <motion.div id="tour-tabs" variants={itemVariants}>
                             <TabsList className="bg-brand-primary/5 p-1 rounded-xl">
                                 <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">Overview</TabsTrigger>
                                 <TabsTrigger value="inquiries" className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">Inquiries</TabsTrigger>
