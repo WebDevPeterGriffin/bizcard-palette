@@ -36,17 +36,20 @@ export default function Contact() {
         const message = formData.get("message") as string;
 
         try {
-            const { data, error } = await supabase.functions.invoke('submit-contact', {
+            const { data: responseData, error } = await supabase.functions.invoke('submit-contact', {
                 body: {
-                    name,
-                    email,
-                    message,
+                    type: 'contact',
+                    data: {
+                        name,
+                        email,
+                        message
+                    },
                     token
                 }
             });
 
             if (error) throw error;
-            if (data?.error) throw new Error(data.error);
+            if (responseData?.error) throw new Error(responseData.error);
 
             toast.success("Message sent successfully!", {
                 description: "We'll get back to you as soon as possible.",

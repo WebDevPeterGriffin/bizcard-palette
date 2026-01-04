@@ -5,6 +5,8 @@ import { useSectionReveal } from "@/hooks/useSectionReveal";
 import { Mail, Phone, MapPin, Instagram, Linkedin, Facebook, Twitter, Youtube } from "lucide-react";
 import { useBuilder } from "@/context/BuilderContext";
 import { EditableText } from "@/components/builder/EditableText";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { createClient } from "@/lib/supabase/client";
 
 export const ContactSection = () => {
     const revealRef = useSectionReveal();
@@ -18,6 +20,9 @@ export const ContactSection = () => {
         message: ''
     });
 
+    const [token, setToken] = React.useState<string | null>(null);
+    const supabase = createClient();
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!userId) {
@@ -25,30 +30,35 @@ export const ContactSection = () => {
             return;
         }
 
+        if (!token) {
+            alert("Please complete the captcha");
+            return;
+        }
+
         setStatus('submitting');
         try {
-            const response = await fetch('/api/websites/inquiry', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId,
-                    name: `${formData.firstName} ${formData.lastName}`,
-                    email: formData.email,
-                    message: formData.message
-                })
+            const { data, error } = await supabase.functions.invoke('submit-contact', {
+                body: {
+                    type: 'website_inquiry',
+                    data: {
+                        userId,
+                        name: `${formData.firstName} ${formData.lastName}`,
+                        email: formData.email,
+                        message: formData.message
+                    },
+                    token
+                }
             });
 
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Failed to submit');
-            }
+            if (error) throw error;
+            if (data?.error) throw new Error(data.error);
 
             setStatus('success');
             setFormData({ firstName: '', lastName: '', email: '', message: '' });
+            setToken(null);
             setTimeout(() => setStatus('idle'), 3000);
         } catch (error) {
             console.error('Submission error:', error);
-            // alert(error instanceof Error ? error.message : 'An unknown error occurred');
             setStatus('error');
         }
     };
@@ -199,6 +209,16 @@ export const ContactSection = () => {
                                     placeholder="I'm interested in buying a home..."
                                 ></textarea>
                             </div>
+
+                            <div className="flex justify-center">
+                                <Turnstile
+                                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
+                                    onSuccess={setToken}
+                                    onExpire={() => setToken(null)}
+                                    theme="dark"
+                                />
+                            </div>
+
                             <button
                                 type="submit"
                                 disabled={status === 'submitting'}

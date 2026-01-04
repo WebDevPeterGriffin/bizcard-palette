@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 interface JoinWaitlistModalProps {
     isOpen: boolean;
@@ -20,39 +21,45 @@ export default function JoinWaitlistModal({ isOpen, onClose }: JoinWaitlistModal
     const [interest, setInterest] = useState("both");
     const [isLoading, setIsLoading] = useState(false);
 
+    const [token, setToken] = useState<string | null>(null);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!token) {
+            toast.error("Please complete the captcha");
+            return;
+        }
+
         setIsLoading(true);
 
         try {
-            const { error } = await supabase
-                .from('waitlist')
-                .insert({ email, interest });
+            const { data, error } = await supabase.functions.invoke('submit-contact', {
+                body: {
+                    type: 'waitlist',
+                    data: { email, interest },
+                    token
+                }
+            });
 
-            if (error) {
-                if (error.code === '23505') { // Unique violation
+            if (error) throw error;
+            if (data?.error) {
+                if (data.error === 'Already on waitlist') {
                     toast.info("You're already on the waitlist!", {
                         description: "We'll keep you posted.",
                     });
                     onClose();
                     return;
                 }
-                throw error;
+                throw new Error(data.error);
             }
-
-            // Notify admin (non-blocking)
-            supabase.functions.invoke('notify-admin', {
-                body: {
-                    type: 'waitlist',
-                    data: { email, interest }
-                }
-            }).catch(err => console.error('Email notification failed:', err));
 
             toast.success("You've been added to the waitlist!", {
                 description: "We'll notify you when we launch.",
             });
 
             setEmail("");
+            setToken(null);
             onClose();
         } catch (error) {
             console.error("Error joining waitlist:", error);
@@ -98,6 +105,14 @@ export default function JoinWaitlistModal({ isOpen, onClose }: JoinWaitlistModal
                                 <SelectItem value="both">Both</SelectItem>
                             </SelectContent>
                         </Select>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <Turnstile
+                            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
+                            onSuccess={setToken}
+                            onExpire={() => setToken(null)}
+                        />
                     </div>
 
                     <div className="flex justify-end gap-3 pt-2">

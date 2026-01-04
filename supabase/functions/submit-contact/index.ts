@@ -30,7 +30,7 @@ serve(async (req) => {
     }
 
     try {
-        const { name, email, message, token } = await req.json();
+        const { type = 'contact', data, token } = await req.json();
 
         // 1. Verify Turnstile Token
         if (!TURNSTILE_SECRET_KEY) {
@@ -54,34 +54,88 @@ serve(async (req) => {
             );
         }
 
-        // 2. Insert into Database
+        // 2. Insert into Database & Send Email based on type
         const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-        const { error: insertError } = await supabase
-            .from('contact_messages')
-            .insert({ name, email, message });
+        let subject = "";
+        let html = "";
+        let recipient = ADMIN_EMAIL;
+        let replyTo = "";
 
-        if (insertError) {
-            console.error("Supabase insert error:", insertError);
-            throw new Error("Failed to save message");
-        }
+        if (type === 'contact') {
+            const { name, email, message } = data;
+            const { error: insertError } = await supabase
+                .from('contact_messages')
+                .insert({ name, email, message });
 
-        // 3. Send Email Notification
-        if (ADMIN_EMAIL) {
-            const subject = `New Contact Message from ${name}`;
-            const html = `
+            if (insertError) throw insertError;
+
+            subject = `New Contact Message from ${name}`;
+            html = `
                 <h2>New Contact Message</h2>
                 <p><strong>Name:</strong> ${name}</p>
                 <p><strong>Email:</strong> ${email}</p>
                 <p><strong>Message:</strong></p>
                 <p>${message.replace(/\n/g, '<br>')}</p>
             `;
+            replyTo = email;
 
+        } else if (type === 'website_inquiry') {
+            const { userId, name, email, message } = data;
+            
+            // Get user email to notify them
+            const { data: userData, error: userError } = await supabase.auth.admin.getUserById(userId);
+            if (userError || !userData.user.email) throw new Error("User not found");
+            
+            recipient = userData.user.email;
+
+            const { error: insertError } = await supabase
+                .from('website_inquiries')
+                .insert({ user_id: userId, name, email, message });
+
+            if (insertError) throw insertError;
+
+            subject = `New Website Inquiry from ${name}`;
+            html = `
+                <h2>New Website Inquiry</h2>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Message:</strong></p>
+                <p>${message.replace(/\n/g, '<br>')}</p>
+                <br/>
+                <p>You can view this inquiry in your Dashboard.</p>
+            `;
+            replyTo = email;
+
+        } else if (type === 'waitlist') {
+            const { email, interest } = data;
+            const { error: insertError } = await supabase
+                .from('waitlist')
+                .insert({ email, interest });
+
+            if (insertError) {
+                if (insertError.code === '23505') throw new Error("Already on waitlist");
+                throw insertError;
+            }
+
+            subject = `New Waitlist Signup: ${email}`;
+            html = `
+                <h2>New Waitlist Signup</h2>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Interest:</strong> ${interest}</p>
+            `;
+            replyTo = email;
+        } else {
+            throw new Error("Invalid submission type");
+        }
+
+        // 3. Send Email Notification
+        if (recipient) {
             await resend.emails.send({
                 from: RESEND_FROM_EMAIL,
-                to: ADMIN_EMAIL,
+                to: recipient,
                 subject: subject,
                 html: html,
-                reply_to: email
+                reply_to: replyTo
             });
         }
 
