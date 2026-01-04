@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
                 if (funcError) {
                     console.error('Edge Function error:', funcError);
                 } else {
-                    console.log('Email notification triggered for:', recipientEmail);
+                    // Email notification triggered
                 }
             } else {
                 console.warn('No contact email found in website config for user:', userId);

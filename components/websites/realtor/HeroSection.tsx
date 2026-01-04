@@ -4,6 +4,7 @@ import React from "react";
 import { useSectionReveal } from "@/hooks/useSectionReveal";
 import { useBuilder } from "@/context/BuilderContext";
 import { EditableText } from "@/components/builder/EditableText";
+import { EditableImage } from "@/components/builder/EditableImage";
 
 export const HeroSection = () => {
     const { config } = useBuilder();
@@ -13,12 +14,15 @@ export const HeroSection = () => {
         <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
             {/* Background with Gradient Fallback */}
             <div className="absolute inset-0" style={{ backgroundColor: 'var(--primary)' }}>
-                <div className="absolute inset-0 opacity-90" style={{ background: `linear-gradient(to bottom right, var(--primary), #000)` }} />
-                {/* Optional: Add a subtle pattern or image overlay here if available, but ensure gradient is the base */}
-                <div
-                    className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600596542815-27b88e54e618?q=80&w=2076&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-40"
-                    aria-hidden="true"
-                />
+                <div className="absolute inset-0 opacity-90 z-10" style={{ background: `linear-gradient(to bottom right, var(--primary), #000)` }} />
+                <div className="absolute inset-0 mix-blend-overlay opacity-40">
+                    <EditableImage
+                        id="hero-bg"
+                        initialValue={config.content.images['hero-bg'] || 'https://images.unsplash.com/photo-1600596542815-27b88e54e618?q=80&w=2076&auto=format&fit=crop'}
+                        alt="Hero Background"
+                        className="w-full h-full object-cover"
+                    />
+                </div>
             </div>
 
             <div className="container mx-auto px-4 relative z-10 text-center" ref={revealRef}>

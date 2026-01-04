@@ -18,12 +18,17 @@ export default async function DashboardPage() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-    // Fetch user's website config
-    const { data: websiteConfig } = await supabase
+    // Fetch user's website configs
+    const { data: websiteConfigs } = await supabase
         .from("website_configs")
         .select("*")
         .eq("user_id", user.id)
-        .single();
+        .order("updated_at", { ascending: false });
+
+    // Determine primary config:
+    // 1. Prefer config with slug (published)
+    // 2. Fallback to most recently updated
+    const websiteConfig = websiteConfigs?.find(c => c.slug) || websiteConfigs?.[0] || null;
 
     // Fetch recent inquiries
     const { data: inquiries } = await supabase

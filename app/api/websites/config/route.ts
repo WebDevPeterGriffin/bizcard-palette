@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { RESERVED_SLUGS } from '@/lib/constants';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     const supabase = await createClient();
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -10,20 +10,31 @@ export async function GET() {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const templateParam = searchParams.get('template');
+
+    // Fetch all configs for the user
     const { data, error } = await supabase
         .from('website_configs')
         .select('*')
-        .eq('user_id', user.id)
-        .eq('template', 'realtor')
-        .single();
+        .eq('user_id', user.id);
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+    if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    let activeConfig;
+    if (templateParam) {
+        activeConfig = data?.find(c => c.template === templateParam);
+    } else {
+        // Prioritize the config with a slug (published), otherwise default to realtor or the first one
+        activeConfig = data?.find(c => c.slug) || data?.find(c => c.template === 'realtor') || data?.[0];
+    }
+
     return NextResponse.json({ 
-        config: data?.config || null,
-        slug: data?.slug || null 
+        config: activeConfig?.config || null,
+        slug: activeConfig?.slug || null,
+        template: activeConfig?.template || templateParam || 'realtor'
     });
 }
 
@@ -36,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { config, slug } = body;
+    const { config, slug, template = 'realtor' } = body;
 
     if (!config) {
         return NextResponse.json({ error: 'Config is required' }, { status: 400 });
@@ -74,6 +85,15 @@ export async function POST(request: NextRequest) {
         if (existingWebsite) {
             return NextResponse.json({ error: 'This URL is already taken by another website. Please choose another.' }, { status: 409 });
         }
+
+        // 3. Ensure no OTHER template of THIS user has this slug (to prevent collision)
+        // If I'm saving 'creative' with slug 'foo', and I have 'realtor' with slug 'foo', I must clear 'realtor' slug.
+        await supabase
+            .from('website_configs')
+            .update({ slug: null })
+            .eq('user_id', user.id)
+            .eq('slug', slug)
+            .neq('template', template);
     }
 
     // Upsert: insert or update
@@ -82,7 +102,7 @@ export async function POST(request: NextRequest) {
         .upsert(
             {
                 user_id: user.id,
-                template: 'realtor',
+                template: template,
                 config: config,
                 ...(slug && { slug }), // Only update slug if provided
             },
@@ -98,7 +118,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, data });
 }
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
     const supabase = await createClient();
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -106,12 +126,15 @@ export async function DELETE() {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const templateParam = searchParams.get('template') || 'realtor';
+
     // Delete config
     const { error: deleteError } = await supabase
         .from('website_configs')
         .delete()
         .eq('user_id', user.id)
-        .eq('template', 'realtor');
+        .eq('template', templateParam);
 
     if (deleteError) {
         return NextResponse.json({ error: deleteError.message }, { status: 500 });

@@ -117,23 +117,66 @@ export default function Websites() {
                                 </div>
                             </div>
 
-                            {/* Coming Soon Placeholders */}
-                            {[2, 3].map((item) => (
-                                <div key={item} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all group opacity-60">
-                                    <div className="h-64 bg-slate-200 relative flex items-center justify-center overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-tr from-slate-200 to-slate-100"></div>
-                                        <Layout className="w-16 h-16 text-slate-300 group-hover:scale-110 transition-transform duration-500" />
-                                        <div className="absolute top-4 right-4 px-3 py-1 bg-[#1A2D49] text-white text-xs font-bold rounded-full uppercase tracking-wider">
-                                            Coming Soon
-                                        </div>
-                                    </div>
-                                    <div className="p-6">
-                                        <div className="h-6 w-2/3 bg-slate-100 rounded mb-3"></div>
-                                        <div className="h-4 w-full bg-slate-50 rounded mb-2"></div>
-                                        <div className="h-4 w-5/6 bg-slate-50 rounded"></div>
+                            {/* Creative Template */}
+                            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all group flex flex-col">
+                                <div className="h-64 bg-black relative flex items-center justify-center overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
+                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800 via-zinc-950 to-black opacity-90"></div>
+                                    <div className="relative z-10 text-center p-6">
+                                        <span className="inline-block py-1 px-3 rounded-full bg-purple-500/20 text-purple-400 text-xs font-semibold tracking-wider mb-3 border border-purple-500/30">
+                                            CREATIVE
+                                        </span>
+                                        <h3 className="text-2xl font-sans font-black text-white mb-2 tracking-tighter">THE VISIONARY</h3>
+                                        <p className="text-zinc-400 text-sm">For agencies and creatives</p>
                                     </div>
                                 </div>
-                            ))}
+                                <div className="p-6 flex-1 flex flex-col">
+                                    <div className="space-y-3 mb-6 flex-1">
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                                            <span>Scroll Animations</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                                            <span>Parallax Effects</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                                            <span>Dark Mode</span>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <Button
+                                            variant="outline"
+                                            className="w-full"
+                                            onClick={() => window.open('/websites/creative', '_blank')}
+                                        >
+                                            Preview
+                                        </Button>
+                                        <Button
+                                            className="w-full bg-black hover:bg-zinc-800 text-white"
+                                            onClick={() => window.location.href = '/websites/creative'}
+                                        >
+                                            Select
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Coming Soon Placeholder */}
+                            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all group opacity-60">
+                                <div className="h-64 bg-slate-200 relative flex items-center justify-center overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-slate-200 to-slate-100"></div>
+                                    <Layout className="w-16 h-16 text-slate-300 group-hover:scale-110 transition-transform duration-500" />
+                                    <div className="absolute top-4 right-4 px-3 py-1 bg-[#1A2D49] text-white text-xs font-bold rounded-full uppercase tracking-wider">
+                                        Coming Soon
+                                    </div>
+                                </div>
+                                <div className="p-6">
+                                    <div className="h-6 w-2/3 bg-slate-100 rounded mb-3"></div>
+                                    <div className="h-4 w-full bg-slate-50 rounded mb-2"></div>
+                                    <div className="h-4 w-5/6 bg-slate-50 rounded"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

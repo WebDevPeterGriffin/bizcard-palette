@@ -74,7 +74,7 @@ export function OverviewTab({
 
                                 <div className="flex flex-wrap gap-3">
                                     <Button asChild className="bg-brand-primary text-white hover:bg-brand-primary/90 shadow-md">
-                                        <Link href="/websites/realtor">
+                                        <Link href={`/websites/${websiteConfig.template}`}>
                                             <Edit className="mr-2 h-4 w-4" />
                                             Edit Website
                                         </Link>
@@ -111,7 +111,7 @@ export function OverviewTab({
                         </CardContent>
                     </Card>
                 ) : (
-                    <Card className="border-2 border-dashed border-brand-primary/20 bg-brand-primary/5 hover:bg-brand-primary/10 transition-colors cursor-pointer" onClick={() => window.location.href = '/websites/realtor'}>
+                    <Card className="border-2 border-dashed border-brand-primary/20 bg-brand-primary/5 hover:bg-brand-primary/10 transition-colors cursor-pointer" onClick={() => window.location.href = '/websites'}>
                         <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                             <div className="w-16 h-16 rounded-full bg-brand-secondary/20 flex items-center justify-center mb-4">
                                 <Globe className="h-8 w-8 text-brand-secondary" />

@@ -4,23 +4,20 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useBuilder } from "@/context/BuilderContext";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, Undo, Redo, GripVertical, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-import { ColorsTab } from "@/components/builder/ColorsTab";
-import { AssetsTab } from "@/components/builder/AssetsTab";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ContentTab } from "@/components/builder/ContentTab";
+import { ColorsTab } from "@/components/builder/ColorsTab";
 import { SlugDialog } from "@/components/builder/SlugDialog";
 
 export const BuilderPanel = () => {
     const {
         config,
+        schema,
         updateColor,
-        updateLogo,
-        updateImage,
         updateText,
         updateSocialLink,
         removeSocialLink,
@@ -34,7 +31,6 @@ export const BuilderPanel = () => {
         slug,
     } = useBuilder();
     const router = useRouter();
-    const [isUploading, setIsUploading] = React.useState(false);
     const [isSlugDialogOpen, setIsSlugDialogOpen] = React.useState(false);
 
     const handleSave = async () => {
@@ -105,30 +101,29 @@ export const BuilderPanel = () => {
                 </div>
 
                 <div className="flex-1 overflow-y-auto">
-                    <Tabs defaultValue="colors" className="w-full">
-                        <TabsList className="w-full grid grid-cols-3 p-1 bg-slate-100/50">
-                            <TabsTrigger value="colors" className="text-xs">Colors</TabsTrigger>
-                            <TabsTrigger value="assets" className="text-xs">Assets</TabsTrigger>
-                            <TabsTrigger value="content" className="text-xs">Content</TabsTrigger>
-                        </TabsList>
+                    <Tabs defaultValue="settings" className="w-full">
+                        <div className="px-6 pt-6">
+                            <TabsList className="w-full grid grid-cols-2">
+                                <TabsTrigger value="settings">Settings</TabsTrigger>
+                                <TabsTrigger value="content">Content</TabsTrigger>
+                            </TabsList>
+                        </div>
 
-                        <div className="p-6 space-y-6">
-                            <ColorsTab config={config} updateColor={updateColor} />
+                        <div className="p-6">
+                            <TabsContent value="settings" className="mt-0">
+                                <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Theme Settings</h4>
+                                <ColorsTab config={config} schema={schema} updateColor={updateColor} />
+                            </TabsContent>
 
-                            <AssetsTab
-                                config={config}
-                                updateImage={updateImage}
-                                updateLogo={updateLogo}
-                                setIsUploading={setIsUploading}
-                                isUploading={isUploading}
-                            />
-
-                            <ContentTab
-                                config={config}
-                                updateText={updateText}
-                                updateSocialLink={updateSocialLink}
-                                removeSocialLink={removeSocialLink}
-                            />
+                            <TabsContent value="content" className="mt-0">
+                                <ContentTab
+                                    config={config}
+                                    schema={schema}
+                                    updateText={updateText}
+                                    updateSocialLink={updateSocialLink}
+                                    removeSocialLink={removeSocialLink}
+                                />
+                            </TabsContent>
                         </div>
                     </Tabs>
                 </div>

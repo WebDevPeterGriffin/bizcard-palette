@@ -7,16 +7,18 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Image as ImageIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { WebsiteConfig } from "@/context/BuilderContext";
+import { TemplateSchema } from "@/types/builder";
 
 interface AssetsTabProps {
     config: WebsiteConfig;
+    schema: TemplateSchema;
     updateImage: (key: string, value: string) => void;
     updateLogo: (type: 'personal' | 'broker', value: string | null) => void;
     setIsUploading: (isUploading: boolean) => void;
     isUploading: boolean;
 }
 
-export function AssetsTab({ config, updateImage, updateLogo, setIsUploading, isUploading }: AssetsTabProps) {
+export function AssetsTab({ config, schema, updateImage, updateLogo, setIsUploading, isUploading }: AssetsTabProps) {
 
     const uploadToStorage = async (file: File, type: string): Promise<string | null> => {
         const formData = new FormData();
@@ -58,120 +60,94 @@ export function AssetsTab({ config, updateImage, updateLogo, setIsUploading, isU
         }
     };
 
-    const handleHeadshotUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
         setIsUploading(true);
-        const url = await uploadToStorage(file, 'headshot');
+        const url = await uploadToStorage(file, key);
         setIsUploading(false);
 
         if (url) {
-            updateImage('headshot', url);
-            toast.success('Headshot uploaded!');
+            updateImage(key, url);
+            toast.success('Image uploaded!');
         }
     };
 
     return (
         <TabsContent value="assets" className="space-y-6 mt-0">
             <div className="space-y-4">
-                {/* Headshot Upload */}
-                <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Headshot</Label>
-                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer relative">
-                        <Input
-                            type="file"
-                            accept="image/*"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            onChange={handleHeadshotUpload}
-                            disabled={isUploading}
-                        />
-                        {config.content.images.headshot ? (
-                            <div className="relative group">
-                                <img src={config.content.images.headshot} alt="Headshot" className="h-24 mx-auto object-cover rounded-lg shadow-sm" />
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        updateImage('headshot', '');
-                                    }}
-                                    className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                    title="Remove headshot"
-                                >
-                                    <Trash2 className="w-3 h-3" />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="text-slate-400 flex flex-col items-center gap-2">
-                                <ImageIcon className="w-6 h-6" />
-                                <span className="text-xs">Upload Headshot</span>
-                            </div>
-                        )}
+                {schema.assets.map((asset) => (
+                    <div key={asset.key} className="space-y-2">
+                        <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{asset.label}</Label>
+                        <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer relative">
+                            <Input
+                                type="file"
+                                accept="image/*"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                onChange={(e) => {
+                                    if (asset.type === 'logo') {
+                                        handleLogoUpload(e, asset.key as 'personal' | 'broker');
+                                    } else {
+                                        handleImageUpload(e, asset.key);
+                                    }
+                                }}
+                                disabled={isUploading}
+                            />
+                            {asset.type === 'logo' ? (
+                                config.content.logos[asset.key as 'personal' | 'broker'] ? (
+                                    <div className="relative group">
+                                        <img
+                                            src={config.content.logos[asset.key as 'personal' | 'broker'] || ''}
+                                            alt={asset.label}
+                                            className="h-12 mx-auto object-contain"
+                                        />
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                updateLogo(asset.key as 'personal' | 'broker', null);
+                                            }}
+                                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                            title="Remove logo"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="text-slate-400 flex flex-col items-center gap-2">
+                                        <ImageIcon className="w-6 h-6" />
+                                        <span className="text-xs">Click to upload</span>
+                                    </div>
+                                )
+                            ) : (
+                                config.content.images[asset.key] ? (
+                                    <div className="relative group">
+                                        <img
+                                            src={config.content.images[asset.key]}
+                                            alt={asset.label}
+                                            className="h-24 mx-auto object-cover rounded-lg shadow-sm"
+                                        />
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                updateImage(asset.key, '');
+                                            }}
+                                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                            title="Remove image"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="text-slate-400 flex flex-col items-center gap-2">
+                                        <ImageIcon className="w-6 h-6" />
+                                        <span className="text-xs">Click to upload</span>
+                                    </div>
+                                )
+                            )}
+                        </div>
                     </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Personal Logo</Label>
-                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer relative">
-                        <Input
-                            type="file"
-                            accept="image/*"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            onChange={(e) => handleLogoUpload(e, 'personal')}
-                        />
-                        {config.content.logos.personal ? (
-                            <div className="relative group">
-                                <img src={config.content.logos.personal} alt="Personal" className="h-12 mx-auto object-contain" />
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        updateLogo('personal', null);
-                                    }}
-                                    className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                    title="Remove logo"
-                                >
-                                    <Trash2 className="w-3 h-3" />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="text-slate-400 flex flex-col items-center gap-2">
-                                <ImageIcon className="w-6 h-6" />
-                                <span className="text-xs">Click to upload</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Broker Logo</Label>
-                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer relative">
-                        <Input
-                            type="file"
-                            accept="image/*"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            onChange={(e) => handleLogoUpload(e, 'broker')}
-                        />
-                        {config.content.logos.broker ? (
-                            <div className="relative group">
-                                <img src={config.content.logos.broker} alt="Broker" className="h-12 mx-auto object-contain" />
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        updateLogo('broker', null);
-                                    }}
-                                    className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                    title="Remove logo"
-                                >
-                                    <Trash2 className="w-3 h-3" />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="text-slate-400 flex flex-col items-center gap-2">
-                                <ImageIcon className="w-6 h-6" />
-                                <span className="text-xs">Click to upload</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
+                ))}
             </div>
         </TabsContent>
     );

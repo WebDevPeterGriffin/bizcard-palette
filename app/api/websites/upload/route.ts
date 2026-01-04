@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
 
 export async function POST(request: NextRequest) {
     const supabase = await createClient();
@@ -18,12 +17,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'File is required' }, { status: 400 });
     }
 
-    // Validate type using Zod
-    const typeSchema = z.enum(['headshot', 'personal-logo', 'broker-logo']);
-    const typeResult = typeSchema.safeParse(type);
-
-    if (!typeResult.success) {
-        return NextResponse.json({ error: 'Invalid type. Must be headshot, personal-logo, or broker-logo' }, { status: 400 });
+    // Validate type
+    if (!type || typeof type !== 'string') {
+        return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
     }
 
     // Validate file type

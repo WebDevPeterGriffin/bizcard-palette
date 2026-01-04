@@ -5,13 +5,13 @@ import { useSectionReveal } from "@/hooks/useSectionReveal";
 import { Mail, Phone, MapPin, Instagram, Linkedin, Facebook, Twitter, Youtube } from "lucide-react";
 import { useBuilder } from "@/context/BuilderContext";
 import { EditableText } from "@/components/builder/EditableText";
+import { EditableImage } from "@/components/builder/EditableImage";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { createClient } from "@/lib/supabase/client";
 
 export const ContactSection = () => {
     const revealRef = useSectionReveal();
-    const { config, userId } = useBuilder();
-    const brokerLogo = config.content.logos.broker;
+    const { config, userId, isReadOnly } = useBuilder();
     const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
     const [formData, setFormData] = React.useState({
         firstName: '',
@@ -241,20 +241,34 @@ export const ContactSection = () => {
 
                 <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="flex items-center gap-6">
-                        {/* Broker Logo */}
-                        <div className="h-12 w-auto opacity-80 hover:opacity-100 transition-opacity">
-                            {brokerLogo ? (
-                                <img
-                                    src={brokerLogo}
-                                    alt="Broker Logo"
-                                    className="h-full w-auto object-contain"
-                                />
-                            ) : (
-                                <div className="border border-white/30 px-3 py-2 rounded text-xs font-serif tracking-widest uppercase text-white/70">
-                                    Broker Logo
-                                </div>
-                            )}
-                        </div>
+                        {/* Broker Logo - only show if logo exists in read-only, or always show in editor */}
+                        {(config.content.logos.broker || !isReadOnly) && (
+                            <div className="h-20 w-auto opacity-80 hover:opacity-100 transition-opacity">
+                                {isReadOnly ? (
+                                    config.content.logos.broker && (
+                                        <img
+                                            src={config.content.logos.broker}
+                                            alt="Broker Logo"
+                                            className="h-20 w-auto object-contain"
+                                        />
+                                    )
+                                ) : (
+                                    <EditableImage
+                                        id="broker"
+                                        uploadType="logo"
+                                        initialValue={config.content.logos.broker || ''}
+                                        alt="Broker Logo"
+                                        className="h-20 w-auto object-contain"
+                                    >
+                                        {!config.content.logos.broker && (
+                                            <div className="border border-dashed border-white/50 px-4 py-3 rounded text-sm font-medium text-white/70 cursor-pointer hover:bg-white/10 transition-colors">
+                                                + Upload Broker Logo
+                                            </div>
+                                        )}
+                                    </EditableImage>
+                                )}
+                            </div>
+                        )}
 
                         {/* Trademarks */}
                         <div className="flex items-center gap-4">

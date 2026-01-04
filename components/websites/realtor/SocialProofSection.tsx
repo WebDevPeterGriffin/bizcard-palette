@@ -29,7 +29,7 @@ export const SocialProofSection = () => {
     ];
 
     return (
-        <section id="testimonials" className="py-24 bg-white">
+        <section id="testimonials" className="py-24" style={{ backgroundColor: 'var(--background)', color: 'var(--text)' }}>
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16" ref={revealRef}>
                     <EditableText
@@ -75,7 +75,7 @@ const TestimonialCard = ({ textKey, authorKey, locationKey }: { textKey: string;
     const { config } = useBuilder();
 
     return (
-        <div ref={cardRef} className="bg-slate-50 p-8 rounded-2xl relative">
+        <div ref={cardRef} className="p-8 rounded-2xl relative text-white" style={{ backgroundColor: '#1A2D49' }}>
             <div className="flex gap-1 mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
                     <Star
@@ -86,15 +86,15 @@ const TestimonialCard = ({ textKey, authorKey, locationKey }: { textKey: string;
                 ))}
             </div>
             <div className="mb-6">
-                <span className="text-slate-700 italic text-lg">"</span>
+                <span className="italic text-lg opacity-60">"</span>
                 <EditableText
                     id={textKey}
                     initialValue={config.content.text[textKey]}
                     as="span"
                     multiline
-                    className="text-slate-700 italic leading-relaxed inline"
+                    className="italic leading-relaxed inline opacity-80"
                 />
-                <span className="text-slate-700 italic text-lg">"</span>
+                <span className="italic text-lg opacity-60">"</span>
             </div>
             <div>
                 <EditableText
@@ -108,7 +108,7 @@ const TestimonialCard = ({ textKey, authorKey, locationKey }: { textKey: string;
                     id={locationKey}
                     initialValue={config.content.text[locationKey]}
                     as="p"
-                    className="text-slate-500 text-sm"
+                    className="text-sm opacity-60"
                 />
             </div>
         </div>

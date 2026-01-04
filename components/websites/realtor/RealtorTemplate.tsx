@@ -15,10 +15,15 @@ export const RealtorTemplate = () => {
 
     return (
         <main
-            className="min-h-screen bg-white font-sans text-slate-900 selection:bg-amber-500/30 relative"
+            className="min-h-screen font-sans selection:bg-amber-500/30 relative"
             style={{
                 '--primary': config.colors.primary,
                 '--secondary': config.colors.secondary,
+                '--text': config.colors.text,
+                '--background': config.colors.background,
+                '--accent': config.colors.accent,
+                backgroundColor: 'var(--background)',
+                color: 'var(--text)',
             } as React.CSSProperties}
         >
             <Navbar />

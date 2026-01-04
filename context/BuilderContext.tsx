@@ -1,6 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+import { TemplateSchema } from '@/types/builder';
+import { realtorSchema } from '@/config/templates/realtor.schema';
+import { creativeSchema } from '@/config/templates/creative.schema';
 
 export interface SocialLink {
     platform: 'instagram' | 'linkedin' | 'facebook' | 'twitter' | 'youtube' | 'tiktok';
@@ -8,6 +11,7 @@ export interface SocialLink {
 }
 
 export interface WebsiteConfig {
+    template: 'realtor' | 'creative';
     colors: {
         primary: string;
         secondary: string;
@@ -32,7 +36,9 @@ export interface WebsiteConfig {
 
 interface BuilderContextType {
     config: WebsiteConfig;
+    schema: TemplateSchema;
     slug: string | null;
+    updateTemplate: (template: 'realtor' | 'creative') => void;
     updateColor: (key: keyof WebsiteConfig['colors'], value: string) => void;
     updateLogo: (type: 'personal' | 'broker', url: string | null) => void;
     updateText: (key: string, value: string) => void;
@@ -44,7 +50,7 @@ interface BuilderContextType {
     canUndo: boolean;
     canRedo: boolean;
     saveConfig: (slug?: string) => Promise<boolean>;
-    loadConfig: () => Promise<void>;
+    loadConfig: (template?: 'realtor' | 'creative') => Promise<void>;
     deleteConfig: () => Promise<boolean>;
     isSaving: boolean;
     isLoading: boolean;
@@ -54,7 +60,8 @@ interface BuilderContextType {
     userId?: string;
 }
 
-const defaultConfig: WebsiteConfig = {
+const realtorConfig: WebsiteConfig = {
+    template: 'realtor',
     colors: {
         primary: '#1A2D49', // Slate 900
         secondary: '#F59E0B', // Amber 500
@@ -132,6 +139,43 @@ const defaultConfig: WebsiteConfig = {
     },
 };
 
+const creativeConfig: WebsiteConfig = {
+    template: 'creative',
+    colors: {
+        primary: '#8B5CF6', // Violet 500
+        secondary: '#EC4899', // Pink 500
+        text: '#ffffff',
+        background: '#09090b', // Zinc 950
+        accent: '#8B5CF6',
+    },
+    content: {
+        logos: {},
+        text: {
+            'hero.title': 'Visionary Design',
+            'hero.subtitle': 'We craft digital experiences that defy expectations.',
+            'hero.cta': 'Explore Work',
+            'about.title': 'About Me',
+            'about.description': 'I am a dedicated professional with a passion for excellence.',
+            'about.stat.number': '15+',
+            'about.stat.label': 'Years Experience',
+            'gallery.title': 'SELECTED WORK',
+            'contact.email': 'hello@example.com',
+            'contact.phone': '+1 (555) 000-0000',
+            'brand.name': 'Creative Brand',
+            'contact.title': "LET'S\nWORK\nTOGETHER",
+            'about.stat2.number': '100%',
+            'about.stat2.label': 'Client Satisfaction',
+        },
+        images: {
+            headshot: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2574&auto=format&fit=crop',
+        },
+        socialLinks: [
+            { platform: 'instagram', url: 'https://instagram.com' },
+            { platform: 'twitter', url: 'https://twitter.com' },
+        ],
+    },
+};
+
 const BuilderContext = createContext<BuilderContextType | undefined>(undefined);
 
 interface BuilderProviderProps {
@@ -142,7 +186,8 @@ interface BuilderProviderProps {
 }
 
 export const BuilderProvider = ({ children, initialConfig, readOnly = false, userId }: BuilderProviderProps) => {
-    const [config, setConfig] = useState<WebsiteConfig>(defaultConfig);
+    const [config, setConfig] = useState<WebsiteConfig>(realtorConfig);
+    const [schema, setSchema] = useState<TemplateSchema>(realtorSchema);
     const [slug, setSlug] = useState<string | null>(null);
     const [savedConfig, setSavedConfig] = useState<WebsiteConfig | null>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -155,6 +200,7 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
     useEffect(() => {
         if (initialConfig) {
             setConfig(initialConfig);
+            setSchema(initialConfig.template === 'creative' ? creativeSchema : realtorSchema);
         }
     }, [initialConfig]);
 
@@ -210,7 +256,16 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [config, history]); // Dependencies are important here for closure capture
+    }, [config, history]);
+
+    const updateTemplate = (template: 'realtor' | 'creative') => {
+        addToHistory(config);
+        setConfig((prev) => ({
+            ...prev,
+            template,
+        }));
+        setSchema(template === 'creative' ? creativeSchema : realtorSchema);
+    };
 
     const updateColor = (key: keyof WebsiteConfig['colors'], value: string) => {
         addToHistory(config);
@@ -232,9 +287,6 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
     };
 
     const updateText = (key: string, value: string) => {
-        // Debouncing could be useful here for text, but for now let's just push history
-        // Ideally we don't push history on EVERY keystroke if updateText is called on change.
-        // But EditableText calls updateText on BLUR, so it's fine.
         addToHistory(config);
         setConfig((prev) => ({
             ...prev,
@@ -303,7 +355,7 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
             const response = await fetch('/api/websites/config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ config, slug: newSlug }),
+                body: JSON.stringify({ config, slug: newSlug, template: config.template }),
             });
             if (!response.ok) {
                 const data = await response.json();
@@ -321,23 +373,39 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
         }
     }, [config]);
 
-    const loadConfig = useCallback(async (): Promise<void> => {
+    const loadConfig = useCallback(async (template?: 'realtor' | 'creative'): Promise<void> => {
         setIsLoading(true);
         try {
-            const response = await fetch('/api/websites/config');
+            const url = template ? `/api/websites/config?template=${template}` : '/api/websites/config';
+            const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();
                 if (data.config) {
-                    setConfig(data.config);
-                    setSavedConfig(data.config);
+                    const loadedConfig = { ...data.config, template: data.template || template || 'realtor' };
+                    setConfig(loadedConfig);
+                    setSchema(loadedConfig.template === 'creative' ? creativeSchema : realtorSchema);
+                    setSavedConfig(loadedConfig);
+                    setHistory({ past: [], future: [] });
+                } else {
+                    const targetTemplate = template || 'realtor';
+                    const defaultConfig = targetTemplate === 'creative' ? creativeConfig : realtorConfig;
+                    setConfig(defaultConfig);
+                    setSchema(targetTemplate === 'creative' ? creativeSchema : realtorSchema);
+                    setSavedConfig(null);
                     setHistory({ past: [], future: [] });
                 }
                 if (data.slug) {
                     setSlug(data.slug);
+                } else {
+                    setSlug(null);
                 }
             }
         } catch (error) {
             console.error('Load error:', error);
+            const targetTemplate = template || 'realtor';
+            const defaultConfig = targetTemplate === 'creative' ? creativeConfig : realtorConfig;
+            setConfig(defaultConfig);
+            setSchema(targetTemplate === 'creative' ? creativeSchema : realtorSchema);
         } finally {
             setIsLoading(false);
         }
@@ -352,7 +420,9 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
                 console.error('Delete failed:', data.error);
                 return false;
             }
+            const defaultConfig = config.template === 'creative' ? creativeConfig : realtorConfig;
             setConfig(defaultConfig);
+            setSchema(config.template === 'creative' ? creativeSchema : realtorSchema);
             setSavedConfig(null);
             setHistory({ past: [], future: [] });
             return true;
@@ -367,8 +437,10 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
     return (
         <BuilderContext.Provider value={{
             config,
+            schema,
             slug,
             setConfig,
+            updateTemplate,
             updateColor,
             updateLogo,
             updateText,

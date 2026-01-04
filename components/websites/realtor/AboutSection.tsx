@@ -5,26 +5,29 @@ import { useSectionReveal } from "@/hooks/useSectionReveal";
 import { CheckCircle2 } from "lucide-react";
 import { useBuilder } from "@/context/BuilderContext";
 import { EditableText } from "@/components/builder/EditableText";
+import { EditableImage } from "@/components/builder/EditableImage";
 
 export const AboutSection = () => {
     const { config } = useBuilder();
     const revealRef = useSectionReveal();
 
     return (
-        <section id="about" className="py-24 bg-white">
+        <section id="about" className="py-24" style={{ backgroundColor: 'var(--background)', color: 'var(--text)' }}>
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row items-center gap-16">
                     {/* Image Side */}
                     <div className="w-full md:w-1/2 relative">
                         <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-slate-100 relative shadow-2xl">
                             {/* Placeholder for Realtor Image - using a high quality Unsplash image */}
-                            <img
-                                src={config.content.images.headshot || "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop"}
+                            {/* Placeholder for Realtor Image - using a high quality Unsplash image */}
+                            <EditableImage
+                                id="headshot"
+                                initialValue={config.content.images.headshot || "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop"}
                                 alt="Realtor Portrait"
                                 className="w-full h-full object-cover"
                             />
                         </div>
-                        <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-xl shadow-xl border border-slate-100 max-w-xs hidden md:block">
+                        <div className="absolute -bottom-6 -right-6 p-6 rounded-xl shadow-xl border border-slate-100 max-w-xs hidden md:block" style={{ backgroundColor: 'var(--background)' }}>
                             <EditableText
                                 id="about.stat.number"
                                 initialValue={config.content.text['about.stat.number']}
@@ -37,7 +40,7 @@ export const AboutSection = () => {
                                 initialValue={config.content.text['about.stat.label']}
                                 as="p"
                                 multiline
-                                className="text-slate-600 font-medium"
+                                className="font-medium opacity-80"
                             />
                         </div>
                     </div>
@@ -62,7 +65,7 @@ export const AboutSection = () => {
                             initialValue={config.content.text['about.description']}
                             as="p"
                             multiline
-                            className="text-slate-600 text-lg leading-relaxed mb-8"
+                            className="text-lg leading-relaxed mb-8 opacity-80"
                         />
 
                         <div className="space-y-4 mb-10">
@@ -72,7 +75,7 @@ export const AboutSection = () => {
                                     id="about.checklist1"
                                     initialValue={config.content.text['about.checklist1']}
                                     as="span"
-                                    className="text-slate-800 font-medium"
+                                    className="font-medium"
                                 />
                             </div>
                             <div className="flex items-center gap-3">
@@ -81,7 +84,7 @@ export const AboutSection = () => {
                                     id="about.checklist2"
                                     initialValue={config.content.text['about.checklist2']}
                                     as="span"
-                                    className="text-slate-800 font-medium"
+                                    className="font-medium"
                                 />
                             </div>
                             <div className="flex items-center gap-3">
@@ -90,7 +93,7 @@ export const AboutSection = () => {
                                     id="about.checklist3"
                                     initialValue={config.content.text['about.checklist3']}
                                     as="span"
-                                    className="text-slate-800 font-medium"
+                                    className="font-medium"
                                 />
                             </div>
                         </div>

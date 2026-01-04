@@ -29,7 +29,7 @@ export const ServicesSection = () => {
     ];
 
     return (
-        <section id="services" className="py-24 bg-slate-50">
+        <section id="services" className="py-24" style={{ backgroundColor: 'var(--background)', color: 'var(--text)' }}>
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-3xl mx-auto mb-16" ref={revealRef}>
                     <EditableText
@@ -51,7 +51,7 @@ export const ServicesSection = () => {
                         initialValue={config.content.text['services.description']}
                         as="p"
                         multiline
-                        className="text-slate-600 text-lg"
+                        className="text-lg opacity-80"
                     />
                 </div>
 
@@ -82,9 +82,14 @@ const ServiceCard = ({ icon, titleKey, descKey }: { icon: React.ReactNode; title
     const { config } = useBuilder();
 
     return (
-        <div ref={cardRef} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        <div
+            ref={cardRef}
+            className="p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+            style={{ backgroundColor: 'var(--background)', borderColor: 'rgba(0,0,0,0.1)' }}
+        >
             <div
-                className="mb-6 bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center transition-colors"
+                className="mb-6 w-20 h-20 rounded-full flex items-center justify-center transition-colors"
+                style={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
             >
                 <div style={{ color: 'var(--secondary)' }}>
                     {icon}
@@ -102,7 +107,7 @@ const ServiceCard = ({ icon, titleKey, descKey }: { icon: React.ReactNode; title
                 initialValue={config.content.text[descKey]}
                 as="p"
                 multiline
-                className="text-slate-600 leading-relaxed"
+                className="leading-relaxed opacity-80"
             />
         </div>
     )
