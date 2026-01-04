@@ -10,6 +10,7 @@ import { useState, useRef } from "react";
 import { toast } from "sonner";
 import MainLayout from "@/components/MainLayout";
 import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
+import { createClient } from "@/lib/supabase/client";
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
@@ -17,6 +18,7 @@ export default function Contact() {
     const [isLoading, setIsLoading] = useState(false);
     const [token, setToken] = useState<string | null>(null);
     const ref = useRef<TurnstileInstance>(null);
+    const supabase = createClient();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,24 +36,17 @@ export default function Contact() {
         const message = formData.get("message") as string;
 
         try {
-            const response = await fetch('/api/contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+            const { data, error } = await supabase.functions.invoke('submit-contact', {
+                body: {
                     name,
                     email,
                     message,
                     token
-                }),
+                }
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to send message');
-            }
+            if (error) throw error;
+            if (data?.error) throw new Error(data.error);
 
             toast.success("Message sent successfully!", {
                 description: "We'll get back to you as soon as possible.",
