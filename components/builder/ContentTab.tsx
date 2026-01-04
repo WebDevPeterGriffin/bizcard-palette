@@ -4,13 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TabsContent } from "@/components/ui/tabs";
 import { Type } from "lucide-react";
-import { WebsiteConfig } from "@/context/BuilderContext";
+import { WebsiteConfig, SocialLink } from "@/context/BuilderContext";
 
 interface ContentTabProps {
     config: WebsiteConfig;
     updateText: (key: string, value: string) => void;
-    updateSocialLink: (platform: string, url: string) => void;
-    removeSocialLink: (platform: string) => void;
+    updateSocialLink: (platform: SocialLink['platform'], url: string) => void;
+    removeSocialLink: (platform: SocialLink['platform']) => void;
 }
 
 export function ContentTab({ config, updateText, updateSocialLink, removeSocialLink }: ContentTabProps) {

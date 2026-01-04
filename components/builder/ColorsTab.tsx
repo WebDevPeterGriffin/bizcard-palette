@@ -7,7 +7,7 @@ import { WebsiteConfig } from "@/context/BuilderContext";
 
 interface ColorsTabProps {
     config: WebsiteConfig;
-    updateColor: (key: string, value: string) => void;
+    updateColor: (key: keyof WebsiteConfig['colors'], value: string) => void;
 }
 
 export function ColorsTab({ config, updateColor }: ColorsTabProps) {
