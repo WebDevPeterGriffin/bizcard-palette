@@ -215,7 +215,6 @@ export const ContactSection = () => {
                                     siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
                                     onSuccess={setToken}
                                     onExpire={() => setToken(null)}
-                                    theme="dark"
                                 />
                             </div>
 
