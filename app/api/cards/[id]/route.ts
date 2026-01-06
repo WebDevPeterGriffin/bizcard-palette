@@ -16,13 +16,16 @@ export async function DELETE(
         }
 
         // 2. Fetch card to verify ownership and get headshot_url
-        const { data: card, error: fetchError } = await supabase
+        const { data: cardData, error: fetchError } = await supabase
             .from("cards")
             .select("user_id, headshot_url")
             .eq("id", id)
             .single();
+        
+        // Type assertion since database types might be outdated
+        const card = cardData as unknown as { user_id: string | null; headshot_url: string | null };
 
-        if (fetchError || !card) {
+        if (fetchError || !cardData) {
             return NextResponse.json({ error: "Card not found" }, { status: 404 });
         }
 

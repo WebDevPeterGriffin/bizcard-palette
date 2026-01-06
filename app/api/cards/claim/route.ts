@@ -29,7 +29,8 @@ export async function POST(request: Request) {
             .eq("id", cardId)
             .single();
         
-        const card = cardData;
+        // Type assertion since database types might be outdated
+        const card = cardData as unknown as { user_id: string | null };
 
         if (fetchError || !card) {
             return NextResponse.json(
