@@ -358,6 +358,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                                 handleCopyLink={handleCopyLink}
                                 handleShare={handleShare}
                                 handleTogglePublish={handleTogglePublish}
+                                onUpdate={() => router.refresh()}
                                 itemVariants={itemVariants}
                             />
                         </TabsContent>

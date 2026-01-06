@@ -7,6 +7,7 @@ import { Globe, Sparkles, Edit, Copy, Share2, Trash2, Plus, CreditCard, Calendar
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { Tables } from "@/integrations/supabase/types";
+import { ConnectDomainDialog } from "./ConnectDomainDialog";
 
 type CardData = Tables<"cards">;
 type WebsiteConfigData = Tables<"website_configs">;
@@ -19,6 +20,7 @@ interface OverviewTabProps {
     handleCopyLink: (slug: string) => void;
     handleShare: (slug: string) => void;
     handleTogglePublish: (isPublished: boolean) => void;
+    onUpdate: () => void;
     itemVariants: any;
 }
 
@@ -30,6 +32,7 @@ export function OverviewTab({
     handleCopyLink,
     handleShare,
     handleTogglePublish,
+    onUpdate,
     itemVariants
 }: OverviewTabProps) {
     // Cast to any to access is_published if not in type definition yet
@@ -80,6 +83,10 @@ export function OverviewTab({
                                 </div>
 
                                 <div className="flex flex-wrap gap-3">
+                                    <ConnectDomainDialog
+                                        websiteConfig={websiteConfig}
+                                        onUpdate={onUpdate}
+                                    />
                                     <Button asChild className="bg-brand-primary text-white hover:bg-brand-primary/90 shadow-md">
                                         <Link href={`/websites/${websiteConfig.template}`}>
                                             <Edit className="mr-2 h-4 w-4" />

@@ -1,7 +1,49 @@
 import { updateSession } from '@/lib/supabase/middleware'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const hostname = request.headers.get('host') || ''
+  
+  // Check if it's a custom domain
+  // We treat anything that's NOT localhost and NOT vercel.app as a custom domain
+  // You might want to add your production domain here if it's different
+  const isCustomDomain = !hostname.includes('localhost') && 
+                        !hostname.includes('.vercel.app') && 
+                        !hostname.includes('mildtechstudios.com'); // Add your main domain here
+
+  if (isCustomDomain) {
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() { return request.cookies.getAll() },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          },
+        },
+      }
+    )
+
+    // Lookup the slug for this custom domain
+    const { data } = await supabase
+      .from('website_configs')
+      .select('slug')
+      .eq('custom_domain', hostname)
+      .eq('is_published', true) // Only serve published sites
+      .single()
+
+    if (data?.slug) {
+      // Rewrite to the slug page
+      // Preserve the path (e.g. /about) if you have multi-page sites, 
+      // but for now we map root to the slug
+      const url = request.nextUrl.clone()
+      url.pathname = `/${data.slug}${url.pathname === '/' ? '' : url.pathname}`
+      return NextResponse.rewrite(url)
+    }
+  }
+
   // Define protected routes
   const protectedPaths = ['/dashboard', '/websites']
   const isProtectedPath = protectedPaths.some(path => 
