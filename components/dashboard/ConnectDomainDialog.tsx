@@ -234,6 +234,65 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                                     Verify Connection
                                 </Button>
                             </div>
+
+                        )}
+
+                        {domainConfig?.verified && (
+                            <div className="space-y-4">
+                                <div className="p-3 bg-green-50 rounded border border-green-100 text-sm text-green-800">
+                                    <p className="font-medium flex items-center gap-2">
+                                        <Check className="w-4 h-4" />
+                                        Domain Connected
+                                    </p>
+                                    <p className="mt-1 text-xs opacity-90">
+                                        Your domain is successfully pointing to our servers.
+                                    </p>
+                                </div>
+
+                                <div className="text-xs text-center text-slate-500">
+                                    <p>Need to check your records?</p>
+                                </div>
+
+                                <div className="space-y-3 opacity-75 hover:opacity-100 transition-opacity">
+                                    <div className="p-3 bg-slate-50 rounded border text-sm">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="font-semibold text-xs uppercase text-slate-500">A Record</span>
+                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard("76.76.21.21")}>
+                                                <Copy className="w-3 h-3" />
+                                            </Button>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            <div>
+                                                <span className="text-xs text-slate-500 block">Name</span>
+                                                <span className="font-mono">@</span>
+                                            </div>
+                                            <div className="col-span-2">
+                                                <span className="text-xs text-slate-500 block">Value</span>
+                                                <span className="font-mono">76.76.21.21</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-3 bg-slate-50 rounded border text-sm">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="font-semibold text-xs uppercase text-slate-500">CNAME Record</span>
+                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard("cname.vercel-dns.com")}>
+                                                <Copy className="w-3 h-3" />
+                                            </Button>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            <div>
+                                                <span className="text-xs text-slate-500 block">Name</span>
+                                                <span className="font-mono">www</span>
+                                            </div>
+                                            <div className="col-span-2">
+                                                <span className="text-xs text-slate-500 block">Value</span>
+                                                <span className="font-mono">cname.vercel-dns.com</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         )}
 
                         <Button
@@ -248,6 +307,6 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                     </div>
                 )}
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 }
