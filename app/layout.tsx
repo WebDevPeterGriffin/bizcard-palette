@@ -23,6 +23,15 @@ export const metadata: Metadata = {
         site: "@mildtechstudios",
         images: ["/images/icon.svg"],
     },
+    manifest: "/manifest.json",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "MildTech Studios",
+    },
+    other: {
+        "mobile-web-app-capable": "yes",
+    },
 };
 
 export default function RootLayout({

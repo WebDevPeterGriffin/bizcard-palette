@@ -71,6 +71,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             openGraph: {
                 images: cardData.headshot_url ? [cardData.headshot_url] : [],
             },
+            manifest: `/api/manifest/${slug}`,
+            appleWebApp: {
+                capable: true,
+                statusBarStyle: "default",
+                title: cardData.full_name,
+            },
+            other: {
+                "mobile-web-app-capable": "yes",
+            },
         };
     }
 
