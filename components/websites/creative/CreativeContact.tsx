@@ -88,7 +88,7 @@ export const CreativeContact = ({ config }: CreativeContactProps) => {
 
                 <div className="mt-32 pt-8 border-t flex justify-between text-sm opacity-50" style={{ borderColor: 'var(--text)' }}>
                     <p>&copy; {new Date().getFullYear()} {config.content.text['brand.name'] || "Brand Name"}. All rights reserved.</p>
-                    <p>Designed with BizCard Palette</p>
+                    <p>Designed by MildTech Studios</p>
                 </div>
             </div>
         </section>

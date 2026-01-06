@@ -93,14 +93,14 @@ export const EditableText = ({ id, initialValue, className, multiline = false, a
                 {...props}
             >
                 {multiline ? (
-                    value.split('\n').map((line, i) => (
+                    (value || '').split('\n').map((line, i) => (
                         <React.Fragment key={i}>
                             {line}
-                            {i < value.split('\n').length - 1 && <br />}
+                            {i < (value || '').split('\n').length - 1 && <br />}
                         </React.Fragment>
                     ))
                 ) : (
-                    value
+                    value || ''
                 )}
             </Component>
         );

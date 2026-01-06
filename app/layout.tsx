@@ -6,19 +6,22 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Digital Business Cards - Eco-Friendly Professional Networking",
-    description: "Create your professional digital business card. Eco-friendly, easy to share, modern alternative to paper cards. Choose from 4 beautiful styles and get your personalized card instantly.",
-    authors: [{ name: "Lovable" }],
+    title: "MildTech Studios - Digital Business Cards & Website Templates",
+    description: "Create your professional digital business card. Eco-friendly, easy to share, modern alternative to paper cards. Choose from beautiful styles and get your personalized card instantly.",
+    authors: [{ name: "MildTech Studios" }],
+    icons: {
+        icon: "/icon.svg",
+    },
     openGraph: {
-        title: "Digital Business Cards - Professional Networking",
+        title: "MildTech Studios - Professional Digital Solutions",
         description: "Create your professional digital business card. Eco-friendly, easy to share, modern alternative to paper cards.",
         type: "website",
-        images: ["https://storage.googleapis.com/gpt-engineer-file-uploads/ZdoB5pEmHIXRFlBMS9MxhXnwerc2/social-images/social-1757587891784-dbc-preview.png"],
+        images: ["/images/icon.svg"],
     },
     twitter: {
         card: "summary_large_image",
-        site: "@lovable_dev",
-        images: ["https://storage.googleapis.com/gpt-engineer-file-uploads/ZdoB5pEmHIXRFlBMS9MxhXnwerc2/social-images/social-1757587891784-dbc-preview.png"],
+        site: "@mildtechstudios",
+        images: ["/images/icon.svg"],
     },
 };
 

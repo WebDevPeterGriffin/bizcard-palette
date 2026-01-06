@@ -66,7 +66,7 @@ export function OverviewTab({
                                             target="_blank"
                                             className="inline-flex items-center text-brand-secondary hover:text-brand-secondary/80 transition-colors text-sm font-medium mt-2"
                                         >
-                                            {window.location.host}/{websiteConfig.slug}
+                                            yoursite.com/{websiteConfig.slug}
                                             <ExternalLinkIcon className="ml-1 w-3 h-3" />
                                         </a>
                                     )}

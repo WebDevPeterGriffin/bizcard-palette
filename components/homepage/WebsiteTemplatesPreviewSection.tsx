@@ -69,7 +69,7 @@ export default function WebsiteTemplatesPreviewSection() {
                 <div className="text-center">
                     <Button
                         variant="brand"
-                        onClick={() => router.push('/websites')}
+                        onClick={() => router.push('/templates')}
                         className="px-8 py-6 text-lg"
                     >
                         Open Website Templates Page

@@ -23,7 +23,7 @@ export default function Footer() {
                         <h4 className="font-bold text-[#1A2D49] mb-4">Products</h4>
                         <ul className="space-y-3 text-sm text-slate-500">
                             <li><Link href="/styles" className="hover:text-[#F0B429] transition-colors">Digital Business Cards</Link></li>
-                            <li><Link href="/websites" className="hover:text-[#F0B429] transition-colors">Website Templates</Link></li>
+                            <li><Link href="/templates" className="hover:text-[#F0B429] transition-colors">Website Templates</Link></li>
                             <li><span className="text-slate-400 cursor-not-allowed">AI Tools (Coming Soon)</span></li>
                         </ul>
                     </div>

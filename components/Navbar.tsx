@@ -61,17 +61,17 @@ export default function Navbar() {
         ? [
             { name: "Dashboard", path: "/dashboard" },
             { name: "Digital Business Cards", path: "/styles" },
-            { name: "Website Templates", path: "/websites" },
+            { name: "Website Templates", path: "/templates" },
         ]
         : [
             { name: "Home", path: "/" },
             { name: "Digital Business Cards", path: "/styles" },
-            { name: "Website Templates", path: "/websites" },
+            { name: "Website Templates", path: "/templates" },
             { name: "Pricing", path: "/pricing" },
             { name: "Contact", path: "/contact" },
         ];
 
-    const isTransparentPage = ["/", "/styles", "/websites", "/pricing", "/contact"].includes(pathname);
+    const isTransparentPage = ["/", "/styles", "/templates", "/pricing", "/contact"].includes(pathname);
     const showSolidNav = isScrolled || !isTransparentPage;
 
     return (

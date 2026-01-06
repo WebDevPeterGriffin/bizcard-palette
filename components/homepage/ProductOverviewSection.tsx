@@ -69,7 +69,7 @@ export default function ProductOverviewSection() {
 
                             <Button
                                 variant="brand"
-                                onClick={() => router.push('/websites')}
+                                onClick={() => router.push('/templates')}
                             >
                                 Browse Website Templates
                                 <ArrowRight className="ml-2 w-4 h-4" />

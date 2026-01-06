@@ -289,7 +289,8 @@ export const ContactSection = () => {
                         </div>
                     </div>
 
-                    <p className="text-slate-500 text-sm">&copy; {new Date().getFullYear()} Luxe Estates. All rights reserved.</p>
+                    <p className="text-slate-500 text-sm">&copy; {new Date().getFullYear()} {config.content.text['brand.name'] || 'Luxe Estates'}. All rights reserved.</p>
+                    <p className="text-slate-500 text-sm">Designed by MildTech Studios</p>
                 </div>
             </div>
         </footer>
