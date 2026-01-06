@@ -32,9 +32,10 @@ interface DashboardClientProps {
     websiteConfig: WebsiteConfigData | null;
     inquiries: InquiryData[];
     appointments: AppointmentData[];
+    cardIds: string[];
 }
 
-export default function DashboardClient({ user, cards, websiteConfig, inquiries, appointments }: DashboardClientProps) {
+export default function DashboardClient({ user, cards, websiteConfig, inquiries, appointments, cardIds }: DashboardClientProps) {
     const router = useRouter();
     const { toast } = useToast();
     const supabase = createClient();
@@ -169,6 +170,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                     event: 'INSERT',
                     schema: 'public',
                     table: 'appointments',
+                    filter: cardIds.length > 0 ? `card_id=in.(${cardIds.join(',')})` : undefined,
                 },
                 async (payload) => {
                     const newAppointment = payload.new as AppointmentData;

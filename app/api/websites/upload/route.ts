@@ -27,6 +27,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Only image files are allowed' }, { status: 400 });
     }
 
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_FILE_SIZE) {
+        return NextResponse.json({ error: 'File too large. Maximum 5MB allowed.' }, { status: 400 });
+    }
+
     // Create unique filename using UUID
     const fileExt = file.name.split('.').pop();
     const fileName = `${user.id}/${crypto.randomUUID()}.${fileExt}`;

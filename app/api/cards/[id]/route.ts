@@ -20,13 +20,13 @@ export async function DELETE(
             .from("cards")
             .select("user_id, headshot_url")
             .eq("id", id)
-            .single() as any;
+            .single();
 
         if (fetchError || !card) {
             return NextResponse.json({ error: "Card not found" }, { status: 404 });
         }
 
-        if (card.user_id !== user.id) {
+        if (card.user_id && card.user_id !== user.id) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
@@ -50,10 +50,21 @@ export async function DELETE(
         }
 
         // 4. Delete card record
-        const { error: deleteError } = await supabase
-            .from("cards")
-            .delete()
-            .eq("id", id);
+        let deleteError;
+        if (!card.user_id) {
+            // Use service role for unowned cards
+            const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+            const { createClient: createServiceClient } = await import("@supabase/supabase-js");
+            const adminSupabase = createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, serviceRoleKey);
+            const { error } = await adminSupabase.from("cards").delete().eq("id", id);
+            deleteError = error;
+        } else {
+            const { error } = await supabase
+                .from("cards")
+                .delete()
+                .eq("id", id);
+            deleteError = error;
+        }
 
         if (deleteError) {
             return NextResponse.json({ error: deleteError.message }, { status: 500 });

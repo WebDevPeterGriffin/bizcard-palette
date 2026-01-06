@@ -29,7 +29,7 @@ export async function POST(request: Request) {
             .eq("id", cardId)
             .single();
         
-        const card = cardData as any;
+        const card = cardData;
 
         if (fetchError || !card) {
             return NextResponse.json(

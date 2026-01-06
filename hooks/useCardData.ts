@@ -56,12 +56,6 @@ const fetchCard = async (slug: string | undefined): Promise<CardData | null> => 
 
         if (!listError && files && files.length > 0) {
             headshotPath = `${cardId}/${files[0].name}`;
-
-            // Best-effort: persist discovered path
-            await supabase
-                .from('cards')
-                .update({ headshot_url: headshotPath })
-                .eq('id', cardId);
         }
     }
 

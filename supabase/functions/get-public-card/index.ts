@@ -27,7 +27,8 @@ interface Database {
 }
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
 export default async function handler(req: Request): Promise<Response> {
   // Handle CORS preflight requests
@@ -50,7 +51,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     // Create Supabase client with service role key to bypass RLS
-    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
 
     const { data, error } = await supabase
       .from('cards')

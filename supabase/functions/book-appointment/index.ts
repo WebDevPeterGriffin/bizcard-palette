@@ -8,6 +8,9 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
+const TURNSTILE_SECRET_KEY = Deno.env.get("TURNSTILE_SECRET_KEY");
+const VERIFY_ENDPOINT = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const DEFAULT_FROM = "MildTech Studios <onboarding@resend.dev>";
 const envFrom = Deno.env.get("RESEND_FROM_EMAIL")?.trim();
@@ -30,7 +33,12 @@ interface BookingRequest {
   visitor_company?: string;
   appointment_date: string;
   message?: string;
+  token: string;
 }
+
+const escapeHtml = (str: string) => str.replace(/[&<>"']/g, (m) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[m] || m));
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
@@ -43,10 +51,52 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Booking request received:", bookingData);
 
     // Validate required fields
-    if (!bookingData.card_id || !bookingData.visitor_name || !bookingData.visitor_email || !bookingData.appointment_date) {
+    if (!bookingData.card_id || !bookingData.visitor_name || !bookingData.visitor_email || !bookingData.appointment_date || !bookingData.token) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Verify Turnstile Token
+    if (!TURNSTILE_SECRET_KEY) {
+        console.error("TURNSTILE_SECRET_KEY not set");
+        return new Response(
+            JSON.stringify({ error: "Server configuration error" }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+    }
+
+    const formData = new FormData();
+    formData.append('secret', TURNSTILE_SECRET_KEY);
+    formData.append('response', bookingData.token);
+
+    const result = await fetch(VERIFY_ENDPOINT, {
+        method: 'POST',
+        body: formData,
+    });
+
+    const outcome = await result.json();
+    if (!outcome.success) {
+        return new Response(
+            JSON.stringify({ error: "Captcha verification failed" }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+    }
+
+    // Idempotency check
+    const { data: existingAppointment } = await supabase
+      .from("appointments")
+      .select("id")
+      .eq("card_id", bookingData.card_id)
+      .eq("visitor_email", bookingData.visitor_email)
+      .eq("appointment_date", bookingData.appointment_date)
+      .maybeSingle();
+
+    if (existingAppointment) {
+      return new Response(
+        JSON.stringify({ error: "Appointment already exists" }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -113,7 +163,7 @@ const handler = async (req: Request): Promise<Response> => {
       description: bookingData.message || "Scheduled appointment",
       startDate: appointmentDate,
       endDate: new Date(appointmentDate.getTime() + 60 * 60 * 1000), // 1 hour duration
-      organizer: card.email || "",
+      organizer: card.emails?.[0] || card.email || "",
       attendee: bookingData.visitor_email,
     });
 
@@ -131,12 +181,12 @@ Appointment Details:
 - Date: ${appointmentDate.toLocaleDateString()}
 - Time: ${appointmentDate.toLocaleTimeString()}
 ${card.company ? `- Company: ${card.company}` : ""}
-${bookingData.message ? `- Message: ${bookingData.message}` : ""}
+${bookingData.message ? `- Message: ${escapeHtml(bookingData.message)}` : ""}
 
 Contact Information:
-${card.phone ? `- Phone: ${card.phone}` : ""}
-${card.email ? `- Email: ${card.email}` : ""}
-${card.website ? `- Website: ${card.website}` : ""}
+${card.phone ? `- Phone: ${escapeHtml(card.phone)}` : ""}
+${(card.emails?.[0] || card.email) ? `- Email: ${escapeHtml(card.emails?.[0] || card.email)}` : ""}
+${card.website ? `- Website: ${escapeHtml(card.website)}` : ""}
 
 If you need to reschedule or cancel, please contact ${card.full_name} directly.
 
@@ -150,10 +200,11 @@ ${card.full_name}
     }
 
     // Send notification email to card owner (if they have an email)
-    if (card.email) {
+    const ownerEmail = card.emails?.[0] || card.email;
+    if (ownerEmail) {
       try {
         await sendEmailSimple({
-          to: card.email,
+          to: ownerEmail,
           subject: `New Appointment Booking from ${bookingData.visitor_name}`,
           text: `
 Hello ${card.full_name},
@@ -169,7 +220,7 @@ ${bookingData.visitor_company ? `- Company: ${bookingData.visitor_company}` : ""
 Appointment Details:
 - Date: ${appointmentDate.toLocaleDateString()}
 - Time: ${appointmentDate.toLocaleTimeString()}
-${bookingData.message ? `- Message: ${bookingData.message}` : ""}
+${bookingData.message ? `- Message: ${escapeHtml(bookingData.message)}` : ""}
 
 Please reach out to ${bookingData.visitor_name} to confirm the appointment details.
 

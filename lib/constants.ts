@@ -11,4 +11,12 @@ export const RESERVED_SLUGS = [
     'favicon.ico',
     'robots.txt',
     'sitemap.xml',
+    'manifest.json',
+    'settings',
+    'profile',
+    'analytics',
+    'billing',
+    'help',
+    'terms',
+    'privacy',
 ];

@@ -3,17 +3,13 @@ import GeneratedCardClient from "./client";
 import WebsiteClient from "./website-client";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import { RESERVED_SLUGS } from "@/lib/constants";
 
 interface PageProps {
     params: Promise<{ slug: string }>;
 }
 
-const RESERVED_SLUGS = [
-    'api', '_next', 'dashboard', 'login', 'signup', 'auth',
-    'websites', 'cards', 'templates', 'editor', 'builder',
-    'settings', 'account', 'admin', 'privacy', 'terms',
-    'pricing', 'support'
-];
+
 
 const isReservedSlug = (slug: string) => {
     return RESERVED_SLUGS.includes(slug.toLowerCase()) || slug.includes('.');

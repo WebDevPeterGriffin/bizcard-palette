@@ -220,7 +220,7 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
 
         setHistory({
             past: newPast,
-            future: [config, ...history.future],
+            future: [config, ...history.future].slice(0, 50),
         });
         setConfig(previous);
     };

@@ -1,6 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { RESERVED_SLUGS } from '@/lib/constants';
+import { z } from 'zod';
+
+const WebsiteConfigSchema = z.object({
+    template: z.enum(['realtor', 'creative']),
+    colors: z.object({
+        primary: z.string(),
+        secondary: z.string(),
+        text: z.string(),
+        background: z.string(),
+        accent: z.string(),
+    }),
+    content: z.object({
+        logos: z.record(z.string().nullable().optional()),
+        text: z.record(z.string()),
+        images: z.record(z.string()),
+        socialLinks: z.array(z.object({
+            platform: z.string(),
+            url: z.string(),
+        })),
+    }),
+});
 
 export async function GET(request: NextRequest) {
     const supabase = await createClient();
@@ -51,6 +72,11 @@ export async function POST(request: NextRequest) {
 
     if (!config) {
         return NextResponse.json({ error: 'Config is required' }, { status: 400 });
+    }
+
+    const parsed = WebsiteConfigSchema.safeParse(config);
+    if (!parsed.success) {
+        return NextResponse.json({ error: "Invalid config format" }, { status: 400 });
     }
 
     // Check reserved slugs
@@ -112,6 +138,9 @@ export async function POST(request: NextRequest) {
         .single();
 
     if (error) {
+        if (error.code === '23505') {
+            return NextResponse.json({ error: 'This URL is already taken. Please choose another.' }, { status: 409 });
+        }
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 

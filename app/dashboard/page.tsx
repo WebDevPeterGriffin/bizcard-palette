@@ -51,10 +51,13 @@ export default async function DashboardPage() {
         .order("appointment_date", { ascending: true })
         .limit(10);
 
+    const cardIds = cards?.map(c => c.id) || [];
+
     return (
         <DashboardClient
             user={user}
             cards={cards || []}
+            cardIds={cardIds}
             websiteConfig={websiteConfig}
             inquiries={inquiries || []}
             appointments={appointments || []}
