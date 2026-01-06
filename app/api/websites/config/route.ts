@@ -19,7 +19,7 @@ const WebsiteConfigSchema = z.object({
         socialLinks: z.array(z.object({
             platform: z.string(),
             url: z.string(),
-        })),
+        })).optional(),
     }),
 });
 
@@ -75,8 +75,12 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Config is required' }, { status: 400 });
     }
 
-    const parsed = WebsiteConfigSchema.safeParse(config);
+    // Ensure template is in config for validation
+    const configToValidate = { ...config, template: config.template || template };
+
+    const parsed = WebsiteConfigSchema.safeParse(configToValidate);
     if (!parsed.success) {
+        console.error("Validation error:", parsed.error);
         return NextResponse.json({ error: "Invalid config format" }, { status: 400 });
     }
 
