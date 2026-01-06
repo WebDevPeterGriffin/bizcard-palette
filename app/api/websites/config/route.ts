@@ -55,7 +55,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ 
         config: activeConfig?.config || null,
         slug: activeConfig?.slug || null,
-        template: activeConfig?.template || templateParam || 'realtor'
+        template: activeConfig?.template || templateParam || 'realtor',
+        is_published: (activeConfig as any)?.is_published || false
     });
 }
 
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { config, slug, template = 'realtor' } = body;
+    const { config, slug, template = 'realtor', is_published } = body;
 
     if (!config) {
         return NextResponse.json({ error: 'Config is required' }, { status: 400 });
@@ -131,6 +132,7 @@ export async function POST(request: NextRequest) {
                 template: template,
                 config: config,
                 ...(slug && { slug }), // Only update slug if provided
+                ...(typeof is_published === 'boolean' && { is_published }),
             },
             { onConflict: 'user_id,template' }
         )

@@ -18,6 +18,7 @@ interface OverviewTabProps {
     handleDeleteCard: (cardId: string, cardName: string) => void;
     handleCopyLink: (slug: string) => void;
     handleShare: (slug: string) => void;
+    handleTogglePublish: (isPublished: boolean) => void;
     itemVariants: any;
 }
 
@@ -28,8 +29,11 @@ export function OverviewTab({
     handleDeleteCard,
     handleCopyLink,
     handleShare,
+    handleTogglePublish,
     itemVariants
 }: OverviewTabProps) {
+    // Cast to any to access is_published if not in type definition yet
+    const isPublished = (websiteConfig as any)?.is_published;
     return (
         <div className="space-y-8">
             {/* My Websites Section */}
@@ -40,9 +44,12 @@ export function OverviewTab({
                         My Website
                     </h2>
                     {websiteConfig && (
-                        <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                            Live
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${isPublished
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
+                            }`}>
+                            <div className={`w-2 h-2 rounded-full ${isPublished ? "bg-green-500 animate-pulse" : "bg-yellow-500"}`} />
+                            {isPublished ? "Live" : "Draft"}
                         </span>
                     )}
                 </div>
@@ -83,20 +90,32 @@ export function OverviewTab({
                                         <>
                                             <Button
                                                 variant="outline"
-                                                onClick={() => handleCopyLink(websiteConfig.slug!)}
-                                                className="border-brand-primary/20 hover:bg-brand-primary/5"
+                                                onClick={() => handleTogglePublish(!isPublished)}
+                                                className={`border-brand-primary/20 hover:bg-brand-primary/5 ${isPublished ? "text-green-600 hover:text-green-700" : "text-slate-500"}`}
                                             >
-                                                <Copy className="mr-2 h-4 w-4" />
-                                                Copy Link
+                                                <Globe className="mr-2 h-4 w-4" />
+                                                {isPublished ? "Unpublish" : "Publish"}
                                             </Button>
-                                            <Button
-                                                variant="outline"
-                                                onClick={() => handleShare(websiteConfig.slug!)}
-                                                className="border-brand-primary/20 hover:bg-brand-primary/5"
-                                            >
-                                                <Share2 className="mr-2 h-4 w-4" />
-                                                Share
-                                            </Button>
+                                            {isPublished && (
+                                                <>
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() => handleCopyLink(websiteConfig.slug!)}
+                                                        className="border-brand-primary/20 hover:bg-brand-primary/5"
+                                                    >
+                                                        <Copy className="mr-2 h-4 w-4" />
+                                                        Copy Link
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() => handleShare(websiteConfig.slug!)}
+                                                        className="border-brand-primary/20 hover:bg-brand-primary/5"
+                                                    >
+                                                        <Share2 className="mr-2 h-4 w-4" />
+                                                        Share
+                                                    </Button>
+                                                </>
+                                            )}
                                         </>
                                     )}
                                     <Button

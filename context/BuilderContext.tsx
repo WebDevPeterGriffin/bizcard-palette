@@ -38,6 +38,8 @@ interface BuilderContextType {
     config: WebsiteConfig;
     schema: TemplateSchema;
     slug: string | null;
+    isPublished: boolean;
+    setIsPublished: (published: boolean) => void;
     updateTemplate: (template: 'realtor' | 'creative') => void;
     updateColor: (key: keyof WebsiteConfig['colors'], value: string) => void;
     updateLogo: (type: 'personal' | 'broker', url: string | null) => void;
@@ -49,7 +51,7 @@ interface BuilderContextType {
     redo: () => void;
     canUndo: boolean;
     canRedo: boolean;
-    saveConfig: (slug?: string) => Promise<boolean>;
+    saveConfig: (slug?: string, isPublishedOverride?: boolean) => Promise<boolean>;
     loadConfig: (template?: 'realtor' | 'creative') => Promise<void>;
     deleteConfig: () => Promise<boolean>;
     isSaving: boolean;
@@ -189,6 +191,7 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
     const [config, setConfig] = useState<WebsiteConfig>(realtorConfig);
     const [schema, setSchema] = useState<TemplateSchema>(realtorSchema);
     const [slug, setSlug] = useState<string | null>(null);
+    const [isPublished, setIsPublished] = useState(false);
     const [savedConfig, setSavedConfig] = useState<WebsiteConfig | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -349,13 +352,14 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
         ? JSON.stringify(config) !== JSON.stringify(savedConfig)
         : history.past.length > 0;
 
-    const saveConfig = useCallback(async (newSlug?: string): Promise<boolean> => {
+    const saveConfig = useCallback(async (newSlug?: string, isPublishedOverride?: boolean): Promise<boolean> => {
         setIsSaving(true);
         try {
+            const publishedState = isPublishedOverride !== undefined ? isPublishedOverride : isPublished;
             const response = await fetch('/api/websites/config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ config, slug: newSlug, template: config.template }),
+                body: JSON.stringify({ config, slug: newSlug, template: config.template, is_published: publishedState }),
             });
             if (!response.ok) {
                 const data = await response.json();
@@ -364,6 +368,7 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
             }
             setSavedConfig(config);
             if (newSlug) setSlug(newSlug);
+            if (isPublishedOverride !== undefined) setIsPublished(isPublishedOverride);
             return true;
         } catch (error) {
             console.error('Save error:', error);
@@ -371,7 +376,7 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
         } finally {
             setIsSaving(false);
         }
-    }, [config]);
+    }, [config, isPublished]);
 
     const loadConfig = useCallback(async (template?: 'realtor' | 'creative'): Promise<void> => {
         setIsLoading(true);
@@ -399,6 +404,7 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
                 } else {
                     setSlug(null);
                 }
+                setIsPublished(data.is_published || false);
             }
         } catch (error) {
             console.error('Load error:', error);
@@ -439,6 +445,8 @@ export const BuilderProvider = ({ children, initialConfig, readOnly = false, use
             config,
             schema,
             slug,
+            isPublished,
+            setIsPublished,
             setConfig,
             updateTemplate,
             updateColor,

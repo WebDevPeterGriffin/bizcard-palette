@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useBuilder } from "@/context/BuilderContext";
 import { Button } from "@/components/ui/button";
-import { Save, Undo, Redo, GripVertical, Loader2 } from "lucide-react";
+import { Save, Undo, Redo, GripVertical, Loader2, Globe } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -29,6 +29,7 @@ export const BuilderPanel = () => {
         isSaving,
         hasUnsavedChanges,
         slug,
+        isPublished,
     } = useBuilder();
     const router = useRouter();
     const [isSlugDialogOpen, setIsSlugDialogOpen] = React.useState(false);
@@ -128,9 +129,9 @@ export const BuilderPanel = () => {
                     </Tabs>
                 </div>
 
-                <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+                <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex gap-2">
                     <Button
-                        className="w-full bg-slate-900 hover:bg-slate-800 gap-2"
+                        className={`flex-1 gap-2 ${isPublished ? 'bg-green-600 hover:bg-green-700' : 'bg-slate-900 hover:bg-slate-800'}`}
                         onClick={handleSave}
                         disabled={isSaving}
                     >
@@ -140,6 +141,29 @@ export const BuilderPanel = () => {
                             <Save className="w-4 h-4" />
                         )}
                         {isSaving ? 'Saving...' : hasUnsavedChanges ? 'Save Changes' : 'Saved'}
+                    </Button>
+
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className={isPublished ? "text-green-600 border-green-200 bg-green-50" : "text-slate-500"}
+                        onClick={async () => {
+                            if (!slug) {
+                                setIsSlugDialogOpen(true);
+                                return;
+                            }
+                            const newStatus = !isPublished;
+                            const success = await saveConfig(undefined, newStatus);
+                            if (success) {
+                                toast.success(newStatus ? "Website published!" : "Website unpublished");
+                            } else {
+                                toast.error("Failed to update publication status");
+                            }
+                        }}
+                        title={isPublished ? "Unpublish Website" : "Publish Website"}
+                        disabled={isSaving}
+                    >
+                        <Globe className="w-4 h-4" />
                     </Button>
                 </div>
             </motion.div>

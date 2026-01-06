@@ -35,6 +35,24 @@ interface DashboardClientProps {
     cardIds: string[];
 }
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1
+    }
+};
+
 export default function DashboardClient({ user, cards, websiteConfig, inquiries, appointments, cardIds }: DashboardClientProps) {
     const router = useRouter();
     const { toast } = useToast();
@@ -107,6 +125,40 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
         } catch (error) {
             toast({
                 title: "Delete failed",
+                description: error instanceof Error ? error.message : "An unknown error occurred",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleTogglePublish = async (isPublished: boolean) => {
+        if (!websiteConfig) return;
+
+        try {
+            const response = await fetch('/api/websites/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    config: websiteConfig.config,
+                    slug: websiteConfig.slug,
+                    template: websiteConfig.template,
+                    is_published: isPublished
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Failed to update publication status');
+            }
+
+            toast({
+                title: isPublished ? "Website published" : "Website unpublished",
+                description: isPublished ? "Your website is now live!" : "Your website is now private.",
+            });
+            router.refresh();
+        } catch (error) {
+            toast({
+                title: "Update failed",
                 description: error instanceof Error ? error.message : "An unknown error occurred",
                 variant: "destructive",
             });
@@ -207,24 +259,6 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
     const totalAppointments = appointmentsList.length;
     const totalCards = cards.length;
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1
-        }
-    };
-
     // Tour State
     const [showTour, setShowTour] = useState(false);
 
@@ -323,6 +357,7 @@ export default function DashboardClient({ user, cards, websiteConfig, inquiries,
                                 handleDeleteCard={handleDeleteCard}
                                 handleCopyLink={handleCopyLink}
                                 handleShare={handleShare}
+                                handleTogglePublish={handleTogglePublish}
                                 itemVariants={itemVariants}
                             />
                         </TabsContent>
