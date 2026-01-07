@@ -22,9 +22,14 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
     const [isLoading, setIsLoading] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
 
+    const [manualCheckRequired, setManualCheckRequired] = useState(false);
+
     // Cast to any because custom_domain and domain_config might not be in the type yet
     const customDomain = (websiteConfig as any).custom_domain;
     const domainConfig = (websiteConfig as any).domain_config as VercelDomainResponse | null;
+
+    // Determine if we should show verified state
+    const isVerified = domainConfig?.verified && !manualCheckRequired;
 
     const handleAddDomain = async () => {
         if (!domain) return;
@@ -48,6 +53,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                 title: "Domain added",
                 description: "Please configure your DNS records to verify ownership.",
             });
+            setManualCheckRequired(true); // Force user to click verify
             onUpdate();
         } catch (error: any) {
             toast({
@@ -72,6 +78,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                     title: "Domain verified!",
                     description: "Your website is now live on your custom domain.",
                 });
+                setManualCheckRequired(false); // Allow verified state to show
             } else {
                 toast({
                     title: "Not yet verified",
@@ -181,7 +188,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                                 <Globe className="w-4 h-4 text-slate-500" />
                                 <span className="font-medium">{customDomain}</span>
                             </div>
-                            {domainConfig?.verified ? (
+                            {isVerified ? (
                                 <span className="flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
                                     <Check className="w-3 h-3" /> Verified
                                 </span>
@@ -192,7 +199,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                             )}
                         </div>
 
-                        {!domainConfig?.verified && (
+                        {!isVerified && (
                             <div className="space-y-4">
                                 <div className="text-sm text-slate-600">
                                     <p className="mb-2">Log in to your domain provider (e.g., GoDaddy, Namecheap) and add the following records. Then click "Verify Connection".</p>
@@ -251,7 +258,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
 
                         )}
 
-                        {domainConfig?.verified && (
+                        {isVerified && (
                             <div className="space-y-4">
                                 <div className="p-3 bg-green-50 rounded border border-green-100 text-sm text-green-800">
                                     <p className="font-medium flex items-center gap-2">
