@@ -139,26 +139,40 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
 
                 {!customDomain ? (
                     <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="domain">Domain Name</Label>
-                            <Input
-                                id="domain"
-                                placeholder="example.com"
-                                value={domain}
-                                onChange={(e) => setDomain(e.target.value)}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                                Enter the domain you want to connect (e.g., www.example.com)
-                            </p>
-                        </div>
-                        <Button
-                            className="w-full"
-                            onClick={handleAddDomain}
-                            disabled={!domain || isLoading}
-                        >
-                            {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                            Add Domain
-                        </Button>
+                        {!(websiteConfig as any).is_published ? (
+                            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
+                                <div className="flex items-center gap-2 font-semibold mb-1">
+                                    <AlertTriangle className="w-4 h-4" />
+                                    Website Not Published
+                                </div>
+                                <p className="text-sm opacity-90">
+                                    You must publish your website before connecting a custom domain. Please publish your site from the dashboard or builder first.
+                                </p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="space-y-2">
+                                    <Label htmlFor="domain">Domain Name</Label>
+                                    <Input
+                                        id="domain"
+                                        placeholder="example.com"
+                                        value={domain}
+                                        onChange={(e) => setDomain(e.target.value)}
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Enter the domain you want to connect (e.g., www.example.com)
+                                    </p>
+                                </div>
+                                <Button
+                                    className="w-full"
+                                    onClick={handleAddDomain}
+                                    disabled={!domain || isLoading}
+                                >
+                                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                    Add Domain
+                                </Button>
+                            </>
+                        )}
                     </div>
                 ) : (
                     <div className="space-y-6 py-4">
@@ -173,7 +187,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                                 </span>
                             ) : (
                                 <span className="flex items-center gap-1 text-xs font-medium text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
-                                    <AlertTriangle className="w-3 h-3" /> Unverified
+                                    <AlertTriangle className="w-3 h-3" /> Pending DNS
                                 </span>
                             )}
                         </div>
@@ -181,7 +195,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                         {!domainConfig?.verified && (
                             <div className="space-y-4">
                                 <div className="text-sm text-slate-600">
-                                    <p className="mb-2">Log in to your domain provider (e.g., GoDaddy, Namecheap) and add the following records:</p>
+                                    <p className="mb-2">Log in to your domain provider (e.g., GoDaddy, Namecheap) and add the following records. Then click "Verify Connection".</p>
                                 </div>
 
                                 <div className="space-y-3">
@@ -254,43 +268,76 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
                                 </div>
 
                                 <div className="space-y-3 opacity-75 hover:opacity-100 transition-opacity">
-                                    <div className="p-3 bg-slate-50 rounded border text-sm">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="font-semibold text-xs uppercase text-slate-500">A Record</span>
-                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard("76.76.21.21")}>
-                                                <Copy className="w-3 h-3" />
-                                            </Button>
-                                        </div>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <div>
-                                                <span className="text-xs text-slate-500 block">Name</span>
-                                                <span className="font-mono">@</span>
-                                            </div>
-                                            <div className="col-span-2">
-                                                <span className="text-xs text-slate-500 block">Value</span>
-                                                <span className="font-mono">76.76.21.21</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {/* Logic to determine if it's a subdomain or root domain */}
+                                    {(() => {
+                                        const isSubdomain = customDomain && customDomain.split('.').length > 2;
+                                        const subdomainPart = isSubdomain ? customDomain.split('.')[0] : 'www';
 
-                                    <div className="p-3 bg-slate-50 rounded border text-sm">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="font-semibold text-xs uppercase text-slate-500">CNAME Record</span>
-                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard("cname.vercel-dns.com")}>
-                                                <Copy className="w-3 h-3" />
-                                            </Button>
-                                        </div>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <div>
-                                                <span className="text-xs text-slate-500 block">Name</span>
-                                                <span className="font-mono">www</span>
-                                            </div>
-                                            <div className="col-span-2">
-                                                <span className="text-xs text-slate-500 block">Value</span>
-                                                <span className="font-mono">cname.vercel-dns.com</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        if (isSubdomain) {
+                                            return (
+                                                <div className="p-3 bg-slate-50 rounded border text-sm">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="font-semibold text-xs uppercase text-slate-500">CNAME Record</span>
+                                                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard("cname.vercel-dns.com")}>
+                                                            <Copy className="w-3 h-3" />
+                                                        </Button>
+                                                    </div>
+                                                    <div className="grid grid-cols-3 gap-2">
+                                                        <div>
+                                                            <span className="text-xs text-slate-500 block">Name</span>
+                                                            <span className="font-mono">{subdomainPart}</span>
+                                                        </div>
+                                                        <div className="col-span-2">
+                                                            <span className="text-xs text-slate-500 block">Value</span>
+                                                            <span className="font-mono">cname.vercel-dns.com</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        } else {
+                                            return (
+                                                <>
+                                                    <div className="p-3 bg-slate-50 rounded border text-sm">
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="font-semibold text-xs uppercase text-slate-500">A Record</span>
+                                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard("76.76.21.21")}>
+                                                                <Copy className="w-3 h-3" />
+                                                            </Button>
+                                                        </div>
+                                                        <div className="grid grid-cols-3 gap-2">
+                                                            <div>
+                                                                <span className="text-xs text-slate-500 block">Name</span>
+                                                                <span className="font-mono">@</span>
+                                                            </div>
+                                                            <div className="col-span-2">
+                                                                <span className="text-xs text-slate-500 block">Value</span>
+                                                                <span className="font-mono">76.76.21.21</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="p-3 bg-slate-50 rounded border text-sm">
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="font-semibold text-xs uppercase text-slate-500">CNAME Record</span>
+                                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard("cname.vercel-dns.com")}>
+                                                                <Copy className="w-3 h-3" />
+                                                            </Button>
+                                                        </div>
+                                                        <div className="grid grid-cols-3 gap-2">
+                                                            <div>
+                                                                <span className="text-xs text-slate-500 block">Name</span>
+                                                                <span className="font-mono">www</span>
+                                                            </div>
+                                                            <div className="col-span-2">
+                                                                <span className="text-xs text-slate-500 block">Value</span>
+                                                                <span className="font-mono">cname.vercel-dns.com</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            );
+                                        }
+                                    })()}
                                 </div>
                             </div>
                         )}

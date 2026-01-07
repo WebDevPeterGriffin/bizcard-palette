@@ -86,7 +86,7 @@ export function HelpWidget({ onRestartTour }: HelpWidgetProps) {
                                 <AccordionItem value="item-2">
                                     <AccordionTrigger className="text-brand-primary font-medium">Can I use my own domain?</AccordionTrigger>
                                     <AccordionContent className="text-muted-foreground">
-                                        Currently, all cards are hosted on our platform. Custom domain support is coming soon! You can share your unique link anywhere.
+                                        Yes! Go to the "Overview" tab and click the "Connect Domain" button. Enter your domain (e.g., yoursite.com) and follow the instructions to update your DNS records.
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="item-3">
@@ -96,9 +96,21 @@ export function HelpWidget({ onRestartTour }: HelpWidgetProps) {
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="item-4">
+                                    <AccordionTrigger className="text-brand-primary font-medium">How do I publish my website?</AccordionTrigger>
+                                    <AccordionContent className="text-muted-foreground">
+                                        In the dashboard or builder, toggle the "Published" switch to make your site live. When unpublished, your site is only visible to you.
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-5">
                                     <AccordionTrigger className="text-brand-primary font-medium">Where do inquiries go?</AccordionTrigger>
                                     <AccordionContent className="text-muted-foreground">
                                         All messages from your contact forms appear in the "Inquiries" tab. You'll also receive an email notification for each new message.
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-6">
+                                    <AccordionTrigger className="text-brand-primary font-medium">How do I manage appointments?</AccordionTrigger>
+                                    <AccordionContent className="text-muted-foreground">
+                                        Go to the "Appointments" tab to view upcoming bookings. You can see client details and meeting times. Ensure your Google Calendar is connected for sync.
                                     </AccordionContent>
                                 </AccordionItem>
                             </Accordion>
