@@ -210,12 +210,21 @@ export const ContactSection = () => {
                                 ></textarea>
                             </div>
 
-                            <div className="flex justify-center">
+                            <div className="flex flex-col items-center gap-2">
                                 <Turnstile
                                     siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
                                     onSuccess={setToken}
                                     onExpire={() => setToken(null)}
+                                    onError={() => {
+                                        console.error("Turnstile error");
+                                        setStatus('error');
+                                    }}
                                 />
+                                {status === 'error' && !token && (
+                                    <p className="text-xs text-red-400 text-center max-w-xs">
+                                        CAPTCHA failed to load. If you are using a custom domain, please ensure it is allowed in your Cloudflare Turnstile settings.
+                                    </p>
+                                )}
                             </div>
 
                             <button

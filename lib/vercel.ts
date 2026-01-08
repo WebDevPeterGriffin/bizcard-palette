@@ -44,6 +44,7 @@ export const addDomainToVercel = async (domain: string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ name: domain }),
+      cache: 'no-store',
     }
   );
 
@@ -67,6 +68,7 @@ export const removeDomainFromVercel = async (domain: string) => {
       headers: {
         Authorization: `Bearer ${process.env.VERCEL_API_TOKEN}`,
       },
+      cache: 'no-store',
     }
   );
 
@@ -90,6 +92,7 @@ export const getDomainResponse = async (domain: string) => {
       headers: {
         Authorization: `Bearer ${process.env.VERCEL_API_TOKEN}`,
       },
+      cache: 'no-store',
     }
   );
 
@@ -113,6 +116,7 @@ export const getConfigResponse = async (domain: string) => {
       headers: {
         Authorization: `Bearer ${process.env.VERCEL_API_TOKEN}`,
       },
+      cache: 'no-store',
     }
   );
 
@@ -136,6 +140,7 @@ export const verifyDomain = async (domain: string) => {
       headers: {
         Authorization: `Bearer ${process.env.VERCEL_API_TOKEN}`,
       },
+      cache: 'no-store',
     }
   );
 

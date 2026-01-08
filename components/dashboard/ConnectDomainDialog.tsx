@@ -70,7 +70,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
         if (!customDomain) return;
         setIsVerifying(true);
         try {
-            const response = await fetch(`/api/domains?domain=${customDomain}`);
+            const response = await fetch(`/api/domains?domain=${customDomain}&t=${Date.now()}`);
             const data = await response.json();
 
             if (data.domain?.verified) {
