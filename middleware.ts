@@ -27,15 +27,19 @@ export async function middleware(request: NextRequest) {
     )
 
     // Lookup the slug and publication status for this custom domain
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('website_configs')
       .select('slug, is_published')
       .eq('custom_domain', hostname)
       .single()
 
+    // Log for debugging (can be removed later)
+    console.log('[Middleware] Custom domain lookup:', { hostname, data, error: error?.message })
+
     if (data) {
       if (!data.is_published) {
         // Rewrite to under construction page
+        console.log('[Middleware] Site unpublished, showing under construction')
         return NextResponse.rewrite(new URL('/under-construction', request.url))
       }
 
@@ -43,9 +47,15 @@ export async function middleware(request: NextRequest) {
         // Rewrite to the slug page
         const url = request.nextUrl.clone()
         url.pathname = `/${data.slug}${url.pathname === '/' ? '' : url.pathname}`
+        console.log('[Middleware] Rewriting to:', url.pathname)
         return NextResponse.rewrite(url)
       }
     }
+
+    // If we got here with a custom domain but no data, show under construction
+    // This handles the case where the domain exists but isn't in our DB
+    console.log('[Middleware] No data found for custom domain, showing under construction')
+    return NextResponse.rewrite(new URL('/under-construction', request.url))
   }
 
   // Define protected routes
