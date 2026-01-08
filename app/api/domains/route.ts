@@ -64,32 +64,20 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        const [domainResponse, configResponse] = await Promise.all([
-            getDomainResponse(domain),
-            getConfigResponse(domain)
-        ]);
+        // Always call verify to force Vercel to re-check DNS
+        const verifyResponse = await verifyDomain(domain);
+        const configResponse = await getConfigResponse(domain);
 
-        // If verified is false, try to verify
-        if (!domainResponse.verified) {
-            const verifyResponse = await verifyDomain(domain);
-            if (verifyResponse.verified) {
-                // Update DB if verification succeeded
-                await supabase
-                    .from('website_configs')
-                    .update({ 
-                        domain_config: verifyResponse as any
-                    } as any)
-                    .eq('custom_domain', domain);
-                
-                return NextResponse.json({
-                    domain: verifyResponse,
-                    config: configResponse
-                });
-            }
-        }
-
+        // Update DB with latest verification status
+        await supabase
+            .from('website_configs')
+            .update({ 
+                domain_config: verifyResponse as any
+            } as any)
+            .eq('custom_domain', domain);
+        
         return NextResponse.json({
-            domain: domainResponse,
+            domain: verifyResponse,
             config: configResponse
         });
     } catch (error: any) {
