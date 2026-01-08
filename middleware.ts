@@ -26,21 +26,25 @@ export async function middleware(request: NextRequest) {
       }
     )
 
-    // Lookup the slug for this custom domain
+    // Lookup the slug and publication status for this custom domain
     const { data } = await supabase
       .from('website_configs')
-      .select('slug')
+      .select('slug, is_published')
       .eq('custom_domain', hostname)
-      .eq('is_published', true) // Only serve published sites
       .single()
 
-    if (data?.slug) {
-      // Rewrite to the slug page
-      // Preserve the path (e.g. /about) if you have multi-page sites, 
-      // but for now we map root to the slug
-      const url = request.nextUrl.clone()
-      url.pathname = `/${data.slug}${url.pathname === '/' ? '' : url.pathname}`
-      return NextResponse.rewrite(url)
+    if (data) {
+      if (!data.is_published) {
+        // Rewrite to under construction page
+        return NextResponse.rewrite(new URL('/under-construction', request.url))
+      }
+
+      if (data.slug) {
+        // Rewrite to the slug page
+        const url = request.nextUrl.clone()
+        url.pathname = `/${data.slug}${url.pathname === '/' ? '' : url.pathname}`
+        return NextResponse.rewrite(url)
+      }
     }
   }
 
