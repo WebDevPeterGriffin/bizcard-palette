@@ -224,6 +224,13 @@ export type Database = {
           template: string
           config: Json
           slug: string | null
+          custom_domain: string | null
+          domain_config: Json | null
+          is_published: boolean
+          domain_added_at: string | null
+          domain_verified_at: string | null
+          domain_verification_token: string | null
+          domain_removed_at: string | null
           created_at: string
           updated_at: string
         }
@@ -233,6 +240,13 @@ export type Database = {
           template?: string
           config: Json
           slug?: string | null
+          custom_domain?: string | null
+          domain_config?: Json | null
+          is_published?: boolean
+          domain_added_at?: string | null
+          domain_verified_at?: string | null
+          domain_verification_token?: string | null
+          domain_removed_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -242,6 +256,13 @@ export type Database = {
           template?: string
           config?: Json
           slug?: string | null
+          custom_domain?: string | null
+          domain_config?: Json | null
+          is_published?: boolean
+          domain_added_at?: string | null
+          domain_verified_at?: string | null
+          domain_verification_token?: string | null
+          domain_removed_at?: string | null
           created_at?: string
           updated_at?: string
         }

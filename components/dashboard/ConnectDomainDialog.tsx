@@ -24,9 +24,9 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
 
     const [manualCheckRequired, setManualCheckRequired] = useState(false);
 
-    // Cast to any because custom_domain and domain_config might not be in the type yet
-    const customDomain = (websiteConfig as any).custom_domain;
-    const domainConfig = (websiteConfig as any).domain_config as VercelDomainResponse | null;
+    // Access domain fields directly - types now include these columns
+    const customDomain = websiteConfig.custom_domain;
+    const domainConfig = websiteConfig.domain_config as VercelDomainResponse | null;
 
     // Determine if we should show verified state
     const isVerified = domainConfig?.verified && !manualCheckRequired;
@@ -146,7 +146,7 @@ export function ConnectDomainDialog({ websiteConfig, onUpdate }: ConnectDomainDi
 
                 {!customDomain ? (
                     <div className="space-y-4 py-4">
-                        {!(websiteConfig as any).is_published ? (
+                        {!websiteConfig.is_published ? (
                             <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
                                 <div className="flex items-center gap-2 font-semibold mb-1">
                                     <AlertTriangle className="w-4 h-4" />

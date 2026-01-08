@@ -1,6 +1,7 @@
 import { updateSession } from '@/lib/supabase/middleware'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { getCachedDomain, setCachedDomain } from '@/lib/domainCache'
 
 export async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || ''
@@ -13,6 +14,23 @@ export async function middleware(request: NextRequest) {
                         !hostname.includes('mildtechstudios.com'); // Add your main domain here
 
   if (isCustomDomain) {
+    // Check cache first for performance
+    const cached = getCachedDomain(hostname);
+    
+    if (cached) {
+      // Use cached data
+      if (!cached.isPublished) {
+        return NextResponse.rewrite(new URL('/under-construction', request.url))
+      }
+      if (cached.slug) {
+        const url = request.nextUrl.clone()
+        url.pathname = `/${cached.slug}${url.pathname === '/' ? '' : url.pathname}`
+        return NextResponse.rewrite(url)
+      }
+      return NextResponse.rewrite(new URL('/under-construction', request.url))
+    }
+
+    // Cache miss - query database
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -27,34 +45,31 @@ export async function middleware(request: NextRequest) {
     )
 
     // Lookup the slug and publication status for this custom domain
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('website_configs')
       .select('slug, is_published')
       .eq('custom_domain', hostname)
       .single()
 
-    // Log for debugging (can be removed later)
-    console.log('[Middleware] Custom domain lookup:', { hostname, data, error: error?.message })
-
     if (data) {
+      // Cache the result
+      setCachedDomain(hostname, data.slug, data.is_published);
+      
       if (!data.is_published) {
-        // Rewrite to under construction page
-        console.log('[Middleware] Site unpublished, showing under construction')
         return NextResponse.rewrite(new URL('/under-construction', request.url))
       }
 
       if (data.slug) {
-        // Rewrite to the slug page
         const url = request.nextUrl.clone()
         url.pathname = `/${data.slug}${url.pathname === '/' ? '' : url.pathname}`
-        console.log('[Middleware] Rewriting to:', url.pathname)
         return NextResponse.rewrite(url)
       }
+    } else {
+      // Cache the "not found" result to avoid repeated DB queries
+      setCachedDomain(hostname, null, false);
     }
 
     // If we got here with a custom domain but no data, show under construction
-    // This handles the case where the domain exists but isn't in our DB
-    console.log('[Middleware] No data found for custom domain, showing under construction')
     return NextResponse.rewrite(new URL('/under-construction', request.url))
   }
 
