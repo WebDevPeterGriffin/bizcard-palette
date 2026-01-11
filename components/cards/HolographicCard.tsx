@@ -90,7 +90,7 @@ const HolographicCard: React.FC<BaseCardProps> = (props) => {
               bookingEnabled={bookingEnabled}
               bookingInstructions={bookingInstructions}
               style="holographic"
-              isDark={false}
+              isDark={true}
               className="mb-5"
             />
           )}

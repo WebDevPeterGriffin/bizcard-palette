@@ -95,7 +95,7 @@ const PrismCard: React.FC<BaseCardProps> = (props) => {
             bookingEnabled={bookingEnabled}
             bookingInstructions={bookingInstructions}
             style="prism"
-            isDark={false}
+            isDark={true}
             className="mb-5"
           />
         )}
