@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
 import { CARD_COMPONENTS, CARD_META, CardStyleId } from "@/components/cards/registry";
-import QRCodeGenerator from "@/components/QRCodeGenerator";
+
 import { useToast } from "@/hooks/use-toast";
 import { useCardData } from "@/hooks/useCardData";
 
