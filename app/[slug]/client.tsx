@@ -162,20 +162,12 @@ const GeneratedCardContent = ({ slug }: GeneratedCardClientProps) => {
                                 headshotUrl={cardData.headshotUrl}
                                 bookingEnabled={cardData.bookingEnabled}
                                 bookingInstructions={cardData.bookingInstructions}
+                                slug={slug}
                             />
                         </Suspense>
                     </div>
 
-                    {/* QR Code Section */}
-                    <div className="flex justify-center mb-8">
-                        <div className={`rounded-lg p-6 ${isDark ? 'bg-white/10 backdrop-blur-sm border border-white/20' : 'bg-white/80 shadow-card'
-                            }`}>
-                            <h3 className={`text-lg font-semibold mb-4 text-center ${isDark ? 'text-white' : ''}`}>
-                                Scan to View Card
-                            </h3>
-                            <QRCodeGenerator url={typeof window !== 'undefined' ? window.location.href : ''} size={200} showControls={false} />
-                        </div>
-                    </div>
+
 
                     {/* Small Brand CTA */}
                     <div className="mt-6 text-center">
