@@ -30,24 +30,53 @@ serve(async (req) => {
     }
 
     try {
-        const { type = 'contact', data, token } = await req.json();
+        const { type = 'contact', data, token, captchaProvider = 'turnstile' } = await req.json();
 
-        // 1. Verify Turnstile Token
-        if (!TURNSTILE_SECRET_KEY) {
-            throw new Error("TURNSTILE_SECRET_KEY not set");
+        // 1. Verify Captcha Token
+        let success = false;
+
+        if (captchaProvider === 'recaptcha') {
+            const RECAPTCHA_SECRET_KEY = Deno.env.get("RECAPTCHA_SECRET_KEY");
+            if (!RECAPTCHA_SECRET_KEY) {
+                throw new Error("RECAPTCHA_SECRET_KEY not set");
+            }
+
+            const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${token}`;
+            const result = await fetch(verifyUrl, { method: 'POST' });
+            const outcome = await result.json();
+            
+            // For v3, we should also check the score, but for now just success is enough
+            // outcome.score > 0.5 is a good threshold
+            success = outcome.success && outcome.score >= 0.5;
+            
+            if (!success) {
+                console.error("reCAPTCHA verification failed:", outcome);
+            }
+
+        } else {
+            // Default to Turnstile
+            if (!TURNSTILE_SECRET_KEY) {
+                throw new Error("TURNSTILE_SECRET_KEY not set");
+            }
+
+            const formData = new FormData();
+            formData.append('secret', TURNSTILE_SECRET_KEY);
+            formData.append('response', token);
+
+            const result = await fetch(VERIFY_ENDPOINT, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const outcome = await result.json();
+            success = outcome.success;
+            
+            if (!success) {
+                console.error("Turnstile verification failed:", outcome);
+            }
         }
 
-        const formData = new FormData();
-        formData.append('secret', TURNSTILE_SECRET_KEY);
-        formData.append('response', token);
-
-        const result = await fetch(VERIFY_ENDPOINT, {
-            method: 'POST',
-            body: formData,
-        });
-
-        const outcome = await result.json();
-        if (!outcome.success) {
+        if (!success) {
             return new Response(
                 JSON.stringify({ error: "Captcha verification failed" }),
                 { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }

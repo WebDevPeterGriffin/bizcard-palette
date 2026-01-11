@@ -1,17 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useSectionReveal } from "@/hooks/useSectionReveal";
 import { Mail, Phone, MapPin, Instagram, Linkedin, Facebook, Twitter, Youtube } from "lucide-react";
 import { useBuilder } from "@/context/BuilderContext";
 import { EditableText } from "@/components/builder/EditableText";
 import { EditableImage } from "@/components/builder/EditableImage";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { createClient } from "@/lib/supabase/client";
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
-export const ContactSection = () => {
-    const revealRef = useSectionReveal();
-    const { config, userId, isReadOnly } = useBuilder();
+const ContactForm = () => {
+    const { config, userId } = useBuilder();
     const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
     const [formData, setFormData] = React.useState({
         firstName: '',
@@ -20,7 +19,7 @@ export const ContactSection = () => {
         message: ''
     });
 
-    const [token, setToken] = React.useState<string | null>(null);
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const supabase = createClient();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -30,13 +29,15 @@ export const ContactSection = () => {
             return;
         }
 
-        if (!token) {
-            alert("Please complete the captcha");
+        if (!executeRecaptcha) {
+            console.error("Execute recaptcha not yet available");
             return;
         }
 
         setStatus('submitting');
         try {
+            const token = await executeRecaptcha('contact_form_submit');
+
             const { data, error } = await supabase.functions.invoke('submit-contact', {
                 body: {
                     type: 'website_inquiry',
@@ -46,7 +47,8 @@ export const ContactSection = () => {
                         email: formData.email,
                         message: formData.message
                     },
-                    token
+                    token,
+                    captchaProvider: 'recaptcha'
                 }
             });
 
@@ -55,13 +57,104 @@ export const ContactSection = () => {
 
             setStatus('success');
             setFormData({ firstName: '', lastName: '', email: '', message: '' });
-            setToken(null);
             setTimeout(() => setStatus('idle'), 3000);
         } catch (error) {
             console.error('Submission error:', error);
             setStatus('error');
         }
     };
+
+    return (
+        <div className="bg-white/5 p-8 rounded-2xl border border-white/10">
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <label htmlFor="firstName" className="text-sm font-medium text-slate-300">First Name</label>
+                        <input
+                            type="text"
+                            id="firstName"
+                            required
+                            value={formData.firstName}
+                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
+                            style={{ borderColor: 'var(--secondary)' }}
+                            placeholder="John"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label htmlFor="lastName" className="text-sm font-medium text-slate-300">Last Name</label>
+                        <input
+                            type="text"
+                            id="lastName"
+                            required
+                            value={formData.lastName}
+                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
+                            style={{ borderColor: 'var(--secondary)' }}
+                            placeholder="Doe"
+                        />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium text-slate-300">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
+                        style={{ borderColor: 'var(--secondary)' }}
+                        placeholder="john@example.com"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label htmlFor="message" className="text-sm font-medium text-slate-300">Message</label>
+                    <textarea
+                        id="message"
+                        rows={4}
+                        required
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
+                        style={{ borderColor: 'var(--secondary)' }}
+                        placeholder="I'm interested in buying a home..."
+                    ></textarea>
+                </div>
+
+                <div className="flex flex-col items-center gap-2">
+                    <p className="text-xs text-slate-400 text-center max-w-xs">
+                        This site is protected by reCAPTCHA and the Google
+                        <a href="https://policies.google.com/privacy" className="text-blue-400 hover:underline mx-1">Privacy Policy</a> and
+                        <a href="https://policies.google.com/terms" className="text-blue-400 hover:underline mx-1">Terms of Service</a> apply.
+                    </p>
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={status === 'submitting'}
+                    className="w-full text-slate-900 font-bold py-4 rounded-lg hover:opacity-90 transition-colors disabled:opacity-50"
+                    style={{ backgroundColor: 'var(--secondary)' }}
+                >
+                    {status === 'submitting' ? 'Sending...' : 'Send Message'}
+                </button>
+                {status === 'success' && (
+                    <p className="text-sm text-green-400 text-center">Message sent successfully!</p>
+                )}
+                {status === 'error' && (
+                    <p className="text-sm text-red-400 text-center">Failed to send message. Please try again.</p>
+                )}
+                <p className="text-xs text-center text-slate-400 mt-4">
+                    Messages will be sent to: <span className="text-white">{config.content.text['contact.email']}</span>
+                </p>
+            </form>
+        </div>
+    );
+};
+
+export const ContactSection = () => {
+    const revealRef = useSectionReveal();
+    const { config, isReadOnly } = useBuilder();
 
     return (
         <footer id="contact" className="text-white pt-24 pb-12" style={{ backgroundColor: 'var(--primary)' }}>
@@ -153,99 +246,9 @@ export const ContactSection = () => {
                     </div>
 
                     {/* Simple Form */}
-                    <div className="bg-white/5 p-8 rounded-2xl border border-white/10">
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label htmlFor="firstName" className="text-sm font-medium text-slate-300">First Name</label>
-                                    <input
-                                        type="text"
-                                        id="firstName"
-                                        required
-                                        value={formData.firstName}
-                                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
-                                        style={{ borderColor: 'var(--secondary)' }}
-                                        placeholder="John"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label htmlFor="lastName" className="text-sm font-medium text-slate-300">Last Name</label>
-                                    <input
-                                        type="text"
-                                        id="lastName"
-                                        required
-                                        value={formData.lastName}
-                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
-                                        style={{ borderColor: 'var(--secondary)' }}
-                                        placeholder="Doe"
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium text-slate-300">Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    required
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
-                                    style={{ borderColor: 'var(--secondary)' }}
-                                    placeholder="john@example.com"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor="message" className="text-sm font-medium text-slate-300">Message</label>
-                                <textarea
-                                    id="message"
-                                    rows={4}
-                                    required
-                                    value={formData.message}
-                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
-                                    style={{ borderColor: 'var(--secondary)' }}
-                                    placeholder="I'm interested in buying a home..."
-                                ></textarea>
-                            </div>
-
-                            <div className="flex flex-col items-center gap-2">
-                                <Turnstile
-                                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
-                                    onSuccess={setToken}
-                                    onExpire={() => setToken(null)}
-                                    onError={() => {
-                                        console.error("Turnstile error");
-                                        setStatus('error');
-                                    }}
-                                />
-                                {status === 'error' && !token && (
-                                    <p className="text-xs text-red-400 text-center max-w-xs">
-                                        CAPTCHA failed to load. If you are using a custom domain, please ensure it is allowed in your Cloudflare Turnstile settings.
-                                    </p>
-                                )}
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={status === 'submitting'}
-                                className="w-full text-slate-900 font-bold py-4 rounded-lg hover:opacity-90 transition-colors disabled:opacity-50"
-                                style={{ backgroundColor: 'var(--secondary)' }}
-                            >
-                                {status === 'submitting' ? 'Sending...' : 'Send Message'}
-                            </button>
-                            {status === 'success' && (
-                                <p className="text-sm text-green-400 text-center">Message sent successfully!</p>
-                            )}
-                            {status === 'error' && (
-                                <p className="text-sm text-red-400 text-center">Failed to send message. Please try again.</p>
-                            )}
-                            <p className="text-xs text-center text-slate-400 mt-4">
-                                Messages will be sent to: <span className="text-white">{config.content.text['contact.email']}</span>
-                            </p>
-                        </form>
-                    </div>
+                    <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}>
+                        <ContactForm />
+                    </GoogleReCaptchaProvider>
                 </div>
 
                 <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
