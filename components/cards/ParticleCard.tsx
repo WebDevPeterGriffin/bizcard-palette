@@ -133,7 +133,7 @@ const ParticleCard: React.FC<BaseCardProps> = (props) => {
               size={120}
               className="flex flex-col items-center"
               fgColor="#a78bfa"
-              bgColor="transparent"
+              bgColor="#00000000"
             />
           )}
         </div>

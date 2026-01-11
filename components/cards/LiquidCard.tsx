@@ -120,7 +120,7 @@ const LiquidCard: React.FC<BaseCardProps> = (props) => {
               size={120}
               className="flex flex-col items-center"
               fgColor="#ffffff"
-              bgColor="transparent"
+              bgColor="#00000000"
             />
           )}
         </div>

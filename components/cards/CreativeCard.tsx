@@ -105,7 +105,7 @@ const CreativeCard: React.FC<BaseCardProps> = (props) => {
               size={140}
               className="mt-6 border-t border-white/20 pt-6"
               fgColor="#ffffff"
-              bgColor="transparent"
+              bgColor="#00000000"
             />
           )}
         </CardContent>
